@@ -17,6 +17,11 @@ repos:
         name: pycln (python)
         args: [--config=pyproject.toml]
 
+  - repo: https://github.com/asottile/pyupgrade.git
+    rev: v3.15.0
+    hooks:
+      - id: pyupgrade
+
   - repo: https://github.com/psf/black
     rev: 23.10.1
     hooks:

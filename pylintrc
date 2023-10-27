@@ -1,0 +1,21 @@
+[MESSAGES CONTROL]
+
+disable=
+    bad-continuation,
+    bad-whitespace,
+    import-error,
+    fixme,
+    arguments-differ,
+    too-few-public-methods,
+    too-many-instance-attributes,
+    no-self-use,
+
+[FORMAT]
+max-line-length=150
+
+[BASIC]
+good-names=i, x, y, z, u, v
+
+[SIMILARITIES]
+ignore-imports=yes
+min-similarity-lines=7

@@ -6,4 +6,4 @@ services:
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     volumes:
-      - ../:/ebl_coords/
+      - ../:/workdir/

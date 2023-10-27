@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "ebl_coords"
 version = "1.0.0"
-description = ""
+description = "Record, postprocess and visualize GoT-Coordinates."
 authors = [
     "Robin Delimar <robin.delimar@students.fhnw.ch>",
     "Pascal Reiss <pascal.reiss@students.fhnw.ch>"

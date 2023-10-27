@@ -163,4 +163,5 @@ config.toml.test
 ## project specific
 # temp folder
 temp
+tmp
 dump

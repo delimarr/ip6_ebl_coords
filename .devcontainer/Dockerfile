@@ -5,3 +5,6 @@ WORKDIR /workdir
 RUN apt-get update && apt-get upgrade -y
 RUN pip install --upgrade pip \
     && pip install 'poetry==1.6.1'
+
+# needed for pyvista in notebooks
+RUN apt-get install libgl1-mesa-glx xvfb -y

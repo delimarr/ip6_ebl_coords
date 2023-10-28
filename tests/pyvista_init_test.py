@@ -1,4 +1,4 @@
-"""Notebook_init test."""
+"""Test if pyvista can connect to xvfb server and init any plot."""
 
 import pyvista as pv
 

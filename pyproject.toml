@@ -7,6 +7,7 @@ authors = [
     "Pascal Reiss <pascal.reiss@students.fhnw.ch>"
 ]
 
+
 [tool.poetry.dependencies]
 python = "3.9.18"
 numpy = "1.22.4"

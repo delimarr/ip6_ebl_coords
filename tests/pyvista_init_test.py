@@ -2,9 +2,9 @@
 
 import pyvista as pv
 
-from ebl_coords.backend import notebook_init  # noqa pylint:disable=unused-import
+from ebl_coords.backend import pyvista_init  # noqa pylint:disable=unused-import
 
 
-def test_xserver() -> None:
+def test_pyvista_init() -> None:
     """Test if pyvista plotter throws no warning."""
     _ = pv.Plotter()

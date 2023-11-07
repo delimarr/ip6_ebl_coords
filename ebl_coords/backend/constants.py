@@ -21,3 +21,5 @@ FILES_S4 = [
     "gr_ringstrecke_s4_13",
     "gr_ringstrecke_s4_14",
 ]
+
+BEST_S4 = "gr_ringstrecke_s4_06"

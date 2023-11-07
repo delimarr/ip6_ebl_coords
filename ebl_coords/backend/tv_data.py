@@ -6,6 +6,7 @@ from typing import List, Optional, Tuple
 import numpy as np
 import pandas as pd
 import pyvista as pv
+from scipy.signal import medfilt
 
 from ebl_coords.backend.constants import LOWER_BND, SCALE, TOLERANCE, UPPER_BND
 
@@ -244,3 +245,25 @@ def keep_k_coeff(
     idx = np.unravel_index(idx, a.shape)
     a[idx] = 0
     return a
+
+
+def median_filter(
+    coords: np.ndarray,
+    kernel_size: np.uint,
+) -> np.ndarray:
+    """Use median filter on given coordinates.
+
+    Each Axis is treated individually.
+    If part of the kernel is outside, ignore values and drop them.
+
+    Args:
+        coords (np.ndarray): Input coordinates
+        kernel_size (np.uint): length of the 1d kernel
+
+    Returns:
+        np.ndarray: modified coordinates
+    """
+    hotspot = int(kernel_size / 2)
+    return np.apply_along_axis(
+        lambda col: medfilt(col, kernel_size), arr=coords, axis=0
+    )[hotspot:-hotspot]

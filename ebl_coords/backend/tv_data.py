@@ -194,7 +194,11 @@ def mark_tolerance(
 
 
 def plot3d(
-    df: pd.DataFrame, title: str, colored: Optional[pd.Series] = None, z: bool = True
+    df: pd.DataFrame,
+    title: str,
+    colored: Optional[pd.Series] = None,
+    z_flg: bool = True,
+    lines_flg: bool = False,
 ) -> None:
     """Make 3d plot.
 
@@ -202,13 +206,16 @@ def plot3d(
         df (pd.DataFrame): Dataframe with GoT-Data
         title (str): title of plot
         colored (Optional[pd.Series], optional): if . Defaults to None.
-        z (bool): keep z-coords. Default is True.
+        z_flg (bool): keep z-coords. Defaults is True.
+        lines_flg (bool): draw lines between consecutive points. Defaults to False.
     """
-    if not z:
+    if not z_flg:
         df.loc[:, "z"] = 0
 
     # TO DO: for serverless, access get_cloud(df) by https request
     cloud = get_cloud(df)
+    if lines_flg:
+        cloud = pv.lines_from_points(cloud.points)
 
     pv.set_plot_theme("dark")
     if colored is not None:

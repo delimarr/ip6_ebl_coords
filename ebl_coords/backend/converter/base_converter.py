@@ -1,19 +1,17 @@
 """Receive any Input and stream it to a socket."""
-import socket
 import json
+import socket
 from dataclasses import asdict
-
 from threading import Thread
-
 from typing import List
+
 from ebl_coords.backend.converter.output_dataclass import ConverterOuput
 
-class BaseConverter():
-    def __init__(
-        self, 
-        ip_server: str = "127.0.0.1", 
-        port_server: int = 42042
-    ) -> None:
+
+class BaseConverter:
+    """Base Class for all converters."""
+
+    def __init__(self, ip_server: str = "127.0.0.1", port_server: int = 42042) -> None:
         """Initialize converter base. Start server that streams from self.buffer.
 
         Args:
@@ -37,9 +35,9 @@ class BaseConverter():
 
     def _start_streaming(self) -> None:
         self.server_thread = Thread(
-            target=self._stream_buffer, 
+            target=self._stream_buffer,
             args=(self.ip_server, self.port_server),
-            daemon=True
+            daemon=True,
         )
         self.server_thread.start()
 
@@ -47,17 +45,9 @@ class BaseConverter():
         server_socket = socket.socket()
         server_socket.bind((ip, port))
         server_socket.listen(10)
-        conn, addr = server_socket.accept()
+        conn, _ = server_socket.accept()
         while True:
             if self.buffer:
                 converter_output = self.buffer.pop()
                 json_b = json.dumps(asdict(converter_output)).encode()
                 conn.send(json_b)
-
-
-    
-
-        
-
-
-    

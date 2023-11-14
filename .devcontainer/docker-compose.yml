@@ -5,3 +5,10 @@ services:
     tty: true        # docker run -t
     volumes:
       - ../:/workdir/
+    networks:
+      - ebl
+      - wide-web
+
+networks:
+  ebl:
+  wide-web:

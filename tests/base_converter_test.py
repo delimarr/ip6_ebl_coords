@@ -2,7 +2,6 @@
 import json
 import socket
 from dataclasses import asdict
-from time import sleep
 
 from ebl_coords.backend.converter.base_converter import BaseConverter
 from ebl_coords.backend.converter.output_dataclass import ConverterOuput
@@ -20,15 +19,14 @@ def test_streaming() -> None:
     ip = "127.0.0.1"
     port = 12701
     bc = BaseConverter(ip_server=ip, port_server=port)
+    bc.buffer.put(c1)
+    bc.buffer.put(c2)
+    bc.buffer.put(c3)
 
-    sleep(0.1)
-
+    bc.alive.wait()
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as recv_socket:
         recv_socket.connect((ip, port))
         reader = recv_socket.makefile("rb")
-        bc.buffer.put(c1)
-        bc.buffer.put(c2)
-        bc.buffer.put(c3)
         c1_answer = reader.readline()
         c2_answer = reader.readline()
         c3_answer = reader.readline()

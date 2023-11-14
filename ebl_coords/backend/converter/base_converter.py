@@ -3,7 +3,7 @@ import json
 import socket
 from dataclasses import asdict
 from queue import Queue
-from threading import Thread
+from threading import Event, Thread
 
 from ebl_coords.backend.converter.output_dataclass import ConverterOuput
 
@@ -20,6 +20,8 @@ class BaseConverter:
         """
         self.ip_server: str = ip_server
         self.port_server: int = port_server
+        self.alive: Event = Event()
+        self.alive.clear()
 
         self.buffer: Queue[ConverterOuput] = Queue(0)
 
@@ -45,6 +47,7 @@ class BaseConverter:
         server_socket = socket.socket()
         server_socket.bind((ip, port))
         server_socket.listen(10)
+        self.alive.set()
         conn, _ = server_socket.accept()
         while True:
             if not self.buffer.empty():

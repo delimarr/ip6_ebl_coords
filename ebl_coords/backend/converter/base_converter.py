@@ -25,6 +25,7 @@ class BaseConverter:
         self.buffer: Queue[ConverterOuput] = Queue(0)
 
         self._start_streaming()
+        self.alive.wait()
 
     def read_input(self) -> None:
         """Read Input and fill self.buffer.

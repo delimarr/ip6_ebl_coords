@@ -23,7 +23,6 @@ def test_streaming() -> None:
     bc.buffer.put(c2)
     bc.buffer.put(c3)
 
-    bc.alive.wait()
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as recv_socket:
         recv_socket.connect((ip, port))
         reader = recv_socket.makefile("rb")

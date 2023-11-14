@@ -15,7 +15,7 @@ def test_streaming() -> None:
     port = 12701
     bc = BaseConverter(ip_server=ip, port_server=port)
 
-    sleep(0.5)
+    sleep(0.1)
 
     recv_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     recv_socket.connect((ip, port))

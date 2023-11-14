@@ -2,8 +2,8 @@
 import json
 import socket
 from dataclasses import asdict
+from queue import Queue
 from threading import Thread
-from typing import List
 
 from ebl_coords.backend.converter.output_dataclass import ConverterOuput
 
@@ -21,7 +21,7 @@ class BaseConverter:
         self.ip_server: str = ip_server
         self.port_server: int = port_server
 
-        self.buffer: List[ConverterOuput] = []
+        self.buffer: Queue[ConverterOuput] = Queue(0)
 
         self._start_streaming()
 
@@ -47,7 +47,8 @@ class BaseConverter:
         server_socket.listen(10)
         conn, _ = server_socket.accept()
         while True:
-            if self.buffer:
-                converter_output = self.buffer.pop()
-                json_b = json.dumps(asdict(converter_output)).encode()
-                conn.send(json_b)
+            if not self.buffer.empty():
+                converter_output = self.buffer.get()
+                json_b = json.dumps(asdict(converter_output)) + "\n"
+                conn.send(json_b.encode())
+                self.buffer.task_done()

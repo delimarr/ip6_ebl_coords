@@ -21,7 +21,6 @@ class BaseConverter:
         self.ip_server: str = ip_server
         self.port_server: int = port_server
         self.alive: Event = Event()
-        self.alive.clear()
 
         self.buffer: Queue[ConverterOuput] = Queue(0)
 

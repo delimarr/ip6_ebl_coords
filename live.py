@@ -1,26 +1,18 @@
-"""Save and plot input from file."""
+"""Save and plot input from gtcommand."""
 import signal
 import sys
-import threading
-from os import path, remove
+from os import path
 
-from ebl_coords.backend.converter.replay_converter import ReplayConverter
-from ebl_coords.backend.mock.gt_recorder import GtRecorder
+from ebl_coords.backend.mock.gt_recorder_original import GtRecorderOriginal
 
-folder = "./data/got_raw_files/run1/"
-in_file = "gr_ringstrecke_s4_11"
-out_file = "./tmp/test.dat"
-assert path.exists(path.join(folder, in_file))
-if path.exists(out_file):
-    remove(out_file)
+folder = "./data/got_raw_files/run8/"
+out_file = "16_dab"
 
-port = 18004
+port = 18002
 
-rc = ReplayConverter(folder=folder, files=[in_file], port_server=port)
-stream = threading.Thread(target=rc.read_input, daemon=True)
-
-global c
-c = GtRecorder(out_file=out_file, port=port, notebook_flg=False)
+c = GtRecorderOriginal(
+    out_file=path.join(folder, out_file), port=port, notebook_flg=False
+)
 
 
 def handler(signum, frame) -> None:
@@ -31,6 +23,5 @@ def handler(signum, frame) -> None:
 
 
 signal.signal(signal.SIGINT, handler)
-stream.start()
 c.start_record()
 c.plot_points()

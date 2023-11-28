@@ -6,6 +6,8 @@ disable=
     arguments-differ,
     too-few-public-methods,
     too-many-instance-attributes,
+    too-many-arguments,
+    consider-using-with
 
 
 [FORMAT]

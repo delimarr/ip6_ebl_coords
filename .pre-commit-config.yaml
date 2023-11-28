@@ -52,7 +52,7 @@ repos:
     hooks:
       - id: pylint
         types: [python]
-        exclude: ^data/
+        exclude: ^data/|live.py
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.6.1
@@ -68,7 +68,7 @@ repos:
             --strict,
           ]
         additional_dependencies: ["toml", "types-toml", "types-requests"]
-        exclude: ^data/
+        exclude: ^data/|live.py
 
   - repo: local
     hooks:

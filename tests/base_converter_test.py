@@ -3,10 +3,13 @@ import json
 import socket
 from dataclasses import asdict
 
+import pytest
+
 from ebl_coords.backend.converter.base_converter import BaseConverter
-from ebl_coords.backend.converter.output_dataclass import ConverterOuput
+from ebl_coords.backend.converter.converter_output import ConverterOuput
 
 
+@pytest.mark.timeout(3)  # type: ignore
 def test_streaming() -> None:
     """Test connection to BaseConverter Server."""
     c1 = ConverterOuput(0, 1, 1, 1, {})

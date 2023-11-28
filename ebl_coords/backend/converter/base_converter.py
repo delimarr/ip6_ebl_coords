@@ -5,7 +5,8 @@ from dataclasses import asdict
 from queue import Queue
 from threading import Event, Thread
 
-from ebl_coords.backend.converter.output_dataclass import ConverterOuput
+from ebl_coords.backend.converter.converter_output import ConverterOuput
+from ebl_coords.backend.converter.helpers import NpEncoder
 
 
 class BaseConverter:
@@ -52,6 +53,6 @@ class BaseConverter:
         while True:
             if not self.buffer.empty():
                 converter_output = self.buffer.get()
-                json_b = json.dumps(asdict(converter_output)) + "\n"
+                json_b = json.dumps(asdict(converter_output), cls=NpEncoder) + "\n"
                 conn.send(json_b.encode())
                 self.buffer.task_done()

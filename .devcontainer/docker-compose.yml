@@ -1,7 +1,16 @@
 services:
   dev-environment-python:
     build: .
+    privileged: true
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     volumes:
       - ../:/workdir/
+      - //var/run/docker.sock://var/run/docker.sock
+    networks:
+      - ebl
+      - wide-web
+
+networks:
+  ebl:
+  wide-web:

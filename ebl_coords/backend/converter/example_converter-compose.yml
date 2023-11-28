@@ -1,0 +1,7 @@
+services: # start this with 'docker-compose -f example_converter-compose.yml up -d'
+  example_converter:
+    image: python:3.9.18 # The Python version we use
+    volumes: # doesnt work due to poetry import stuff, have to find clean way
+      - ./base_converter.py:/converter/base_converter.py
+      - ./example_converter.py:/converter/example_converter.py
+    entrypoint: ["python3 /converter/example_converter.py"]

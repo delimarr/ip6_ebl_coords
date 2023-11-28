@@ -7,3 +7,5 @@ This repository contains an interface to GoT, coordinates recording and analysis
 - select newly created env from poetry as python interpreter
 - if you are on linux run `git config --global --add safe.directory /workdir`
 - run `pre-commit install`
+
+# use local_exec branch in order to run `live.py`

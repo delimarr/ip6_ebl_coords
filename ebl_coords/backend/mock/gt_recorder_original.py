@@ -1,5 +1,4 @@
 """Record GTCommand output and write to file. Execute only locally."""
-import json
 import socket
 import threading
 from os import path
@@ -9,10 +8,10 @@ from typing import Optional
 import numpy as np
 import pyvista as pv
 
-from ebl_coords.backend.converter.converter_output import ConverterOuput
+from ebl_coords.backend.converter.helpers import now_ms
 
 
-class GtRecorder:
+class GtRecorderOriginal:
     """Class to save in ConverterOutputFormat and plot live."""
 
     def __init__(
@@ -41,7 +40,7 @@ class GtRecorder:
         self.ip = ip
         self.port = port
         self.plot_flg = plot_flg
-        self.buffer: Queue[ConverterOuput] = Queue(0)
+        self.buffer: Queue[np.ndarray] = Queue(0)
         self.notebook_flg = notebook_flg
         self.record_thread = threading.Thread(target=self.record, daemon=True)
 
@@ -52,25 +51,12 @@ class GtRecorder:
         pl.enable_eye_dome_lighting()
         pl.show(interactive_update=True)
 
-        i = 0
         print("start plotting...")
         while True:
             if not self.buffer.empty():
-                converter_output = self.buffer.get()
-                if i % 5 == 0:
-                    point = pv.pyvista_ndarray(
-                        np.array(
-                            [
-                                converter_output.x,
-                                converter_output.y,
-                                converter_output.z,
-                            ],
-                            dtype=np.float32,
-                        )
-                    )
-                    pl.add_points(point)
-                    print(self.buffer.qsize())
-                i += 1
+                point = self.buffer.get()
+                pl.add_points(point)
+                print(self.buffer.qsize())
             pl.update()
 
     def start_record(self) -> None:
@@ -85,15 +71,24 @@ class GtRecorder:
     def record(self) -> None:
         """Listen on socket, fill the buffer and write to file."""
         self.loc_socket.connect((self.ip, self.port))
-        reader = self.loc_socket.makefile("rb")
 
         i = 0
         print("start recording...")
+        buffer = b""
         while self.max_rows is None or i < self.max_rows:
-            c_dict = json.loads(reader.readline())
-            c = ConverterOuput(**c_dict)
-            self.buffer.put(c)
-            self.fd.write(str(c_dict) + ";\n")
+            while b";" not in buffer:
+                buffer += self.loc_socket.recv(1024)
+
+            line, _, buffer = buffer.partition(b";")
+            line = line.decode("utf-8")
+            self.fd.write(str(now_ms()) + ";")
+            self.fd.writelines(line + ";\n")
+            if i % 5 == 0:
+                ds = line.split(",")
+                point = np.array([ds[3], ds[4], ds[5]], dtype=np.float32)
+                self.buffer.put(point)
+
+            print(i)
             i += 1
 
         del self

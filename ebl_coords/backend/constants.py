@@ -1,6 +1,11 @@
 """Constants used in the Notebooks and tvData.py."""
 from os.path import abspath
 
+# neo4j config
+NEO4J_URI = "bolt://localhost:7687"
+NEO4J_USR = "neo4j"
+NEO4J_PASSWD = "password"
+
 TOLERANCE: int = 30
 SCALE: float = 0.2
 LOWER_BND: int = -180

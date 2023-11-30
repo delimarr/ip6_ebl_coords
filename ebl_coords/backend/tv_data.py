@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Functions to transform/visualize GoT data."""
+import warnings
 from os.path import join
 from typing import List, Optional, Tuple
 
@@ -7,6 +8,7 @@ import numpy as np
 import pandas as pd
 import pyvista as pv
 from scipy.signal import medfilt
+from scipy.spatial.distance import cdist
 
 from ebl_coords.backend.constants import LOWER_BND, SCALE, TOLERANCE, UPPER_BND
 
@@ -282,3 +284,29 @@ def median_filter(
     return np.apply_along_axis(
         lambda col: medfilt(col, kernel_size), arr=coords, axis=0
     )[hotspot:-hotspot]
+
+
+def get_track_switches_hit(
+    labels: np.ndarray,
+    label_coords: np.ndarray,
+    waypoints: np.ndarray,
+    threshold: float,
+) -> np.ndarray:
+    """Get all labels, which near any waypoint.
+
+    Raise Warning if not all waypoint are distinctively mapped.
+
+    Args:
+        labels (np.ndarray): lables of coords labels-length = number of label_coords
+        label_coords (np.ndarray): coordinates of labels
+        waypoints (np.ndarray): any waypoints
+        threshold (float): radius <= of sphere around label_coords
+
+    Returns:
+        np.ndarray: All labels which have at least one waypoint in threshold distance.
+    """
+    distances = cdist(label_coords, waypoints)
+    distances = distances <= threshold
+    labels_hits = distances.sum(axis=1)
+    warnings.warn(f"double hits: {distances.sum(axis=0).max() > 1}")
+    return labels[labels_hits > 1]

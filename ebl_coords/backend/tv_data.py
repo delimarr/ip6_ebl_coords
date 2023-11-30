@@ -148,8 +148,8 @@ def to_img_arr(
 def mark_tolerance(
     df: pd.DataFrame,
     tolerance: int = TOLERANCE,
-    lower_bnd: int = LOWER_BND,
-    upper_bnd: int = UPPER_BND,
+    lower_bnd: Optional[int] = LOWER_BND,
+    upper_bnd: Optional[int] = UPPER_BND,
 ) -> pd.DataFrame:
     """Mark good points.
 
@@ -169,7 +169,15 @@ def mark_tolerance(
     """
     # z boundary
     marked = df.z.to_numpy()
-    marked = (marked >= lower_bnd) & (marked <= upper_bnd)
+    if lower_bnd:
+        lower_marked = marked >= lower_bnd
+    else:
+        lower_marked = np.full(marked.shape, True)
+    if upper_bnd:
+        upper_marked = marked <= upper_bnd
+    else:
+        upper_marked = np.full(marked.shape, True)
+    marked = lower_marked & upper_marked
 
     coords = np.c_[df.x, df.y, df.z]
     # scatter & and reduce with minus

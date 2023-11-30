@@ -272,7 +272,7 @@ def filter_df(
     Returns:
         pd.DataFrame: transformed df
     """
-    if tolerance:
+    if tolerance is not None:
         df = mark_tolerance(df, tolerance=tolerance, lower_bnd=None, upper_bnd=None)
         df = df.loc[df.iloc[:, 0]]
 

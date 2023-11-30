@@ -50,12 +50,13 @@ class Plotter3d:
     def _add_track_switches(self) -> None:
         """Add track switches from neo4j DB."""
         ts_coords = []
+        ts_labels = []
         for bhf in self.bhfs:
             bhf = bhf.upper()
             cmd = f"MATCH (node:WEICHE {{bhf: '{bhf}'}} ) RETURN node.name, node.x, node.y, node.z"
             track_switches = self.session.run(cmd).data()
             for ts in track_switches[::2]:
-                self.ts_labels.append(f"{bhf}_{ts['node.name']}")
+                ts_labels.append(f"{bhf}_{ts['node.name']}")
                 z = 0
                 if self.z_flg:
                     z = ts["node.z"]
@@ -63,6 +64,7 @@ class Plotter3d:
                     np.array([ts["node.x"], ts["node.y"], z], dtype=np.float32)
                 )
             self.ts_coords = np.array(ts_coords, dtype=np.float32)
+            self.ts_labels = np.array(ts_labels)
 
     def _rails_to_lines(self) -> None:
         """Collect all rails from DB and save the coordinates."""
@@ -144,7 +146,7 @@ class Plotter3d:
             tolerance (Optional[int], optional): minimal required distance to a neighbour. Defaults to None.
         """
         self.waypoints = filter_df(df, kernel_size=kernel_size, tolerance=tolerance)
-        cloud = get_cloud(df)
+        cloud = get_cloud(self.waypoints)
         if not self.z_flg:
             cloud.points[:, 2] = 0
 

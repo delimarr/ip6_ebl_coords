@@ -5,7 +5,7 @@ from typing import List
 from ebl_coords.backend.converter.base_converter import BaseConverter
 from ebl_coords.backend.converter.converter_output import ConverterOuput
 from ebl_coords.backend.converter.helpers import now_ms
-from ebl_coords.backend.tv_data import get_df
+from ebl_coords.backend.transform_data import get_df
 
 
 class ReplayConverter(BaseConverter):

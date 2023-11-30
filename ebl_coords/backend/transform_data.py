@@ -9,7 +9,7 @@ import pandas as pd
 from scipy.signal import medfilt
 from scipy.spatial.distance import cdist
 
-from ebl_coords.backend.constants import LOWER_BND, SCALE, TOLERANCE, UPPER_BND
+from ebl_coords.backend.constants import SCALE, TOLERANCE
 
 
 def mark_valid_signal(
@@ -133,8 +133,8 @@ def to_img_arr(
 def mark_tolerance(
     df: pd.DataFrame,
     tolerance: int = TOLERANCE,
-    lower_bnd: Optional[int] = LOWER_BND,
-    upper_bnd: Optional[int] = UPPER_BND,
+    lower_bnd: Optional[int] = None,
+    upper_bnd: Optional[int] = None,
 ) -> pd.DataFrame:
     """Mark good points.
 
@@ -146,8 +146,8 @@ def mark_tolerance(
     Args:
         df (pd.DataFrame): DataFrame with GoT-Coords in x, y, z columns.
         tolerance (int, optional): Minimal distance to closest neighbour. Defaults to TOLERANCE.
-        lower_bnd (int, optional): Lower boundary for z. Defaults to LOWER_BND.
-        upper_bnd (int, optional): Upper boundary for z. Defaults to UPPER_BND.
+        lower_bnd (int, optional): Lower boundary for z. Defaults to None.
+        upper_bnd (int, optional): Upper boundary for z. Defaults to None.
 
     Returns:
         pd.DataFrame: Dataframe with marked_tolerance_lowerbnd_upperbnd column.
@@ -255,3 +255,30 @@ def get_track_switches_hit(
     labels_hits = distances.sum(axis=1)
     warnings.warn(f"double hits: {distances.sum(axis=0).max() > 1}")
     return labels[labels_hits > 1]
+
+
+def filter_df(
+    df: pd.DataFrame,
+    kernel_size: Optional[int] = 11,
+    tolerance: Optional[int] = TOLERANCE,
+) -> pd.DataFrame:
+    """Filter all outliers in df.
+
+    Args:
+        df (pd.DataFrame): df
+        kernel_size (Optional[int], optional): kernel size of median filter, set to None for no median filter. Defaults to 11.
+        tolerance (Optional[int], optional): Minimal distance to closest neighbour needed to be valid, None = infinite. Defaults to TOLERANCE.
+
+    Returns:
+        pd.DataFrame: transformed df
+    """
+    if tolerance:
+        df = mark_tolerance(df, tolerance=tolerance, lower_bnd=None, upper_bnd=None)
+        df = df.loc[df.iloc[:, 0]]
+
+    if kernel_size:
+        median_coords = median_filter(np.c_[df.x, df.y, df.z], kernel_size)
+        k = kernel_size // 2
+        df = df.iloc[k:-k, :]
+        df.loc[:, ["x", "y", "z"]] = median_coords
+    return df

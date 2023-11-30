@@ -6,11 +6,16 @@ services:
     tty: true        # docker run -t
     volumes:
       - ../:/workdir/
-      - //var/run/docker.sock://var/run/docker.sock
-    networks:
-      - ebl
-      - wide-web
-
-networks:
-  ebl:
-  wide-web:
+  neo4j:
+    image: neo4j:5.12.0-community
+    restart: unless-stopped
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+      - "7473:7473"
+    environment:
+      - NEO4J_AUTH=neo4j/password
+    volumes:
+      - ./db/data:/data
+      - ./db/conf:/conf
+      - ./db/logs:/logs

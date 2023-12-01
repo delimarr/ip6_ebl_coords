@@ -8,16 +8,10 @@ services:
       - ../:/workdir/
     environment:
       - DEV_CONTAINER=1
-  neo4j:
-    image: neo4j:5.12.0-community
-    restart: unless-stopped
-    ports:
-      - "7474:7474"
-      - "7687:7687"
-      - "7473:7473"
-    environment:
-      - NEO4J_AUTH=neo4j/password
-    volumes:
-      - ./db/data:/data
-      - ./db/conf:/conf
-      - ./db/logs:/logs
+    networks:
+      - ebl-net
+
+networks:
+  ebl-net:
+    name: ebl
+    external: true

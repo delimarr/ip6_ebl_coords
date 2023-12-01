@@ -1,12 +1,13 @@
 """Module to interact with neo4j."""
 from os import environ
 
+import pandas as pd
 from neo4j import GraphDatabase
 
-import pandas as pd
-
-from ebl_coords.backend.constants import NEO4J_PASSWD, NEO4J_URI_LOCAL, NEO4J_URI_CONTAINER, NEO4J_USR
+from ebl_coords.backend.constants import NEO4J_PASSWD, NEO4J_URI_CONTAINER
+from ebl_coords.backend.constants import NEO4J_URI_LOCAL, NEO4J_USR
 from ebl_coords.graph_db.query_generator import drop_db
+
 
 class _InnerApi:
     """Class to interact with neo4j."""
@@ -42,11 +43,13 @@ class _InnerApi:
         """Closes the session."""
         self.session.close()
 
+
 class Api(_InnerApi):
     """Singleton wrapper class for Api."""
+
     _api = None
-    
-    def __new__(cls) -> _InnerApi:
+
+    def __new__(cls) -> _InnerApi:  # type: ignore
         """Return singleton or create if it does not exist yet."""
         if cls._api is None:
             cls._api = super(_InnerApi, cls).__new__(cls)

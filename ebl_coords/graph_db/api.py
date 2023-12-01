@@ -1,6 +1,8 @@
 """Module to interact with neo4j."""
-from neo4j import GraphDatabase
 from os import environ
+
+from neo4j import GraphDatabase
+
 import pandas as pd
 
 from ebl_coords.backend.constants import NEO4J_PASSWD, NEO4J_URI_LOCAL, NEO4J_URI_CONTAINER, NEO4J_USR

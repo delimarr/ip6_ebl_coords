@@ -1,16 +1,15 @@
 """Module to plot tracks and wayspoints."""
 from queue import Queue
-from typing import List, Optional
+from typing import Optional
 
 import numpy as np
 import pandas as pd
 import pyvista as pv
-from neo4j import GraphDatabase
 
-from ebl_coords.backend.constants import NEO4J_PASSWD, NEO4J_URI, NEO4J_USR
 from ebl_coords.backend.mock.gt_recorder import GtRecorder
 from ebl_coords.backend.mock.gt_recorder_filtered import GTRecorderFiltered
 from ebl_coords.backend.transform_data import filter_df
+from ebl_coords.graph_db.api import Api
 from ebl_coords.plot.helpers import get_cloud
 
 
@@ -36,9 +35,7 @@ class Plotter3d:
         self.interactive_update = interactive_update
         self.kernel_size = kernel_size
         self.tolerance = tolerance
-        self.session = GraphDatabase.driver(
-            NEO4J_URI, auth=(NEO4J_USR, NEO4J_PASSWD)
-        ).session()
+        self.graph_db = Api()
 
         pv.set_plot_theme("dark")
         self.title: Optional[str] = None
@@ -48,7 +45,6 @@ class Plotter3d:
         if self.interactive_update:
             self.pl.show(interactive_update=self.interactive_update)
 
-        self.bhfs: List[str] = []
         self.ts_labels: np.ndarray
         self.ts_coords: np.ndarray
 
@@ -57,48 +53,23 @@ class Plotter3d:
         self.waypoints: pd.DataFrame
         self.socket_buffer: Queue[np.ndarray] = Queue(0)
 
-    def __del__(self) -> None:
-        """Close neo4j session."""
-        self.session.close()
-
     def _add_track_switches(self) -> None:
         """Add track switches from neo4j DB."""
-        ts_coords = []
-        ts_labels = []
-        for bhf in self.bhfs:
-            bhf = bhf.upper()
-            cmd = f"MATCH (node:WEICHE {{bhf: '{bhf}'}} ) RETURN node.name, node.x, node.y, node.z"
-            track_switches = self.session.run(cmd).data()
-            for ts in track_switches[::2]:
-                ts_labels.append(f"{bhf}_{ts['node.name']}")
-                z = 0
-                if self.z_flg:
-                    z = ts["node.z"]
-                ts_coords.append(
-                    np.array([ts["node.x"], ts["node.y"], z], dtype=np.float32)
-                )
-            self.ts_coords = np.array(ts_coords, dtype=np.float32)
-            self.ts_labels = np.array(ts_labels)
+        cmd = "MATCH (node:WEICHE) RETURN node.bhf, node.name, node.x, node.y, node.z"
+        df = self.graph_db.run_query(cmd)[::2]
+        self.ts_labels = (df["node.bhf"] + "_" + df["node.name"]).to_numpy()
+        self.ts_coords = df[["node.x", "node.y", "node.z"]].to_numpy(dtype=np.float32)
+        if self.z_flg:
+            self.ts_coords[:, 2] = 0
 
     def _rails_to_lines(self) -> None:
         """Collect all rails from DB and save the coordinates."""
-        cmd = "MATCH (n1)-[TRAIN_RAIL]->(n2) RETURN n1, n2"
-        lines = self.session.run(cmd).data()
-        line_points = []
-        for line in lines:
-            n1 = line["n1"]
-            n2 = line["n2"]
-            p1 = np.array([n1["x"], n1["y"], n1["z"]], dtype=np.float32)
-            p2 = np.array([n2["x"], n2["y"], n2["z"]], dtype=np.float32)
-            if not self.z_flg:
-                p1[2] = 0
-                p2[2] = 0
-            line_points.append([p1, p2])
-        self.rail_lines = np.array(line_points).reshape(-1, 3)
+        cmd = "MATCH (n1)-[TRAIN_RAIL]->(n2) RETURN n1.x, n1.y, n1.z, n2.x, n2.y, n2.z"
+        df = self.graph_db.run_query(cmd)
+        self.rail_lines = df.to_numpy(dtype=np.float32).reshape(-1, 3)
 
     def plot_track_switches(
         self,
-        bhfs: List[str],
         point_size: int = 15,
         point_color: str = "yellow",
         lines_color: Optional[str] = None,
@@ -106,12 +77,10 @@ class Plotter3d:
         """Plot all track_switches.
 
         Args:
-            bhfs (List[str]): list of trainstations.
             point_size (int, optional): point size. Defaults to 15.
             point_color (str, optional): color. Defaults to 'yellow'.
             lines_color (Optional[str], optional): If color, plot lines, which connect train switches. Defaults to None.
         """
-        self.bhfs = list(map(lambda bhf: bhf.upper(), bhfs))
         self._add_track_switches()
         self.pl.add_point_labels(
             self.ts_coords,

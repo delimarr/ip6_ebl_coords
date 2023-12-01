@@ -26,9 +26,8 @@ port = 42042
 folder = "./data/got_raw_files/"
 files = os.listdir(folder)
 
-bhfs = ["DAB", "CHA", "ENS"]
 p = Plotter3d(interactive_update=True, kernel_size=5, tolerance=20)
-p.plot_track_switches(bhfs, lines_color="white")
+p.plot_track_switches(lines_color="white")
 out_file = "temp.dat"
 if os.path.exists(out_file):
     os.remove(out_file)

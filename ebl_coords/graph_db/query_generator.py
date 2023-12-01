@@ -15,10 +15,11 @@ def single_node(node: Node) -> str:
     Returns:
         str: query call
     """
-    return f"""
-        (\
+    return f"""\
+        CREATE(\
         {node.id}:{node.switch_item.name} \
             {{\
+                node_id: '{node.id}', \
                 name: '{node.name}', \
                 ecos_id: '{node.ecos_id}', \
                 bhf: '{node.bhf.name}', \
@@ -26,26 +27,10 @@ def single_node(node: Node) -> str:
                 y: {node.coords[1]}, \
                 z: {node.coords[2]} \
             }}\
-        ),
-    """
-
-
-def directional_edge(edge: Edge) -> str:
-    """Create a query for a single directional edge.
-
-    Args:
-        edge (Edge): edge
-
-    Returns:
-        str: query call
-    """
-    return f"""
-        (\
-        {edge.source.id})\
-            -[:{edge.relation.name} {{distance:{edge.distance}}}]->\
-        ({edge.dest.id}\
-        ),
-    """
+        )
+    """.replace(
+        " ", ""
+    )
 
 
 def double_node(template_node: Node) -> Tuple[str, Tuple[Node, Node]]:
@@ -58,38 +43,45 @@ def double_node(template_node: Node) -> Tuple[str, Tuple[Node, Node]]:
         str: query call, new nodes
     """
     node1 = Node(**template_node.__dict__)
-    node1.id = node1.id + "_1"
+    node1.id = node1.id + "_0"
     node2 = Node(**template_node.__dict__)
-    node2.id = node2.id + "_2"
+    node2.id = node2.id + "_1"
+    edge = Edge(node1, node2, EdgeRelation.DOUBLE_VERTEX, distance=0)
 
-    res = single_node(node1)
-    res += single_node(node2)
+    node1_cmd = single_node(node1)
+    node2_cmd = single_node(node2)
+    edge_cmd = bidirectional_edge(edge)
 
-    edge_12 = Edge(node1, node2, EdgeRelation.DOUBLE_VERTEX, distance=0)
-    edge_21 = Edge(node2, node1, EdgeRelation.DOUBLE_VERTEX, distance=0)
-    res += directional_edge(edge_12)
-    res += directional_edge(edge_21)
-    return res, (node1, node2)
+    with_statement = f"WITH {node1.id}, {node2.id}\n"
+
+    cmd = node1_cmd + node2_cmd + with_statement + edge_cmd
+
+    return cmd, (node1, node2)
 
 
-def bidirectional_edge(template_edge: Edge) -> Tuple[str, Tuple[Edge, Edge]]:
+def bidirectional_edge(template_edge: Edge) -> str:
     """Create query for bidirectional edge.
 
     Args:
         template_edge (Edge): template for both edges.
 
     Returns:
-        Tuple[str, Tuple[Edge, Edge]]: query call, new edges
+        str : query call, new edges
     """
-    edge1 = Edge(**template_edge.__dict__)
-    edge2 = Edge(**template_edge.__dict__)
-    edge2.source = edge1.dest
-    edge2.dest = edge1.source
+    source = template_edge.source
+    dest = template_edge.dest
+    distance = template_edge.distance
+    relation = template_edge.relation.name
 
-    res = directional_edge(edge1)
-    res += directional_edge(edge2)
-
-    return res, (edge1, edge2)
+    cmd = f"""\
+        MATCH(source:{source.switch_item.name}{{node_id: '{source.id}'}})
+        MATCH(dest:{dest.switch_item.name}{{node_id: '{dest.id}'}})
+        CREATE(source)-[:{relation}{{distance: {distance}}}]->(dest)
+        CREATE(dest)-[:{relation}{{distance: {distance}}}]->(source)
+    """.replace(
+        " ", ""
+    )
+    return cmd
 
 
 def drop_db() -> str:

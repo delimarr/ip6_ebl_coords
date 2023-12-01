@@ -6,6 +6,8 @@ services:
     tty: true        # docker run -t
     volumes:
       - ../:/workdir/
+    environment:
+      - DEV_CONTAINER=1
   neo4j:
     image: neo4j:5.12.0-community
     restart: unless-stopped

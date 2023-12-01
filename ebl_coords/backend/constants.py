@@ -2,7 +2,8 @@
 from os.path import abspath
 
 # neo4j config
-NEO4J_URI = "bolt://localhost:7687"
+NEO4J_URI_LOCAL = "bolt://localhost:7687"
+NEO4J_URI_CONTAINER = "bolt://neo4j:7687"
 NEO4J_USR = "neo4j"
 NEO4J_PASSWD = "password"
 

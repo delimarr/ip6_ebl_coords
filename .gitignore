@@ -165,5 +165,6 @@ config.toml.test
 temp
 tmp
 dump
+temp.*
 
 .devcontainer/db/*

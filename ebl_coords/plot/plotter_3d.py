@@ -8,7 +8,8 @@ import pyvista as pv
 from neo4j import GraphDatabase
 
 from ebl_coords.backend.constants import NEO4J_PASSWD, NEO4J_URI, NEO4J_USR
-from ebl_coords.backend.mock.gt_recorder_original import GtRecorderOriginal
+from ebl_coords.backend.mock.gt_recorder import GtRecorder
+from ebl_coords.backend.mock.gt_recorder_filtered import GTRecorderFiltered
 from ebl_coords.backend.transform_data import filter_df
 from ebl_coords.plot.helpers import get_cloud
 
@@ -16,15 +17,25 @@ from ebl_coords.plot.helpers import get_cloud
 class Plotter3d:
     """Pyvista based plotter."""
 
-    def __init__(self, z_flg: bool = True, interactive_update: bool = False) -> None:
+    def __init__(
+        self,
+        kernel_size: int,
+        tolerance: int,
+        z_flg: bool = True,
+        interactive_update: bool = False,
+    ) -> None:
         """Initialize the Plotter.
 
         Args:
             z_flg (bool, optional): If False squish the z-axis to zero. Defaults to True.
             interactive_update (bool, optional): Set to true if plot from socket. Defaults to False.
+            kernel_size (int): kernel_size of median filter, must be odd.
+            tolerance (int): minimal distance to closest neighbour waypoint needed to be valid.
         """
         self.z_flg = z_flg
         self.interactive_update = interactive_update
+        self.kernel_size = kernel_size
+        self.tolerance = tolerance
         self.session = GraphDatabase.driver(
             NEO4J_URI, auth=(NEO4J_USR, NEO4J_PASSWD)
         ).session()
@@ -117,7 +128,7 @@ class Plotter3d:
             self.pl.add_lines(self.rail_lines, color=lines_color, width=3)
 
     def plot_waypoints_socket(self, ip: str, port: int, waypoints_file: str) -> None:
-        """Plot live from GtCommand socket.
+        """Plot live from GtCommand socket. If kernel_size and tolerance is set, preprcess coordinates.
 
         Args:
             ip (str): ip of server
@@ -131,26 +142,40 @@ class Plotter3d:
             raise ConnectionRefusedError(
                 "Use only if Plotter is initialized with interactive-update = True"
             )
-        recorder = GtRecorderOriginal(
-            out_file=waypoints_file, ip=ip, port=port, plot_flg=True, notebook_flg=False
-        )
+
+        if self.kernel_size and self.tolerance:
+            recorder = GTRecorderFiltered(
+                out_file=waypoints_file,
+                ip=ip,
+                port=port,
+                plot_flg=True,
+                notebook_flg=False,
+                kernel_size=self.kernel_size,
+                tolerance=self.tolerance,
+            )
+        else:
+            recorder = GtRecorder(  # type: ignore
+                out_file=waypoints_file,
+                ip=ip,
+                port=port,
+                plot_flg=True,
+                notebook_flg=False,
+            )
         recorder.start_record()
         recorder.plot_points(pl=self.pl)
 
     def plot_waypoints_df(
         self,
         df: pd.DataFrame,
-        kernel_size: Optional[int] = None,
-        tolerance: Optional[int] = None,
     ) -> None:
         """Plot all points from DataFrame and preprocess them.
 
         Args:
             df (pd.DataFrame): df
-            kernel_size (Optional[int], optional): kernel size of median filter. Defaults to None.
-            tolerance (Optional[int], optional): minimal required distance to a neighbour. Defaults to None.
         """
-        self.waypoints = filter_df(df, kernel_size=kernel_size, tolerance=tolerance)
+        self.waypoints = filter_df(
+            df, kernel_size=self.kernel_size, tolerance=self.tolerance
+        )
         cloud = get_cloud(self.waypoints)
         if not self.z_flg:
             cloud.points[:, 2] = 0

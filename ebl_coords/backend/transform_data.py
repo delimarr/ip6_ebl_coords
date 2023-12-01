@@ -130,6 +130,28 @@ def to_img_arr(
     return arr, df
 
 
+def get_tolerance_mask(coords: np.ndarray, tolerance: int) -> np.ndarray:
+    """Compare the distance to both neighbours, disregard first and last point.
+
+    Args:
+        coords (np.ndarray): coordinates
+        tolerance (int): minimal distance of closer neighbour.
+
+    Returns:
+        np.ndarray: boolean mask
+    """
+    # scatter & and reduce with minus
+    d = coords[1:, :] - coords[:-1, :]
+    # calculate norm
+    d = np.apply_along_axis(np.linalg.norm, axis=1, arr=d)
+
+    # scatter
+    d_mask = np.c_[d[:-1], d[1:]]
+    # reduce with min
+    d_mask = d_mask.min(axis=1) <= tolerance
+    return d_mask
+
+
 def mark_tolerance(
     df: pd.DataFrame,
     tolerance: int = TOLERANCE,
@@ -165,15 +187,7 @@ def mark_tolerance(
     marked = lower_marked & upper_marked
 
     coords = np.c_[df.x, df.y, df.z]
-    # scatter & and reduce with minus
-    d = coords[1:, :] - coords[:-1, :]
-    # calculate norm
-    d = np.apply_along_axis(np.linalg.norm, axis=1, arr=d)
-
-    # scatter
-    d_mask = np.c_[d[:-1], d[1:]]
-    # reduce with min
-    d_mask = d_mask.min(axis=1) <= tolerance
+    d_mask = get_tolerance_mask(coords, tolerance)
 
     # ignore first and last point, because it only has one neighbour
     marked[0] = False

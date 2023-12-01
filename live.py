@@ -27,8 +27,9 @@ folder = "./data/got_raw_files/"
 files = os.listdir(folder)
 
 bhfs = ["DAB", "CHA", "ENS"]
-p = Plotter3d(interactive_update=True)
+p = Plotter3d(interactive_update=True, kernel_size=5, tolerance=20)
 p.plot_track_switches(bhfs, lines_color="white")
 out_file = "temp.dat"
-os.remove(out_file)
+if os.path.exists(out_file):
+    os.remove(out_file)
 p.plot_waypoints_socket(ip, port, out_file)

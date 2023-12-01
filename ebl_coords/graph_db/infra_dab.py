@@ -5,23 +5,24 @@ from uuid import uuid4
 
 import numpy as np
 
+from ebl_coords.graph_db.api import Api
 from ebl_coords.graph_db.data_elements.bahnhof_enum import Bhf
 from ebl_coords.graph_db.data_elements.edge_dc import Edge
 from ebl_coords.graph_db.data_elements.edge_relation_enum import EdgeRelation
 from ebl_coords.graph_db.data_elements.node_dc import Node
 from ebl_coords.graph_db.data_elements.switch_item_enum import SwitchItem
 from ebl_coords.graph_db.query_generator import bidirectional_edge, double_node
-from ebl_coords.graph_db.api import Api
 
 
 def guid() -> str:
     """Get a random guid."""
     return "guid_" + str(uuid4()).partition("-")[0]
 
+
 graph_db = Api()
 graph_db.drop_db()
 
-WEICHEN_FILE = "./data/dachsburgring_weichen.json"
+WEICHEN_FILE = "./data/weichen_run_7_9.json"
 
 
 w_tps: List[Node] = []

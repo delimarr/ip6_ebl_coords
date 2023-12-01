@@ -267,8 +267,9 @@ def get_track_switches_hit(
     distances = cdist(label_coords, waypoints)
     distances = distances <= threshold
     labels_hits = distances.sum(axis=1)
-    warnings.warn(f"double hits: {distances.sum(axis=0).max() > 1}")
-    return labels[labels_hits > 1]
+    if distances.sum(axis=0).max() > 1:
+        warnings.warn("double hits!")
+    return labels[labels_hits >= 1]
 
 
 def filter_df(

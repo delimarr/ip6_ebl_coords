@@ -8,7 +8,7 @@ import pyvista as pv
 
 from ebl_coords.backend.mock.gt_recorder import GtRecorder
 from ebl_coords.backend.mock.gt_recorder_filtered import GTRecorderFiltered
-from ebl_coords.backend.transform_data import filter_df
+from ebl_coords.backend.transform_data import filter_df, get_track_switches_hit
 from ebl_coords.graph_db.api import Api
 from ebl_coords.plot.helpers import get_cloud
 
@@ -59,14 +59,16 @@ class Plotter3d:
         df = self.graph_db.run_query(cmd)[::2]
         self.ts_labels = (df["node.bhf"] + "_" + df["node.name"]).to_numpy()
         self.ts_coords = df[["node.x", "node.y", "node.z"]].to_numpy(dtype=np.float32)
-        if self.z_flg:
+        if not self.z_flg:
             self.ts_coords[:, 2] = 0
 
     def _rails_to_lines(self) -> None:
         """Collect all rails from DB and save the coordinates."""
-        cmd = "MATCH (n1)-[TRAIN_RAIL]->(n2) RETURN n1.x, n1.y, n1.z, n2.x, n2.y, n2.z"
+        cmd = "MATCH (n1)-[:TRAIN_RAIL]->(n2) RETURN n1.x, n1.y, n1.z, n2.x, n2.y, n2.z"
         df = self.graph_db.run_query(cmd)
         self.rail_lines = df.to_numpy(dtype=np.float32).reshape(-1, 3)
+        if not self.z_flg:
+            self.rail_lines[:, 2] = 0
 
     def plot_track_switches(
         self,
@@ -121,6 +123,9 @@ class Plotter3d:
                 notebook_flg=False,
                 kernel_size=self.kernel_size,
                 tolerance=self.tolerance,
+                ts_labels=self.ts_labels,
+                ts_coords=self.ts_coords,
+                z_flg=self.z_flg,
             )
         else:
             recorder = GtRecorder(  # type: ignore
@@ -129,6 +134,9 @@ class Plotter3d:
                 port=port,
                 plot_flg=True,
                 notebook_flg=False,
+                ts_labels=self.ts_labels,
+                ts_coords=self.ts_coords,
+                z_flg=self.z_flg,
             )
         recorder.start_record()
         recorder.plot_points(pl=self.pl)
@@ -149,4 +157,20 @@ class Plotter3d:
         if not self.z_flg:
             cloud.points[:, 2] = 0
 
+        hit = get_track_switches_hit(self.ts_labels, self.ts_coords, cloud.points, 30)
+        mask = np.isin(self.ts_labels, hit)
+
+        self.pl.add_point_labels(
+            self.ts_coords[mask],
+            self.ts_labels[mask],
+            show_points=True,
+            point_color="blue",
+            point_size=30,
+            always_visible=True,
+            render_points_as_spheres=True,
+            font_size=10,
+        )
+        print(self.ts_labels[mask])
+
         self.pl.add_points(cloud, render_points_as_spheres=True)
+        self.pl.show()

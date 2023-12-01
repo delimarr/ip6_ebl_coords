@@ -6,7 +6,7 @@ import numpy as np
 
 from ebl_coords.backend.converter.helpers import now_ms
 from ebl_coords.backend.mock.gt_recorder import GtRecorder
-from ebl_coords.backend.transform_data import get_tolerance_mask
+from ebl_coords.backend.transform_data import get_tolerance_mask, get_track_switches_hit
 
 
 class GTRecorderFiltered(GtRecorder):
@@ -17,25 +17,41 @@ class GTRecorderFiltered(GtRecorder):
         out_file: str,
         kernel_size: int,
         tolerance: int,
+        ts_labels: np.ndarray,
+        ts_coords: np.ndarray,
         max_rows: Optional[int] = None,
         ip: str = "127.0.0.1",
         port: int = 18002,
         plot_flg: bool = True,
         notebook_flg: bool = False,
+        z_flg: bool = True,
     ) -> None:
         """Initialize the recorder.
 
         Args:
-            out_file (str): output file
-            kernel_size (int): kernelsize for median filter, must be odd.
-            tolerance (int): minimal distance required to a neighbour, in order for a point to be valid.
-            max_rows (Optional[int], optional): Max rows written. Defaults to None.
-            ip (str, optional): ip adress. Defaults to "127.0.0.1".
-            port (int, optional): port. Defaults to 18002.
-            plot_flg (bool, optional): Set False to avoid plotting. Defaults to True.
-            notebook_flg (bool, optional): Set it to True, if working in a .ipynb. Defaults to False.
+            out_file (str): path to a new output file
+            kernel_size (int): kernel size of median filter. Must be odd.
+            tolerance (int): Min distance required to closest neighbour of a waypoint.
+            ts_labels (np.ndarray): trainswitches labels
+            ts_coords (np.ndarray): trainswitches coordinates
+            ip (str, optional): ip adress server socket. Defaults to "127.0.0.1".
+            max_rows (int, optional): Limits how many lines will be received. Defaults to None.
+            port (int, optional): port server socket. Defaults to 18002.
+            plot_flg (bool, optional): Plot each 5th point live. Defaults to True.
+            notebook_flg (bool, optional): Set to True if executing in Notebook. Defaults to True.
+            z_flg (bool, optional): True to keep z-axis. Defaults to True.
         """
-        super().__init__(out_file, max_rows, ip, port, plot_flg, notebook_flg)
+        super().__init__(
+            out_file,
+            ts_labels,
+            ts_coords,
+            max_rows,
+            ip,
+            port,
+            plot_flg,
+            notebook_flg,
+            z_flg,
+        )
         self.kernel_size = kernel_size
         self.tolerance = tolerance
 
@@ -61,6 +77,8 @@ class GTRecorderFiltered(GtRecorder):
             self.fd.writelines(line_string + ";\n")
             ds = line_string.split(",")
             point = np.array([ds[4], ds[5], ds[6]], dtype=np.float32)
+            if not self.z_flg:
+                point[2] = 0
 
             self.tolerance_buffer[-1] = point
             if get_tolerance_mask(self.tolerance_buffer, self.tolerance)[0]:
@@ -69,6 +87,14 @@ class GTRecorderFiltered(GtRecorder):
 
             if median_idx == self.kernel_size:
                 waypoint = np.median(self.median_buffer, axis=0)
+                tracks_hit = get_track_switches_hit(
+                    self.ts_labels,
+                    self.ts_coords,
+                    waypoints=[waypoint],
+                    threshold=self.threshold,
+                )
+                if tracks_hit.size > 0:
+                    self.switch_track_buffer.put((tracks_hit, waypoint))
                 median_idx = self.kernel_size - 1
                 self.median_buffer[0:-1, :] = self.median_buffer[1:, :]
 

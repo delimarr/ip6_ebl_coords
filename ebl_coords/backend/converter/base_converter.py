@@ -24,6 +24,7 @@ class BaseConverter:
         self.alive: Event = Event()
 
         self.buffer: Queue[ConverterOuput] = Queue(0)
+        self.raw_buffer: Queue[str] = Queue(0)
 
         self._start_streaming()
         self.alive.wait()
@@ -56,3 +57,7 @@ class BaseConverter:
                 json_b = json.dumps(asdict(converter_output), cls=NpEncoder) + "\n"
                 conn.send(json_b.encode())
                 self.buffer.task_done()
+            if not self.raw_buffer.empty():
+                row = self.raw_buffer.get()
+                conn.send(row.encode("utf-8"))
+                self.raw_buffer.task_done()

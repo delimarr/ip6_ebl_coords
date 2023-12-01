@@ -1,4 +1,6 @@
 """Record GTCommand output and write to file. Execute only locally."""
+import logging
+import signal
 import socket
 import threading
 from os import path
@@ -42,38 +44,43 @@ class GtRecorderOriginal:
         self.plot_flg = plot_flg
         self.buffer: Queue[np.ndarray] = Queue(0)
         self.notebook_flg = notebook_flg
-        self.record_thread = threading.Thread(target=self.record, daemon=True)
+        self.record_thread = threading.Thread(target=self.record, daemon=False)
+        self.stop_recording = threading.Event()
+        signal.signal(signal.SIGINT, self._handler)
 
-    def plot_points(self) -> None:
-        """Plot every 5th point."""
-        pl = pv.Plotter(notebook=self.notebook_flg)
+    def _handler(self, signum, frame) -> None:
+        if not self.stop_recording.is_set():
+            self.stop_recording.set()
+            logging.debug("%s, %s", signum, frame)
+
+    def plot_points(self, pl: pv.Plotter = None) -> None:
+        """Plot every 5th point.
+
+        pl (pv.Plotter, optional): Existing Plotter to add point, None = create new one. Defaults to None.
+        """
+        if not pl:
+            pl = pv.Plotter(notebook=self.notebook_flg)
         pl.add_axes()
         pl.enable_eye_dome_lighting()
         pl.show(interactive_update=True)
 
-        print("start plotting...")
-        while True:
+        logging.debug("start plotting...")
+        while self.record_thread.is_alive():
             if not self.buffer.empty():
                 point = self.buffer.get()
                 pl.add_points(point)
-                print(self.buffer.qsize())
             pl.update()
 
     def start_record(self) -> None:
         """Start listening thread."""
         self.record_thread.start()
 
-    def __del__(self) -> None:
-        """Close file descriptor and socket."""
-        print("\nclosing...")
-        self.fd.close()
-
     def record(self) -> None:
         """Listen on socket, fill the buffer and write to file."""
         self.loc_socket.connect((self.ip, self.port))
 
         i = 0
-        print("start recording...")
+        logging.debug("start recording...")
         buffer = b""
         while self.max_rows is None or i < self.max_rows:
             while b";" not in buffer:
@@ -88,7 +95,9 @@ class GtRecorderOriginal:
                 point = np.array([ds[3], ds[4], ds[5]], dtype=np.float32)
                 self.buffer.put(point)
 
-            print(i)
+            logging.info("New point: %d", i)
             i += 1
-
-        del self
+            if self.stop_recording.is_set():
+                self.fd.close()
+                logging.info("%s properly closed.", self.out_file)
+                break

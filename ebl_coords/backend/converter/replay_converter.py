@@ -15,6 +15,7 @@ class ReplayConverter(BaseConverter):
         self,
         folder: str,
         files: List[str],
+        raw_flg: bool = False,
         ip_server: str = "127.0.0.1",
         port_server: int = 42042,
     ) -> None:
@@ -23,10 +24,12 @@ class ReplayConverter(BaseConverter):
         Args:
             folder (str): full path to parent folder containing all files.
             files (List[str]): files to concat
+            raw_flg (bool, optional): Set to true if raw got outputfiles are used. Defaults to False.
             ip_server (str, optional): ip adress. Defaults to "127.0.0.1".
             port_server (int, optional): port. Defaults to 42042.
         """
         super().__init__(ip_server, port_server)
+        self.raw_flg = raw_flg
         self.df = get_df(files, folder)
 
     def read_input(self) -> None:
@@ -39,6 +42,14 @@ class ReplayConverter(BaseConverter):
                 # wait
                 pass
             misc_idx = row.index.difference(["x", "y", "z", "pc_timestamp"])
-            self.buffer.put(
-                ConverterOuput(now_ms(), row.x, row.y, row.z, dict(row[misc_idx]))
-            )
+            if self.raw_flg:
+                self.raw_buffer.put(
+                    row.to_string(header=False, index=False)
+                    .replace("\n", ",")
+                    .replace(" ", "")
+                    + ";"
+                )
+            else:
+                self.buffer.put(
+                    ConverterOuput(now_ms(), row.x, row.y, row.z, dict(row[misc_idx]))
+                )

@@ -1,4 +1,5 @@
 """Module to plot tracks and wayspoints."""
+from queue import Queue
 from typing import List, Optional
 
 import numpy as np
@@ -7,6 +8,7 @@ import pyvista as pv
 from neo4j import GraphDatabase
 
 from ebl_coords.backend.constants import NEO4J_PASSWD, NEO4J_URI, NEO4J_USR
+from ebl_coords.backend.mock.gt_recorder_original import GtRecorderOriginal
 from ebl_coords.backend.transform_data import filter_df
 from ebl_coords.plot.helpers import get_cloud
 
@@ -42,6 +44,7 @@ class Plotter3d:
         self.rail_lines: np.ndarray
 
         self.waypoints: pd.DataFrame
+        self.socket_buffer: Queue[np.ndarray] = Queue(0)
 
     def __del__(self) -> None:
         """Close neo4j session."""
@@ -113,24 +116,26 @@ class Plotter3d:
             self._rails_to_lines()
             self.pl.add_lines(self.rail_lines, color=lines_color, width=3)
 
-    def plot_waypoints_socket(self, ip: str, port: int) -> None:
+    def plot_waypoints_socket(self, ip: str, port: int, waypoints_file: str) -> None:
         """Plot live from GtCommand socket.
 
         Args:
             ip (str): ip of server
             port (int): port of server
+            waypoints_file (str): write received GtCommand output into file.
 
         Raises:
             ConnectionRefusedError: interactive_update must be True.
-            NotImplementedError: _description_
         """
-        if self.interactive_update:
+        if not self.interactive_update:
             raise ConnectionRefusedError(
                 "Use only if Plotter is initialized with interactive-update = True"
             )
-        print(port)
-        print(ip)
-        raise NotImplementedError()
+        recorder = GtRecorderOriginal(
+            out_file=waypoints_file, ip=ip, port=port, plot_flg=True, notebook_flg=False
+        )
+        recorder.start_record()
+        recorder.plot_points(pl=self.pl)
 
     def plot_waypoints_df(
         self,

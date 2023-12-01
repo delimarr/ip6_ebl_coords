@@ -4,10 +4,10 @@ from os import environ
 
 import pyvista as pv
 
-from ebl_coords.backend import pyvista_init  # noqa pylint:disable=unused-import
+if "DEV_CONTAINER" in environ:
+    from ebl_coords.backend import pyvista_init  # noqa pylint:disable=unused-import
 
 
 def test_pyvista_init() -> None:
     """Test if pyvista plotter throws no warning."""
-    if "DEV_CONTAINER" in environ:
-        _ = pv.Plotter()
+    _ = pv.Plotter()

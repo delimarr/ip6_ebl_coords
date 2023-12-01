@@ -1,9 +1,14 @@
 """Plotter example."""
 import os
 import threading
+from os import environ
 
 from ebl_coords.backend.converter.replay_converter import ReplayConverter
 from ebl_coords.plot.plotter_3d import Plotter3d
+
+if "DEV_CONTAINER" in environ:
+    from ebl_coords.backend import pyvista_init  # noqa pylint:disable=unused-import
+
 
 # 11 10 7 10 11 11 11 8 6 ; 9 ; 10 7 3 2
 folder = "./data/got_raw_files/run8/"

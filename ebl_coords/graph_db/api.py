@@ -1,6 +1,7 @@
 """Module to interact with neo4j."""
 from os import environ
 
+
 from neo4j import GraphDatabase
 
 import pandas as pd

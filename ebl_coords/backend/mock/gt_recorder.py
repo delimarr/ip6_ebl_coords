@@ -27,6 +27,7 @@ class GtRecorder:
         plot_flg: bool = True,
         notebook_flg: bool = True,
         z_flg: bool = True,
+        ts_threshold: int = 30,
     ) -> None:
         """Open and listen to a socket and write output to file. Hit CTRL + BREAK to stop.
 
@@ -40,6 +41,7 @@ class GtRecorder:
             plot_flg (bool, optional): Plot each 5th point live. Defaults to True.
             notebook_flg (bool, optional): Set to True if executing in Notebook. Defaults to True.
             z_flg (bool, optional): True to keep z-axis. Defaults to True.
+            ts_threshold (int, optional): tolerance radius around train switch and distance update. Defaults to 30.
         """
         self.out_file = path.abspath(out_file)
         self.max_rows = max_rows
@@ -51,14 +53,14 @@ class GtRecorder:
         self.ip = ip
         self.port = port
         self.plot_flg = plot_flg
-        self.buffer: Queue[np.ndarray] = Queue(0)
+        self.buffer: Queue[Tuple[int, np.ndarray]] = Queue(0)
         self.switch_track_buffer: Queue[Tuple[np.ndarray, np.ndarray]] = Queue(0)
         self.notebook_flg = notebook_flg
         self.record_thread = threading.Thread(target=self.record, daemon=False)
         self.stop_recording = threading.Event()
         signal.signal(signal.SIGINT, self._handler)
 
-        self.threshold = 30
+        self.threshold = ts_threshold
 
     def _handler(self, signum: int, frame) -> None:  # type: ignore
         if not self.stop_recording.is_set():
@@ -75,12 +77,35 @@ class GtRecorder:
         pl.add_axes()
         pl.enable_eye_dome_lighting()
         pl.show(interactive_update=True)
+        text_actor = pl.add_text(
+            "distance: 0.00gt, v: 0.00gt/s",
+            position="upper_right",
+            color="white",
+            font_size=18,
+        )
 
+        last_point = None
+        last_ms = None
+        distance = 0
         logging.debug("start plotting...")
         while self.record_thread.is_alive():
             if not self.buffer.empty():
-                point = self.buffer.get()
+                ms, point = self.buffer.get()
                 pl.add_points(point)
+                if last_point is not None:
+                    delta_distance = np.linalg.norm(last_point - point)
+                    if delta_distance > 50:
+                        distance += delta_distance
+                        velocity = delta_distance / (ms - last_ms) * 1e3
+                        text_actor.set_text(
+                            text=f"distance: {distance:.2f}gt, v: {velocity:.2f}gt/s",
+                            position="upper_right",
+                        )
+                        last_point = point
+                        last_ms = ms
+                else:
+                    last_point = point
+                    last_ms = ms
             if not self.switch_track_buffer.empty():
                 labels, point = self.switch_track_buffer.get()
                 points = np.resize(point, (labels.shape[0], 3))
@@ -120,7 +145,8 @@ class GtRecorder:
                 point = np.array([ds[4], ds[5], ds[6]], dtype=np.float32)
                 if not self.z_flg:
                     point[2] = 0
-                self.buffer.put(point)
+                ms = int(ds[1])
+                self.buffer.put((ms, point))
 
             logging.info("New point: %d", i)
             i += 1

@@ -22,6 +22,8 @@ class Plotter3d:
         tolerance: int,
         z_flg: bool = True,
         interactive_update: bool = False,
+        ts_threshold: int = 30,
+        track_flg: bool = False,
     ) -> None:
         """Initialize the Plotter.
 
@@ -30,11 +32,15 @@ class Plotter3d:
             interactive_update (bool, optional): Set to true if plot from socket. Defaults to False.
             kernel_size (int): kernel_size of median filter, must be odd.
             tolerance (int): minimal distance to closest neighbour waypoint needed to be valid.
+            ts_threshold (int, optional): Minimal distance required to be in around train switches. Defaults to 30.
+            track_flg (bool, optional): track the distance and the velocity. Defaults to False.
         """
         self.z_flg = z_flg
         self.interactive_update = interactive_update
         self.kernel_size = kernel_size
         self.tolerance = tolerance
+        self.ts_threshold = ts_threshold
+        self.track_flg = track_flg
         self.graph_db = Api()
 
         pv.set_plot_theme("dark")
@@ -98,6 +104,8 @@ class Plotter3d:
             self._rails_to_lines()
             self.pl.add_lines(self.rail_lines, color=lines_color, width=3)
 
+        self.pl.view_xy()
+
     def plot_waypoints_socket(self, ip: str, port: int, waypoints_file: str) -> None:
         """Plot live from GtCommand socket. If kernel_size and tolerance is set, preprcess coordinates.
 
@@ -137,6 +145,7 @@ class Plotter3d:
                 ts_labels=self.ts_labels,
                 ts_coords=self.ts_coords,
                 z_flg=self.z_flg,
+                ts_threshold=self.ts_threshold,
             )
         recorder.start_record()
         recorder.plot_points(pl=self.pl)
@@ -157,7 +166,9 @@ class Plotter3d:
         if not self.z_flg:
             cloud.points[:, 2] = 0
 
-        hit = get_track_switches_hit(self.ts_labels, self.ts_coords, cloud.points, 30)
+        hit = get_track_switches_hit(
+            self.ts_labels, self.ts_coords, cloud.points, self.ts_threshold
+        )
         mask = np.isin(self.ts_labels, hit)
 
         self.pl.add_point_labels(

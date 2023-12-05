@@ -100,7 +100,8 @@ class GTRecorderFiltered(GtRecorder):
 
                 # add 5th point to plot buffer
                 if plot_idx % 5 == 0:
-                    self.buffer.put(waypoint)
+                    ms = int(ds[1])
+                    self.buffer.put((ms, waypoint))
                     plot_idx = 0
                 else:
                     plot_idx += 1

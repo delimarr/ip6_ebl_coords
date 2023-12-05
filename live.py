@@ -13,8 +13,8 @@ if "DEV_CONTAINER" in environ:
 # 11 10 7 10 11 11 11 8 6 ; 9 ; 10 7 3 2
 folder = "./data/got_raw_files/run8/"
 files = [
-    # "01_dab",
-    "02_dab"
+    "01_dab",
+    # "02_dab"
 ]
 
 
@@ -47,7 +47,9 @@ for file in files:
     p.plot_waypoints_df(get_df([file], folder))
 
 """
-p = Plotter3d(interactive_update=True, kernel_size=11, tolerance=50, z_flg=False)
+p = Plotter3d(
+    interactive_update=True, kernel_size=11, tolerance=50, z_flg=False, ts_threshold=35
+)
 p.plot_track_switches(lines_color="white")
 out_file = "temp.dat"
 if os.path.exists(out_file):

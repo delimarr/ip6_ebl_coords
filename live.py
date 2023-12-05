@@ -13,8 +13,8 @@ if "DEV_CONTAINER" in environ:
 # 11 10 7 10 11 11 11 8 6 ; 9 ; 10 7 3 2
 folder = "./data/got_raw_files/run8/"
 files = [
-    "01_dab",
-    # "02_dab"
+    # "01_dab",
+    "02_dab"
 ]
 
 

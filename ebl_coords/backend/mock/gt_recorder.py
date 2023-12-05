@@ -78,7 +78,7 @@ class GtRecorder:
         pl.enable_eye_dome_lighting()
         pl.show(interactive_update=True)
         text_actor = pl.add_text(
-            "distance: 0.00gt, v: 0.00gt/s",
+            "Distanz: 0.000m, v: 0.000m/s",
             position="upper_right",
             color="white",
             font_size=18,
@@ -86,7 +86,14 @@ class GtRecorder:
 
         last_point = None
         last_ms = None
+        ts_label = None
         distance = 0
+        ts_text_actor = pl.add_text(
+            text="Weiche: Strecken-Meter\n",
+            position="upper_left",
+            color="#FF64B5F6",
+            font_size=14,
+        )
         logging.debug("start plotting...")
         while self.record_thread.is_alive():
             if not self.buffer.empty():
@@ -98,7 +105,7 @@ class GtRecorder:
                         distance += delta_distance
                         velocity = delta_distance / (ms - last_ms) * 1e3
                         text_actor.set_text(
-                            text=f"distance: {distance:.2f}gt, v: {velocity:.2f}gt/s",
+                            text=f"Distanz: {distance/1e3:.3f}m, v: {velocity/1e3:.3f}m/s",
                             position="upper_right",
                         )
                         last_point = point
@@ -113,12 +120,19 @@ class GtRecorder:
                     points,
                     labels,
                     show_points=True,
-                    point_color="blue",
+                    point_color="#FF64B5F6",
                     point_size=self.threshold,
                     always_visible=True,
                     render_points_as_spheres=True,
                     font_size=10,
                 )
+                if labels.size == 1:
+                    label = labels[0]
+                    if label != ts_label:
+                        ts_label = label
+                        text = ts_text_actor.get_text(2)
+                        text += f"{label}: {distance/1000:.3f}m\n"
+                        ts_text_actor.set_text(text=text, position="upper_left")
             pl.update()
 
     def start_record(self) -> None:

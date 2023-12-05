@@ -175,7 +175,7 @@ class Plotter3d:
             self.ts_coords[mask],
             self.ts_labels[mask],
             show_points=True,
-            point_color="blue",
+            point_color="#FF64B5F6",
             point_size=30,
             always_visible=True,
             render_points_as_spheres=True,

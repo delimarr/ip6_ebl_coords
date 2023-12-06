@@ -7,6 +7,9 @@ NEO4J_URI_CONTAINER = "bolt://neo4j:7687"
 NEO4J_USR = "neo4j"
 NEO4J_PASSWD = "password"
 
+ECOS_IP = None  # HAVE TO LOOK UP
+ECOS_PORT = None  # SAME
+
 TOLERANCE: int = 30
 SCALE: float = 0.2
 LOWER_BND: int = -180

@@ -45,14 +45,14 @@ repos:
         name: pydocstyle
         args:
           - --convention=google
-        exclude: ^data/
+        exclude: ^data/|main_gui.py
 
   - repo: https://github.com/pycqa/pylint
     rev: v3.0.2
     hooks:
       - id: pylint
         types: [python]
-        exclude: ^data/|live.py
+        exclude: ^data/|live.py|main_gui.py
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.6.1
@@ -68,7 +68,7 @@ repos:
             --strict,
           ]
         additional_dependencies: ["toml", "types-toml", "types-requests"]
-        exclude: ^data/|live.py|infra_dab.py
+        exclude: ^data/|live.py|infra_dab.py|main_gui.py
 
   - repo: local
     hooks:

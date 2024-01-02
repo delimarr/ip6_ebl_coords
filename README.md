@@ -9,3 +9,6 @@ This repository contains an interface to GoT, coordinates recording and analysis
 - run `pre-commit install`
 
 # use local_exec branch in order to run `live.py`
+
+# pyqt6
+https://www.pythontutorial.net/pyqt/qt-designer/

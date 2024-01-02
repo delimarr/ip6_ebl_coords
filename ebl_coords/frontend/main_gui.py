@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file '/workdir/ebl_coords/frontend/ui_files/main_gui.ui'
+# Form implementation generated from reading ui file './ebl_coords/frontend/ui_files/main_gui.ui'
 #
 # Created by: PyQt6 UI code generator 6.4.2
 #
@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow:
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1186, 916)
+        MainWindow.resize(1186, 955)
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -24,9 +24,27 @@ class Ui_MainWindow:
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.map_tab)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.map_splitter = QtWidgets.QSplitter(parent=self.map_tab)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Preferred,
+            QtWidgets.QSizePolicy.Policy.Preferred,
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.map_splitter.sizePolicy().hasHeightForWidth())
+        self.map_splitter.setSizePolicy(sizePolicy)
         self.map_splitter.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.map_splitter.setObjectName("map_splitter")
         self.map_left = QtWidgets.QWidget(parent=self.map_splitter)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Policy.Preferred,
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.map_left.sizePolicy().hasHeightForWidth())
+        self.map_left.setSizePolicy(sizePolicy)
+        self.map_left.setMinimumSize(QtCore.QSize(200, 0))
+        self.map_left.setMaximumSize(QtCore.QSize(600, 16777215))
         self.map_left.setObjectName("map_left")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.map_left)
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
@@ -41,17 +59,47 @@ class Ui_MainWindow:
         self.label_5 = QtWidgets.QLabel(parent=self.map_left_form)
         self.label_5.setObjectName("label_5")
         self.formLayout.setWidget(
-            1, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_5
+            2, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_5
         )
         self.map_zonename_txt = QtWidgets.QLineEdit(parent=self.map_left_form)
         self.map_zonename_txt.setObjectName("map_zonename_txt")
         self.formLayout.setWidget(
-            1, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_zonename_txt
+            2, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_zonename_txt
         )
         self.map_zone_speichern_btn = QtWidgets.QPushButton(parent=self.map_left_form)
         self.map_zone_speichern_btn.setObjectName("map_zone_speichern_btn")
         self.formLayout.setWidget(
-            2, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_zone_speichern_btn
+            5, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_zone_speichern_btn
+        )
+        self.label_6 = QtWidgets.QLabel(parent=self.map_left_form)
+        self.label_6.setObjectName("label_6")
+        self.formLayout.setWidget(
+            3, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_6
+        )
+        self.label_7 = QtWidgets.QLabel(parent=self.map_left_form)
+        self.label_7.setObjectName("label_7")
+        self.formLayout.setWidget(
+            4, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_7
+        )
+        self.map_zone_width = QtWidgets.QSpinBox(parent=self.map_left_form)
+        self.map_zone_width.setObjectName("map_zone_width")
+        self.formLayout.setWidget(
+            3, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_zone_width
+        )
+        self.map_zone_height = QtWidgets.QSpinBox(parent=self.map_left_form)
+        self.map_zone_height.setObjectName("map_zone_height")
+        self.formLayout.setWidget(
+            4, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_zone_height
+        )
+        self.label_8 = QtWidgets.QLabel(parent=self.map_left_form)
+        self.label_8.setObjectName("label_8")
+        self.formLayout.setWidget(
+            1, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_8
+        )
+        self.map_zone_select_combo_box = QtWidgets.QComboBox(parent=self.map_left_form)
+        self.map_zone_select_combo_box.setObjectName("map_zone_select_combo_box")
+        self.formLayout.setWidget(
+            1, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_zone_select_combo_box
         )
         self.verticalLayout_5.addWidget(self.map_left_form)
         self.map_right = QtWidgets.QWidget(parent=self.map_splitter)
@@ -73,6 +121,8 @@ class Ui_MainWindow:
         self.weichen_splitter.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.weichen_splitter.setObjectName("weichen_splitter")
         self.weichen_left = QtWidgets.QWidget(parent=self.weichen_splitter)
+        self.weichen_left.setMinimumSize(QtCore.QSize(200, 0))
+        self.weichen_left.setMaximumSize(QtCore.QSize(600, 16777215))
         self.weichen_left.setObjectName("weichen_left")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.weichen_left)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -152,6 +202,18 @@ class Ui_MainWindow:
         self.strecken_splitter.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.strecken_splitter.setObjectName("strecken_splitter")
         self.strecken_left = QtWidgets.QWidget(parent=self.strecken_splitter)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Policy.Preferred,
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.strecken_left.sizePolicy().hasHeightForWidth()
+        )
+        self.strecken_left.setSizePolicy(sizePolicy)
+        self.strecken_left.setMinimumSize(QtCore.QSize(200, 0))
+        self.strecken_left.setMaximumSize(QtCore.QSize(600, 16777215))
         self.strecken_left.setObjectName("strecken_left")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.strecken_left)
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
@@ -206,7 +268,7 @@ class Ui_MainWindow:
         self.horizontalLayout_2.addWidget(self.tabWidget)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(parent=MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1186, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1186, 21))
         self.menubar.setObjectName("menubar")
         self.menuZonen = QtWidgets.QMenu(parent=self.menubar)
         self.menuZonen.setObjectName("menuZonen")
@@ -231,6 +293,9 @@ class Ui_MainWindow:
         MainWindow.setWindowTitle(_translate("MainWindow", "EBL"))
         self.label_5.setText(_translate("MainWindow", "Zonename"))
         self.map_zone_speichern_btn.setText(_translate("MainWindow", "Speichern"))
+        self.label_6.setText(_translate("MainWindow", "Zonenbreite"))
+        self.label_7.setText(_translate("MainWindow", "Zonenhöhe"))
+        self.label_8.setText(_translate("MainWindow", "Zone"))
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.map_tab), _translate("MainWindow", "Karte")
         )

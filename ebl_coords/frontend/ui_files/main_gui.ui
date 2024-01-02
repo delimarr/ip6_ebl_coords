@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1186</width>
-    <height>916</height>
+    <height>955</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,10 +27,34 @@
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
          <widget class="QSplitter" name="map_splitter">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
           <widget class="QWidget" name="map_left" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>600</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
              <widget class="QListWidget" name="map_weichen_list"/>
@@ -38,22 +62,52 @@
             <item>
              <widget class="QWidget" name="map_left_form" native="true">
               <layout class="QFormLayout" name="formLayout">
-               <item row="1" column="0">
+               <item row="2" column="0">
                 <widget class="QLabel" name="label_5">
                  <property name="text">
                   <string>Zonename</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="1">
+               <item row="2" column="1">
                 <widget class="QLineEdit" name="map_zonename_txt"/>
                </item>
-               <item row="2" column="1">
+               <item row="5" column="1">
                 <widget class="QPushButton" name="map_zone_speichern_btn">
                  <property name="text">
                   <string>Speichern</string>
                  </property>
                 </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_6">
+                 <property name="text">
+                  <string>Zonenbreite</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QLabel" name="label_7">
+                 <property name="text">
+                  <string>Zonenhöhe</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QSpinBox" name="map_zone_width"/>
+               </item>
+               <item row="4" column="1">
+                <widget class="QSpinBox" name="map_zone_height"/>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_8">
+                 <property name="text">
+                  <string>Zone</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="map_zone_select_combo_box"/>
                </item>
               </layout>
              </widget>
@@ -86,6 +140,18 @@
            <enum>Qt::Horizontal</enum>
           </property>
           <widget class="QWidget" name="weichen_left" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>600</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
              <widget class="QListWidget" name="weichen_list"/>
@@ -181,6 +247,24 @@
            <enum>Qt::Horizontal</enum>
           </property>
           <widget class="QWidget" name="strecken_left" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>600</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <item>
              <widget class="QListWidget" name="strecken_list"/>
@@ -252,7 +336,7 @@
      <x>0</x>
      <y>0</y>
      <width>1186</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuZonen">

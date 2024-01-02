@@ -49,7 +49,7 @@ class Plotter3d:
         self.pl.enable_eye_dome_lighting()
         self.pl.add_axes()
         if self.interactive_update:
-            self.pl.show(interactive_update=self.interactive_update)
+            self.pl.show(interactive_update=self.interactive_update, full_screen=True)
 
         self.ts_labels: np.ndarray
         self.ts_coords: np.ndarray

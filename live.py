@@ -20,7 +20,9 @@ files = [
 
 def replay():
     """Replay raw got files to socket."""
-    rp = ReplayConverter(files=files, folder=folder, raw_flg=True, fixed_intervall=None)
+    rp = ReplayConverter(
+        files=files, folder=folder, raw_flg=True, fixed_intervall=0.001
+    )
     rp.read_input()
 
 

@@ -11,7 +11,7 @@ RUN pip install --upgrade pip \
 RUN apt-get install libgl1-mesa-glx xvfb -y
 
 # git stuff required for linux
-RUN git config --global --add safe.directory /workdir
+#RUN git config --global --add safe.directory /workdir
 
 # activate poetry and pre-commit hook
 CMD poetry install \

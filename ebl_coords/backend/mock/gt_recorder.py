@@ -9,6 +9,7 @@ from typing import Optional, Tuple
 
 import numpy as np
 import pyvista as pv
+from playsound import playsound
 
 from ebl_coords.backend.converter.helpers import now_ms
 
@@ -133,6 +134,9 @@ class GtRecorder:
                         text = ts_text_actor.get_text(2)
                         text += f"{label}: {distance/1000:.3f}m\n"
                         ts_text_actor.set_text(text=text, position="upper_left")
+                        threading.Thread(
+                            target=playsound, args=["./sounds/weiche.wav"], daemon=True
+                        ).start()
             pl.update()
 
     def start_record(self) -> None:

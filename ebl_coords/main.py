@@ -255,7 +255,7 @@ class MainWindow(QMainWindow):  # type: ignore
 
     def populate_zone_dropdown(self) -> None:
         """Populates the dropdown list with all existing zones."""
-        zone_file_list = os.listdir("./data/frontend/")
+        zone_file_list = os.listdir("./ebl_coords/frontend/zone_data")
         zones = list(map(lambda zone: zone.split(".")[0], zone_file_list))
         self.ui.map_zone_select_combo_box.clear()
         for zone in zones:

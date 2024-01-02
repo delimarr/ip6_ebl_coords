@@ -14,7 +14,7 @@ disable=
 max-line-length=150
 
 [BASIC]
-good-names=i, x, y, z, u, v
+good-names=i, x, y, z, u, v, foo
 
 [SIMILARITIES]
 ignore-imports=yes

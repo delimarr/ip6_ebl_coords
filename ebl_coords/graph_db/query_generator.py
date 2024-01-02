@@ -4,6 +4,7 @@ from typing import Tuple
 from ebl_coords.graph_db.data_elements.edge_dc import Edge
 from ebl_coords.graph_db.data_elements.edge_relation_enum import EdgeRelation
 from ebl_coords.graph_db.data_elements.node_dc import Node
+from ebl_coords.graph_db.data_elements.switch_item_enum import SwitchItem
 
 
 def single_node(node: Node) -> str:
@@ -101,6 +102,45 @@ def bidirectional_edge(template_edge: Edge) -> str:
         " ", ""
     )
     return cmd
+
+
+def get_double_nodes(guid: str) -> str:
+    """Create query to get both nodes in a double vertex.
+
+    Args:
+        guid (str): node_id of one of the nodes.
+
+    Returns:
+        str: query call
+    """
+    double_vertex = EdgeRelation.DOUBLE_VERTEX.name
+    weiche = SwitchItem.WEICHE.name
+    vals = "n1.name, n1.bhf, n1.ecos_id"
+    return f"""
+    MATCH(n1:WEICHE{{node_id:'{guid}'}})-[:{double_vertex}]->(n2:{weiche}) RETURN {vals};
+    """
+
+
+def update_double_nodes(node: Node) -> str:
+    """Update a double node.
+
+    Args:
+        node (Node): new node values, with one existing id.
+
+    Returns:
+        str: query call
+    """
+    double_vertex = EdgeRelation.DOUBLE_VERTEX.name
+    weiche = SwitchItem.WEICHE.name
+    return f"""
+    MATCH(n1:WEICHE{{node_id:'{node.id}'}})-[:{double_vertex}]->(n2:{weiche})\
+    SET n1.bhf = '{node.bhf.name}'\
+    SET n2.bhf = '{node.bhf.name}'\
+    SET n1.name = '{node.name}'\
+    SET n2.name = '{node.name}'\
+    SET n1.ecos_id = '{node.ecos_id}'\
+    SET n2.ecos_id = '{node.ecos_id}';
+    """
 
 
 def drop_db() -> str:

@@ -23,3 +23,11 @@ class Editor:
             NotImplementedError: Needs to be overriden.
         """
         raise NotImplementedError()
+
+    def save(self) -> None:
+        """Save and reset.
+
+        Raises:
+            NotImplementedError: Needs to be overriden.
+        """
+        raise NotImplementedError()

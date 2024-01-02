@@ -2,6 +2,7 @@
 import json
 import time
 from typing import Any, List
+from uuid import uuid4
 
 import numpy as np
 import pandas as pd
@@ -70,3 +71,8 @@ def now_ms() -> int:
         int: ms
     """
     return int(time.time() * 1000)
+
+
+def guid() -> str:
+    """Get a random guid."""
+    return "guid_" + str(uuid4()).partition("-")[0]

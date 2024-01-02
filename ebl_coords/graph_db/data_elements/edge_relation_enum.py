@@ -6,4 +6,6 @@ class EdgeRelation(Enum):
     """Enum edge relation."""
 
     DOUBLE_VERTEX = "DOUBLE_VERTEX"
-    TRAIN_RAIL = "TRAIN_RAIL"
+    NEUTRAL = "NEUTRAL"
+    DEFLECTION = "DEFLECTION"
+    STRAIGHT = "STRAIGHT"

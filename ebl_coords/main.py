@@ -1,27 +1,15 @@
 """Start the EBL-GUI application."""
 import os
 import sys
-from typing import Callable, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 from PyQt6.QtWidgets import QApplication, QComboBox, QHBoxLayout, QLabel, QListWidget
-from PyQt6.QtWidgets import QListWidgetItem, QMainWindow, QPushButton, QVBoxLayout
-from PyQt6.QtWidgets import QWidget
+from PyQt6.QtWidgets import QListWidgetItem, QMainWindow, QVBoxLayout, QWidget
 
 from ebl_coords.frontend.main_gui import Ui_MainWindow
+from ebl_coords.frontend.weichen_editor import WeichenEditor
 from ebl_coords.frontend.zone_maker import ZoneMaker
 from ebl_coords.graph_db.api import Api
-
-
-class CustomBtn(QWidget):  # type: ignore
-    """A Custom Container with a QPushButton."""
-
-    def __init__(self, text: str, guid: str, parent: Optional[QWidget] = None):
-        """Initialize the button with a guid in a layout."""
-        super().__init__(parent)
-        self.layout = QVBoxLayout(self)
-        self.button = QPushButton(text)
-        self.guid = guid
-        self.layout.addWidget(self.button)
 
 
 class CustomZoneSwitchItem(QWidget):  # type: ignore
@@ -150,11 +138,10 @@ class MainWindow(QMainWindow):  # type: ignore
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)  # type: ignore
 
+        self.weichen_editor = WeichenEditor(self.ui, self.graph_db)
+
         # Initial sind keine Weichen geladen, da keine Zone ausgewählt ist, dies muss noch implementierst werden mit einer Update funktion
         self.fill_list_map(self.ui.map_weichen_list)
-
-        self.fill_list(self.ui.weichen_list, self.example_function)
-        self.fill_list(self.ui.strecken_list, self.example_function)
 
         self.zone_maker = ZoneMaker(self.ui.map_label)
         # Text kann hier von speichern zu generieren & speichern geaendert werden, so dass funktionalität gespiegelt wird
@@ -163,28 +150,6 @@ class MainWindow(QMainWindow):  # type: ignore
         self.populate_zone_dropdown()
 
         self.show()
-
-    def example_function(self, custom_btn: CustomBtn) -> None:
-        """Use this function as an example."""
-        print(custom_btn.button.text())
-        print(custom_btn.guid)
-
-    def add_btn_to_list(
-        self, qlist: QListWidget, text: str, guid: str, foo: Callable[[CustomBtn], None]
-    ) -> None:
-        """Add a QPushButton to a QList.
-
-        Args:
-            qlist (QListWidget): QListWidget
-            text (str): display text of the button
-            guid (str): guid
-            foo (Callable[[CustomBtn], None]): bound to button.clicked
-        """
-        item = QListWidgetItem(qlist)
-        custom_btn = CustomBtn(text, guid)
-        custom_btn.button.released.connect(lambda: foo(custom_btn))
-        item.setSizeHint(custom_btn.sizeHint())
-        qlist.setItemWidget(item, custom_btn)
 
     def add_switch_item_to_list(self, qlist: QListWidget, text: str, guid: str) -> None:
         """Add a CustomZoneSwitchItem to a QList.
@@ -198,23 +163,6 @@ class MainWindow(QMainWindow):  # type: ignore
         custom_switch_item = CustomZoneSwitchItem(text, guid, [], [])
         item.setSizeHint(custom_switch_item.sizeHint())
         qlist.setItemWidget(item, custom_switch_item)
-
-    def fill_list(self, qlist: QListWidget, foo: Callable[[CustomBtn], None]) -> None:
-        """Fill given list with train switches from the graph db.
-
-        Args:
-            qlist (QListWidget): QListWidget
-            foo (Callable[[CustomBtn], None]): bound to button.clicked
-        """
-        cmd = "MATCH (node:WEICHE) RETURN node.bhf, node.name, node.node_id"
-        df = self.graph_db.run_query(cmd)[::2]
-        for _, row in df.iterrows():
-            self.add_btn_to_list(
-                qlist,
-                text=f"{row['node.bhf']}_{row['node.name']}",
-                guid=row["node.node_id"],
-                foo=foo,
-            )
 
     def fill_list_map(self, qlist: QListWidget) -> None:
         """Fill given list with CustomZoneSwitchItem based on the switches from the graph_db.

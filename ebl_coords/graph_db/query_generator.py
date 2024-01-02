@@ -59,6 +59,25 @@ def double_node(template_node: Node) -> Tuple[str, Tuple[Node, Node]]:
     return cmd, (node1, node2)
 
 
+def single_edge(edge: Edge) -> str:
+    """Create query for directional edge.
+
+    Args:
+        edge (Edge): edge
+
+    Returns:
+        str: query call
+    """
+    cmd = f"""\
+        MATCH(source:{edge.source.switch_item.name}{{node_id: '{edge.source.id}'}})
+        MATCH(dest:{edge.dest.switch_item.name}{{node_id: '{edge.dest.id}'}})
+        CREATE(source)-[:{edge.relation}{{distance: {edge.distance}}}]->(dest)
+    """.replace(
+        " ", ""
+    )
+    return cmd
+
+
 def bidirectional_edge(template_edge: Edge) -> str:
     """Create query for bidirectional edge.
 
@@ -66,7 +85,7 @@ def bidirectional_edge(template_edge: Edge) -> str:
         template_edge (Edge): template for both edges.
 
     Returns:
-        str : query call, new edges
+        str : query call
     """
     source = template_edge.source
     dest = template_edge.dest

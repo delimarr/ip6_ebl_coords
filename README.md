@@ -12,3 +12,6 @@ This repository contains an interface to GoT, coordinates recording and analysis
 
 # pyqt6
 https://www.pythontutorial.net/pyqt/qt-designer/
+
+# vsc does not show poetry env
+https://stackoverflow.com/questions/59882884/vscode-doesnt-show-poetry-virtualenvs-in-select-interpreter-option

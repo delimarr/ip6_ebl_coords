@@ -259,7 +259,7 @@ class MainWindow(QMainWindow):  # type: ignore
         zones = list(map(lambda zone: zone.split(".")[0], zone_file_list))
         self.ui.map_zone_select_combo_box.clear()
         for zone in zones:
-            self.ui.map_zone_select_combo_box.addItme(zone)
+            self.ui.map_zone_select_combo_box.addItem(zone)
 
     # def load_zone(self, selected_zone: str):
     #    """Loads a zone from the specified json file

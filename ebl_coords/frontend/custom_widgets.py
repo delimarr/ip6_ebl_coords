@@ -1,10 +1,35 @@
 """Custom Widgets and helper functions for PyQt-Gui."""
 from typing import Callable, Optional
 
-from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QVBoxLayout
-from PyQt6.QtWidgets import QWidget
+from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtGui import QMouseEvent
+from PyQt6.QtWidgets import QHBoxLayout, QLabel, QListWidget, QListWidgetItem
+from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QWidget
 
+from ebl_coords.decorators import override
 from ebl_coords.graph_db.api import Api
+from ebl_coords.graph_db.data_elements.edge_relation_enum import EdgeRelation
+
+
+class ClickableLabel(QLabel):  # type: ignore
+    """A clickable QLabel."""
+
+    clicked = pyqtSignal()
+
+    def __init__(self) -> None:
+        """Initialize clock event."""
+        super().__init__()
+        self.click_event: QMouseEvent
+
+    @override
+    def mousePressEvent(self, event: QMouseEvent) -> None:  # pylint: disable=C0103
+        """Evoke connected click event and store it.
+
+        Args:
+            event (QMouseEvent): mouse event
+        """
+        self.click_event = event
+        self.clicked.emit()
 
 
 class CustomBtn(QWidget):  # type: ignore
@@ -17,6 +42,34 @@ class CustomBtn(QWidget):  # type: ignore
         self.button = QPushButton(text)
         self.guid = guid
         self.layout.addWidget(self.button)
+
+
+class CustomZoneContainer(QWidget):  # type: ignore
+    """A Custom Container with a label and three QPushButtons."""
+
+    def __init__(
+        self, text: str, guid_0: str, guid_1: str, parent: Optional[QWidget] = None
+    ) -> None:
+        """Initialize the container from a double node.
+
+        Args:
+            text (str): Naming label
+            guid_0 (str): id from node_0
+            guid_1 (str): id from node_1
+            parent (Optional[QWidget]): parent. Defaults to None.
+        """
+        super().__init__(parent)
+        self.layout = QHBoxLayout(self)
+        self.name_label = QLabel(text)
+        self.neutral_btn = QPushButton(EdgeRelation.NEUTRAL.value)
+        self.deflection_btn = QPushButton(EdgeRelation.DEFLECTION.value)
+        self.straight_btn = QPushButton(EdgeRelation.STRAIGHT.value)
+        self.guid_0 = guid_0
+        self.guid_1 = guid_1
+        self.layout.addWidget(self.name_label)
+        self.layout.addWidget(self.neutral_btn)
+        self.layout.addWidget(self.straight_btn)
+        self.layout.addWidget(self.deflection_btn)
 
 
 def add_btn_to_list(

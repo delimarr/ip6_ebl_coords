@@ -13,3 +13,4 @@ class Edge:
     dest: Node
     relation: EdgeRelation
     distance: float
+    target: EdgeRelation = EdgeRelation.DOUBLE_VERTEX

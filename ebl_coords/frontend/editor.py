@@ -7,7 +7,7 @@ class Editor:
     """Base Class for any Editors."""
 
     def __init__(self, ui: Ui_MainWindow, graph_db: Api) -> None:
-        """Initialize the editor with a windows and a graph_db api.
+        """Initialize the editor with a window and a graph_db api.
 
         Args:
             ui (Ui_MainWindow): main window

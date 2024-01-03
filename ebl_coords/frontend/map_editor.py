@@ -50,6 +50,7 @@ class MapEditor(Editor):
     def load_json(self) -> None:
         """Create scene from a json file."""
         filename = self.ui.map_zone_select_combo_box.currentText()
+        old_switches = self.zone.switches
         if filename:
             with open(join(self.path, filename), encoding="utf-8") as fd:
                 zone_dict = json.load(fd)
@@ -58,6 +59,9 @@ class MapEditor(Editor):
                 self.zone = Zone(**zone_dict)
                 for key, val in map_ts_dict.items():
                     self.zone.switches[key] = MapTrainSwitch(**val)
+            for key, val in old_switches.items():
+                if not key in self.zone.switches.keys():
+                    self.zone.switches[key] = val
             self.zone_maker = ZoneMaker(self.map_label, self.zone.block_size)
             self.ui.map_zonename_txt.setText(self.zone.name)
             self.ui.map_zone_width.setValue(self.zone.width)
@@ -185,14 +189,19 @@ class MapEditor(Editor):
             if df.size > 0:
                 for _, row in df.iterrows():
                     if row["e.target"] is not None:
-                        ts1 = self.zone.switches[f"{row['n1.node_id']}{relation.name}"]
-                        ts2 = self.zone.switches[
-                            f"{row['n2.node_id']}{row['e.target']}"
-                        ]
-                        if ts1.coords and ts2.coords:
-                            u1, v1 = ts1.coords
-                            u2, v2 = ts2.coords
-                            self.zone_maker.draw_grid_line(u1, v1, u2, v2)
+                        try:
+                            ts1 = self.zone.switches[
+                                f"{row['n1.node_id']}{relation.name}"
+                            ]
+                            ts2 = self.zone.switches[
+                                f"{row['n2.node_id']}{row['e.target']}"
+                            ]
+                            if ts1.coords and ts2.coords:
+                                u1, v1 = ts1.coords
+                                u2, v2 = ts2.coords
+                                self.zone_maker.draw_grid_line(u1, v1, u2, v2)
+                        except KeyError:
+                            print("Donkey")
 
     def _draw(self) -> None:
         self.zone_maker.draw_grid(self.zone.width, self.zone.height)

@@ -77,14 +77,17 @@ class MapEditor(Editor):
             lambda: self.select_ts(guid_1, zone_container.straight_btn)
         )
         neutral_switch = MapTrainSwitch(
+            description=text,
             guid=guid_0,
             relation=EDGE_RELATION_TO_ENUM[zone_container.neutral_btn.text()].name,
         )
         deflection_switch = MapTrainSwitch(
+            description=f"{text}_1",
             guid=guid_1,
             relation=EDGE_RELATION_TO_ENUM[zone_container.deflection_btn.text()].name,
         )
         straight_switch = MapTrainSwitch(
+            description=f"{text}_0",
             guid=guid_1,
             relation=EDGE_RELATION_TO_ENUM[zone_container.straight_btn.text()].name,
         )
@@ -106,8 +109,9 @@ class MapEditor(Editor):
         df = self.graph_db.run_query(cmd)[::2]
         for _, row in df.iterrows():
             guid = row["node.node_id"]
+            name = f"{row['node.bhf']}_{row['node.name']}"
             self._add_btns_to_list(
-                text=f"{row['node.bhf']}_{row['node.name']}",
+                text=name,
                 guid_0=guid,
                 guid_1=guid[:-1] + "1",
             )
@@ -195,7 +199,9 @@ class MapEditor(Editor):
         # draw topo points
         for ts in self.zone.switches.values():
             if ts.coords is not None:
-                self.zone_maker.draw_grid_point(ts.coords[0], ts.coords[1])
+                u, v = ts.coords
+                self.zone_maker.draw_grid_point(u, v)
+                self.zone_maker.draw_grid_text(ts.description, u, v)
 
         self._draw_connect_topo()
         self._draw_connect_ts()

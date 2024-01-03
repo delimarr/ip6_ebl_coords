@@ -10,6 +10,7 @@ from dataclasses_json import dataclass_json
 class MapTrainSwitch:
     """Represents a trainswitch for zone."""
 
+    description: str
     guid: str
     relation: str
     coords: Optional[Tuple[int, int]] = None

@@ -42,19 +42,31 @@ class ZoneMaker:
         painter.end()
         self.map.setPixmap(canvas)
 
-    def _draw_text(self, text: str, u: int, v: int) -> None:
+    def _draw_text(self, text: str, x: int, y: int) -> None:
         """Write text at coordinates in grid system.
 
         Args:
             text (str): Text
-            u (int): u-coordinate
-            v (int): v-coordinate
+            x (int): pixel x
+            y (int): pixel y
         """
         canvas = self.map.pixmap()
         painter = QtGui.QPainter(canvas)
-        painter.drawText(u, v, text)
+        painter.drawText(x, y, text)
         painter.end()
         self.map.setPixmap(canvas)
+
+    def draw_grid_text(self, text: str, u: int, v: int) -> None:
+        """Draw a text in the middle of a tile.
+
+        Args:
+            text (str): text
+            u (int): x axis
+            v (int): y axis
+        """
+        x = u * self.block_size + self.block_size // 2
+        y = v * self.block_size + self.block_size // 2
+        self._draw_text(text, x, y)
 
     def draw_grid(self, width: int, height: int) -> None:
         """Draws a grid.

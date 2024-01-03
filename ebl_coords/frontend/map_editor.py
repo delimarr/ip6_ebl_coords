@@ -189,19 +189,14 @@ class MapEditor(Editor):
             if df.size > 0:
                 for _, row in df.iterrows():
                     if row["e.target"] is not None:
-                        try:
-                            ts1 = self.zone.switches[
-                                f"{row['n1.node_id']}{relation.name}"
-                            ]
-                            ts2 = self.zone.switches[
-                                f"{row['n2.node_id']}{row['e.target']}"
-                            ]
-                            if ts1.coords and ts2.coords:
-                                u1, v1 = ts1.coords
-                                u2, v2 = ts2.coords
-                                self.zone_maker.draw_grid_line(u1, v1, u2, v2)
-                        except KeyError:
-                            print("Donkey")
+                        ts1 = self.zone.switches[f"{row['n1.node_id']}{relation.name}"]
+                        ts2 = self.zone.switches[
+                            f"{row['n2.node_id']}{row['e.target']}"
+                        ]
+                        if ts1.coords and ts2.coords:
+                            u1, v1 = ts1.coords
+                            u2, v2 = ts2.coords
+                            self.zone_maker.draw_grid_line(u1, v1, u2, v2)
 
     def _draw(self) -> None:
         self.zone_maker.draw_grid(self.zone.width, self.zone.height)

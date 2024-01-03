@@ -7,6 +7,7 @@ from PyQt6.QtWidgets import QApplication, QComboBox, QHBoxLayout, QLabel, QListW
 from PyQt6.QtWidgets import QListWidgetItem, QMainWindow, QVBoxLayout, QWidget
 
 from ebl_coords.frontend.main_gui import Ui_MainWindow
+from ebl_coords.frontend.strecken_editor import StreckenEditor
 from ebl_coords.frontend.weichen_editor import WeichenEditor
 from ebl_coords.frontend.zone_maker import ZoneMaker
 from ebl_coords.graph_db.api import Api
@@ -138,7 +139,10 @@ class MainWindow(QMainWindow):  # type: ignore
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)  # type: ignore
 
-        self.weichen_editor = WeichenEditor(self.ui, self.graph_db)
+        self.strecken_editor = StreckenEditor(self.ui, self.graph_db)
+        self.weichen_editor = WeichenEditor(
+            self.ui, self.graph_db, self.strecken_editor
+        )
 
         # Initial sind keine Weichen geladen, da keine Zone ausgewählt ist, dies muss noch implementierst werden mit einer Update funktion
         self.fill_list_map(self.ui.map_weichen_list)

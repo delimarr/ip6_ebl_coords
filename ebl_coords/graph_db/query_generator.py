@@ -70,9 +70,9 @@ def single_edge(edge: Edge) -> str:
         str: query call
     """
     cmd = f"""\
-        MATCH(source:{edge.source.switch_item.name}{{node_id: '{edge.source.id}'}})
-        MATCH(dest:{edge.dest.switch_item.name}{{node_id: '{edge.dest.id}'}})
-        CREATE(source)-[:{edge.relation}{{distance: {edge.distance}}}]->(dest)
+        MATCH(source:{edge.source.switch_item.name}{{node_id: '{edge.source.id}'}})\
+        MATCH(dest:{edge.dest.switch_item.name}{{node_id: '{edge.dest.id}'}})\
+        CREATE(source)-[:{edge.relation.name}{{distance: {edge.distance}}}]->(dest);\
     """.replace(
         " ", ""
     )

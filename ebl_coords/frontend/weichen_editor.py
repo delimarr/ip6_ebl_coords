@@ -8,6 +8,7 @@ from ebl_coords.decorators import override
 from ebl_coords.frontend.custom_widgets import CustomBtn, fill_list
 from ebl_coords.frontend.editor import Editor
 from ebl_coords.frontend.main_gui import Ui_MainWindow
+from ebl_coords.frontend.strecken_editor import StreckenEditor
 from ebl_coords.graph_db.api import Api
 from ebl_coords.graph_db.data_elements.bahnhof_enum import Bhf
 from ebl_coords.graph_db.data_elements.node_dc import Node
@@ -23,14 +24,18 @@ class WeichenEditor(Editor):
         Editor (_type_): Base Editor class.
     """
 
-    def __init__(self, ui: Ui_MainWindow, graph_db: Api) -> None:
-        """Bind rest Button and fill list with data from the db.
+    def __init__(
+        self, ui: Ui_MainWindow, graph_db: Api, strecken_editor: StreckenEditor
+    ) -> None:
+        """Bind buttons and fill list with data from the db.
 
         Args:
             ui (Ui_MainWindow): main window
             graph_db (Api): api of graph database
+            strecken_editor (StreckenEditor): invokes reset of strecken_editor, if trainswitches change.
         """
         super().__init__(ui=ui, graph_db=graph_db)
+        self.strecken_editor = strecken_editor
 
         self.ui.weichen_new_btn.clicked.connect(self.reset)
         self.ui.weichen_speichern_btn.clicked.connect(self.save)
@@ -48,6 +53,7 @@ class WeichenEditor(Editor):
         self.ui.weichen_list.clear()
         fill_list(self.graph_db, self.ui.weichen_list, self.select_ts)
         self.selected_ts = None
+        self.strecken_editor.reset()
 
     @override
     def save(self) -> None:

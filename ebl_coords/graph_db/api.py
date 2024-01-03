@@ -32,7 +32,7 @@ class _InnerApi:
         Returns:
             pd.DataFrame: resulting data as a dataframe. Can be empty.
         """
-        return self.session.run(query).to_df(expand=False)
+        return self.session.run(query).to_df()
 
     # for delete make console interactive and ask if user is a dumbass
     def drop_db(self) -> None:

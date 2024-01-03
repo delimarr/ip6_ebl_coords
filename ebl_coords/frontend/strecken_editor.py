@@ -70,6 +70,7 @@ class StreckenEditor(Editor):
                 continue
             cmd = f"MATCH (n1)-[:{relation.name}]->(n2) RETURN n1.bhf, n1.name, n1.node_id, n2.bhf, n2.name"
             df = self.graph_db.run_query(cmd)
+            df.sort_values(by=["n1.bhf", "n1.name"], inplace=True)
             if df.size > 0:
                 for _, row in df.iterrows():
                     add_btn_to_list(

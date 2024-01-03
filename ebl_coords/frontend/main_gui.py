@@ -36,14 +36,13 @@ class Ui_MainWindow:
         self.map_splitter.setObjectName("map_splitter")
         self.map_left = QtWidgets.QWidget(parent=self.map_splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Policy.Preferred,
             QtWidgets.QSizePolicy.Policy.Preferred,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.map_left.sizePolicy().hasHeightForWidth())
         self.map_left.setSizePolicy(sizePolicy)
-        self.map_left.setMinimumSize(QtCore.QSize(200, 0))
         self.map_left.setMaximumSize(QtCore.QSize(600, 16777215))
         self.map_left.setObjectName("map_left")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.map_left)

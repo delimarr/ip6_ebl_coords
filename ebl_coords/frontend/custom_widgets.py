@@ -102,6 +102,7 @@ def fill_list(
     """
     cmd = "MATCH (node:WEICHE) RETURN node.bhf, node.name, node.node_id"
     df = graph_db.run_query(cmd)[::2]
+    df.sort_values(by=["node.bhf", "node.name"], inplace=True)
     for _, row in df.iterrows():
         add_btn_to_list(
             qlist,

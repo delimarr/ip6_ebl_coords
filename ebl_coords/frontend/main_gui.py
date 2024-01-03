@@ -101,6 +101,11 @@ class Ui_MainWindow:
         self.formLayout.setWidget(
             1, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_zone_select_combo_box
         )
+        self.map_zone_neu_btn = QtWidgets.QPushButton(parent=self.map_left_form)
+        self.map_zone_neu_btn.setObjectName("map_zone_neu_btn")
+        self.formLayout.setWidget(
+            6, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_zone_neu_btn
+        )
         self.verticalLayout_5.addWidget(self.map_left_form)
         self.map_right = QtWidgets.QWidget(parent=self.map_splitter)
         self.map_right.setObjectName("map_right")
@@ -288,10 +293,13 @@ class Ui_MainWindow:
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "EBL"))
         self.label_5.setText(_translate("MainWindow", "Zonename"))
-        self.map_zone_speichern_btn.setText(_translate("MainWindow", "Speichern"))
+        self.map_zone_speichern_btn.setText(
+            _translate("MainWindow", "Speichern und Generieren")
+        )
         self.label_6.setText(_translate("MainWindow", "Zonenbreite"))
         self.label_7.setText(_translate("MainWindow", "Zonenhöhe"))
         self.label_8.setText(_translate("MainWindow", "Zone"))
+        self.map_zone_neu_btn.setText(_translate("MainWindow", "Neue Zone"))
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.map_tab), _translate("MainWindow", "Karte")
         )

@@ -1,4 +1,8 @@
 """Map Editor."""
+import json
+from dataclasses import asdict
+from os import listdir
+from os.path import abspath, join
 from typing import Optional
 
 from PyQt6.QtWidgets import QListWidgetItem, QPushButton
@@ -27,6 +31,7 @@ class MapEditor(Editor):
         """
         super().__init__(ui, graph_db)
         self.selected_ts: Optional[MapTrainSwitch] = None
+        self.path = abspath("./ebl_coords/frontend/zone_data/")
 
         self.map_label = ClickableLabel()
         self.map_label.setObjectName("map_label")
@@ -34,10 +39,30 @@ class MapEditor(Editor):
         self.ui.map_right.layout().addWidget(self.map_label)
 
         self.ui.map_zone_speichern_btn.released.connect(self.save)
+        self.ui.map_zone_select_combo_box.currentTextChanged.connect(self.load_json)
+        self.ui.map_zone_neu_btn.released.connect(self.reset)
 
-        self.zone: Zone
-        self.zone_maker: ZoneMaker
-        self.reset()
+        self.zone = Zone(name="", block_size=41, width=0, height=0, switches={})
+        self.zone_maker = ZoneMaker(self.map_label, block_size=self.zone.block_size)
+        self._fill_list()
+        self._fill_zone_combobox()
+
+    def load_json(self) -> None:
+        """Create scene from a json file."""
+        filename = self.ui.map_zone_select_combo_box.currentText()
+        if filename:
+            with open(join(self.path, filename), encoding="utf-8") as fd:
+                zone_dict = json.load(fd)
+                map_ts_dict = zone_dict["switches"]
+                zone_dict["switches"] = {}
+                self.zone = Zone(**zone_dict)
+                for key, val in map_ts_dict.items():
+                    self.zone.switches[key] = MapTrainSwitch(**val)
+            self.zone_maker = ZoneMaker(self.map_label, self.zone.block_size)
+            self.ui.map_zonename_txt.setText(self.zone.name)
+            self.ui.map_zone_width.setValue(self.zone.width)
+            self.ui.map_zone_height.setValue(self.zone.height)
+            self._draw()
 
     def _add_btns_to_list(self, text: str, guid_0: str, guid_1: str) -> None:
         item = QListWidgetItem(self.ui.map_weichen_list)
@@ -95,18 +120,26 @@ class MapEditor(Editor):
         self.ui.map_zonename_txt.clear()
         self.ui.map_zone_width.clear()
         self.ui.map_zone_height.clear()
-        self.zone = Zone(name="", block_size=41, width=0, height=0, switches={})
-        self.zone_maker = ZoneMaker(self.map_label, block_size=self.zone.block_size)
+        self.map_label.clear()
         self._fill_list()
 
     @override
     def save(self) -> None:
-        """Draw the zone."""
-        self.zone.name = self.ui.map_zonename_txt.text()
-        self.zone.width = int(self.ui.map_zone_width.text())
-        self.zone.height = int(self.ui.map_zone_height.text())
-        self._draw()
-        # to do write to file
+        """Draw the zone and export to json."""
+        zone_name = self.ui.map_zonename_txt.text()
+        width = self.ui.map_zone_width.text()
+        height = self.ui.map_zone_height.text()
+        if zone_name and width and height:
+            self.zone.name = zone_name
+            self.zone.width = int(width)
+            self.zone.height = int(height)
+            # write to file
+            filename = zone_name + ".json"
+            with open(join(self.path, filename), "w", encoding="utf-8") as fd:
+                json.dump(asdict(self.zone), fd, indent=4)
+            self.ui.map_zone_select_combo_box.clear()
+            self._fill_zone_combobox()
+            self._draw()
 
     def select_ts(self, guid: str, btn: QPushButton) -> None:
         """Select a train switch with its direction.
@@ -118,6 +151,9 @@ class MapEditor(Editor):
         self.selected_ts = self.zone.switches[
             f"{guid}{EDGE_RELATION_TO_ENUM[btn.text()].name}"
         ]
+
+    def _fill_zone_combobox(self) -> None:
+        self.ui.map_zone_select_combo_box.addItems(listdir(self.path))
 
     def _draw_connect_topo(self) -> None:
         switches = list(self.zone.switches.values())
@@ -171,5 +207,4 @@ class MapEditor(Editor):
             coords = self.zone_maker.get_grid_coords(position.x(), position.y())
             self.selected_ts.coords = (int(coords[0]), int(coords[1]))
             self.selected_ts = None
-
             self._draw()

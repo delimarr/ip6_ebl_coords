@@ -166,5 +166,6 @@ temp
 tmp
 dump
 temp.*
+zone_data
 
 .devcontainer/db/*

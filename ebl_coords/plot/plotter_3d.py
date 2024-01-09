@@ -70,7 +70,7 @@ class Plotter3d:
 
     def _rails_to_lines(self) -> None:
         """Collect all rails from DB and save the coordinates."""
-        cmd = "MATCH (n1)-[:TRAIN_RAIL]->(n2) RETURN n1.x, n1.y, n1.z, n2.x, n2.y, n2.z"
+        cmd = "MATCH (n1)-[:NEUTRAL]->(n2) RETURN n1.x, n1.y, n1.z, n2.x, n2.y, n2.z"
         df = self.graph_db.run_query(cmd)
         self.rail_lines = df.to_numpy(dtype=np.float32).reshape(-1, 3)
         if not self.z_flg:

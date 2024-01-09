@@ -21,7 +21,6 @@ class GtCommandApi:
         self.loc_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.buffer: Queue[np.ndarray] = Queue(0)
         self.record_thread = Thread(target=self._record, daemon=False)
-        print("test")
 
     def _record(self) -> None:
         buffer = b""

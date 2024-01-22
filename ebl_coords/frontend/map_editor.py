@@ -7,6 +7,8 @@ from typing import Optional
 
 from PyQt6.QtWidgets import QListWidgetItem, QPushButton
 
+from ebl_coords.backend.abstract.gtcommand_subject import GtCommandSubject
+from ebl_coords.backend.abstract.ts_hit_observer import TsHitObserver
 from ebl_coords.decorators import override
 from ebl_coords.frontend.custom_widgets import ClickableLabel, CustomZoneContainer
 from ebl_coords.frontend.editor import Editor
@@ -22,12 +24,15 @@ from ebl_coords.graph_db.data_elements.edge_relation_enum import EdgeRelation
 class MapEditor(Editor):
     """The Map editor."""
 
-    def __init__(self, ui: Ui_MainWindow, graph_db: Api) -> None:
+    def __init__(
+        self, ui: Ui_MainWindow, graph_db: Api, gtcommand_subject: GtCommandSubject
+    ) -> None:
         """Initialize the editor with a window and a graph_db api.
 
         Args:
             ui (Ui_MainWindow): main window
             graph_db (Api): graph db api
+            gtcommand_subject (GtCommandSubject): GtCommand Subject
         """
         super().__init__(ui, graph_db)
         self.selected_ts: Optional[MapTrainSwitch] = None
@@ -41,6 +46,11 @@ class MapEditor(Editor):
         self.ui.map_zone_speichern_btn.released.connect(self.save)
         self.ui.map_zone_select_combo_box.currentTextChanged.connect(self.load_json)
         self.ui.map_zone_neu_btn.released.connect(self.reset)
+
+        self.ts_hit_observer = TsHitObserver()
+        self.ts_hit_observer.redraw_zone_signal.connect(self._draw)
+        self.gtcommand_subject = gtcommand_subject
+        self.gtcommand_subject.attach(self.ts_hit_observer)
 
         self.zone = Zone(name="", block_size=41, width=0, height=0, switches={})
         self.zone_maker = ZoneMaker(self.map_label, block_size=self.zone.block_size)
@@ -199,6 +209,7 @@ class MapEditor(Editor):
                             self.zone_maker.draw_grid_line(u1, v1, u2, v2)
 
     def _draw(self) -> None:
+        # draw colored line, based on train position. Use ecos lookup tabel and self.ts_hit_observer.result (current ts)
         self.zone_maker.draw_grid(self.zone.width, self.zone.height)
 
         # draw topo points

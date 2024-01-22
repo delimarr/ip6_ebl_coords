@@ -1,10 +1,11 @@
 """Weichen Editor."""
-from typing import List, Optional
+from typing import Optional
 
 import numpy as np
 
+from ebl_coords.backend.abstract.gtcommand_subject import GtCommandSubject
+from ebl_coords.backend.abstract.ts_measure_observer import TsMeasureObserver
 from ebl_coords.backend.converter.helpers import guid
-from ebl_coords.backend.gtcommand.api import GtCommandApi
 from ebl_coords.decorators import override
 from ebl_coords.frontend.custom_widgets import CustomBtn, fill_list
 from ebl_coords.frontend.editor import Editor
@@ -12,7 +13,6 @@ from ebl_coords.frontend.main_gui import Ui_MainWindow
 from ebl_coords.frontend.strecken_editor import StreckenEditor
 from ebl_coords.graph_db.api import Api
 from ebl_coords.graph_db.data_elements.bahnhof_enum import Bhf
-from ebl_coords.graph_db.data_elements.edge_relation_enum import EdgeRelation
 from ebl_coords.graph_db.data_elements.node_dc import Node
 from ebl_coords.graph_db.data_elements.switch_item_enum import SwitchItem
 from ebl_coords.graph_db.query_generator import double_node, get_double_nodes
@@ -27,7 +27,11 @@ class WeichenEditor(Editor):
     """
 
     def __init__(
-        self, ui: Ui_MainWindow, graph_db: Api, strecken_editor: StreckenEditor
+        self,
+        ui: Ui_MainWindow,
+        graph_db: Api,
+        strecken_editor: StreckenEditor,
+        gtcommand_subject: GtCommandSubject,
     ) -> None:
         """Bind buttons and fill list with data from the db.
 
@@ -35,10 +39,13 @@ class WeichenEditor(Editor):
             ui (Ui_MainWindow): main window
             graph_db (Api): api of graph database
             strecken_editor (StreckenEditor): invokes reset of strecken_editor, if trainswitches change.
+            gtcommand_subject (GtCommandSubject): GtCommand Subject
         """
         super().__init__(ui=ui, graph_db=graph_db)
         self.strecken_editor = strecken_editor
-        self.gt_api = GtCommandApi()
+        self.gtcommand_subject = gtcommand_subject
+        self.ts_obs = TsMeasureObserver(self.ui)
+        self.gtcommand_subject.attach(self.ts_obs)
 
         self.ui.weichen_new_btn.clicked.connect(self.reset)
         self.ui.weichen_speichern_btn.clicked.connect(self.save)
@@ -99,26 +106,5 @@ class WeichenEditor(Editor):
     def start_measurement(self) -> None:
         """Start measure coordinates for this trainswitch."""
         if self.selected_ts is not None:
-            self.gt_api.start_record()
-            coords: List[np.ndarray] = []
-            while len(coords) < 150:
-                if self.gt_api.buffer.not_empty:
-                    coords.append(self.gt_api.buffer.get())
-            self.gt_api = GtCommandApi()
-            coords = np.array(coords, dtype=np.float32)
-            ts_coord = np.median(coords, axis=0)
-            double_vertex = EdgeRelation.DOUBLE_VERTEX.name
-            weiche = SwitchItem.WEICHE.name
-            cmd = f"""
-            MATCH(n1:WEICHE{{node_id:'{self.selected_ts}'}})-[:{double_vertex}]->(n2:{weiche})\
-            SET n1.x = '{ts_coord[0]}'\
-            SET n2.x = '{ts_coord[0]}'\
-            SET n1.y = '{ts_coord[1]}'\
-            SET n2.y = '{ts_coord[1]}'\
-            SET n1.z = '{ts_coord[2]}'\
-            SET n2.z = '{ts_coord[2]}';
-            """
-            self.graph_db.run_query(cmd)
-            print(ts_coord)
-        else:
-            print("pls select first an existing trainswitch")
+            self.ts_obs.popup()
+            self.gtcommand_subject.measure_ts(self.selected_ts)

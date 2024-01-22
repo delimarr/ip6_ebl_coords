@@ -32,6 +32,9 @@ def replay():
 replay_thread = threading.Thread(target=replay, daemon=True)
 replay_thread.start()
 
+while True:
+    ...
+
 ip = "127.0.0.1"
 port = 42042
 

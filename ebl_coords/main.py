@@ -3,6 +3,7 @@ import sys
 
 from PyQt6.QtWidgets import QApplication, QMainWindow
 
+from ebl_coords.backend.abstract.gtcommand_subject import GtCommandSubject
 from ebl_coords.frontend.main_gui import Ui_MainWindow
 from ebl_coords.frontend.map_editor import MapEditor
 from ebl_coords.frontend.strecken_editor import StreckenEditor
@@ -22,11 +23,16 @@ class MainWindow(QMainWindow):  # type: ignore
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)  # type: ignore
 
+        self.gtcommand_subject = GtCommandSubject("127.0.0.1", 42042, self.graph_db)
+
         self.strecken_editor = StreckenEditor(self.ui, self.graph_db)
         self.weichen_editor = WeichenEditor(
-            self.ui, self.graph_db, self.strecken_editor
+            ui=self.ui,
+            graph_db=self.graph_db,
+            strecken_editor=self.strecken_editor,
+            gtcommand_subject=self.gtcommand_subject,
         )
-        self.map_editor = MapEditor(self.ui, self.graph_db)
+        self.map_editor = MapEditor(self.ui, self.graph_db, self.gtcommand_subject)
 
         self.show()
 

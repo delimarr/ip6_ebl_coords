@@ -15,3 +15,6 @@ https://www.pythontutorial.net/pyqt/qt-designer/
 
 # vsc does not show poetry env
 https://stackoverflow.com/questions/59882884/vscode-doesnt-show-poetry-virtualenvs-in-select-interpreter-option
+
+# observer pattern python
+https://refactoring.guru/design-patterns/observer/python/example

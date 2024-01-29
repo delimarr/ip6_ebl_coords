@@ -270,8 +270,6 @@ class Ui_MainWindow:
         self.menubar = QtWidgets.QMenuBar(parent=MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1186, 22))
         self.menubar.setObjectName("menubar")
-        self.menuZonen = QtWidgets.QMenu(parent=self.menubar)
-        self.menuZonen.setObjectName("menuZonen")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(parent=MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -280,46 +278,63 @@ class Ui_MainWindow:
         self.actionneue_Zone.setObjectName("actionneue_Zone")
         self.actionZone_laden = QtGui.QAction(parent=MainWindow)
         self.actionZone_laden.setObjectName("actionZone_laden")
-        self.menuZonen.addAction(self.actionneue_Zone)
-        self.menuZonen.addAction(self.actionZone_laden)
-        self.menubar.addAction(self.menuZonen.menuAction())
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        MainWindow.setTabOrder(self.weichen_weichenname_txt, self.weichen_dcc_txt)
+        MainWindow.setTabOrder(self.weichen_dcc_txt, self.weichen_bhf_txt)
+        MainWindow.setTabOrder(self.weichen_bhf_txt, self.weichen_speichern_btn)
+        MainWindow.setTabOrder(self.weichen_speichern_btn, self.weichen_einmessen_btn)
+        MainWindow.setTabOrder(
+            self.weichen_einmessen_btn, self.map_zone_select_combo_box
+        )
+        MainWindow.setTabOrder(self.map_zone_select_combo_box, self.map_zonename_txt)
+        MainWindow.setTabOrder(self.map_zonename_txt, self.map_zone_width)
+        MainWindow.setTabOrder(self.map_zone_width, self.map_zone_height)
+        MainWindow.setTabOrder(self.map_zone_height, self.map_zone_speichern_btn)
+        MainWindow.setTabOrder(self.map_zone_speichern_btn, self.map_zone_neu_btn)
+        MainWindow.setTabOrder(self.map_zone_neu_btn, self.strecken_comboBox_a)
+        MainWindow.setTabOrder(self.strecken_comboBox_a, self.strecken_comboBox_b)
+        MainWindow.setTabOrder(self.strecken_comboBox_b, self.strecken_speichern_btn)
+        MainWindow.setTabOrder(self.strecken_speichern_btn, self.weichen_list)
+        MainWindow.setTabOrder(self.weichen_list, self.strecken_list)
+        MainWindow.setTabOrder(self.strecken_list, self.strecken_new_btn)
+        MainWindow.setTabOrder(self.strecken_new_btn, self.map_weichen_list)
+        MainWindow.setTabOrder(self.map_weichen_list, self.tabWidget)
+        MainWindow.setTabOrder(self.tabWidget, self.weichen_new_btn)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "EBL"))
-        self.label_5.setText(_translate("MainWindow", "Zonename"))
+        self.label_5.setText(_translate("MainWindow", "Netzname"))
         self.map_zone_speichern_btn.setText(
             _translate("MainWindow", "Speichern und Generieren")
         )
-        self.label_6.setText(_translate("MainWindow", "Zonenbreite"))
-        self.label_7.setText(_translate("MainWindow", "Zonenhöhe"))
-        self.label_8.setText(_translate("MainWindow", "Zone"))
-        self.map_zone_neu_btn.setText(_translate("MainWindow", "Neue Zone"))
+        self.label_6.setText(_translate("MainWindow", "Netzbreite"))
+        self.label_7.setText(_translate("MainWindow", "Netzhöhe"))
+        self.label_8.setText(_translate("MainWindow", "Datei"))
+        self.map_zone_neu_btn.setText(_translate("MainWindow", "Neues Netz"))
         self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.map_tab), _translate("MainWindow", "Karte")
+            self.tabWidget.indexOf(self.map_tab), _translate("MainWindow", "Gleisnetz")
         )
         self.weichen_new_btn.setText(_translate("MainWindow", "Neue Weiche"))
-        self.label_2.setText(_translate("MainWindow", "Weichename"))
+        self.label_2.setText(_translate("MainWindow", "Weichenummer"))
         self.label_3.setText(_translate("MainWindow", "DCC"))
-        self.label_4.setText(_translate("MainWindow", "Bahnhof"))
+        self.label_4.setText(_translate("MainWindow", "Betriebspunkt"))
         self.weichen_einmessen_btn.setText(_translate("MainWindow", "Einmessen"))
         self.weichen_speichern_btn.setText(_translate("MainWindow", "Speichern"))
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.weichen_tab),
             _translate("MainWindow", "Weichen"),
         )
-        self.strecken_new_btn.setText(_translate("MainWindow", "Neue Strecke"))
-        self.label.setText(_translate("MainWindow", "Weiche A"))
-        self.label_10.setText(_translate("MainWindow", "Weiche B"))
+        self.strecken_new_btn.setText(_translate("MainWindow", "Neue Kante"))
+        self.label.setText(_translate("MainWindow", "Weichenpunkt A"))
+        self.label_10.setText(_translate("MainWindow", "Weichenpunkt B"))
         self.strecken_speichern_btn.setText(_translate("MainWindow", "Speichern"))
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.strecken_tab),
-            _translate("MainWindow", "Strecken"),
+            _translate("MainWindow", "Kanten"),
         )
-        self.menuZonen.setTitle(_translate("MainWindow", "Zonen"))
         self.actionneue_Zone.setText(_translate("MainWindow", "Neue Zone"))
         self.actionZone_laden.setText(_translate("MainWindow", "Zone laden"))

@@ -1,5 +1,7 @@
 """Custom Widgets and helper functions for PyQt-Gui."""
-from typing import Callable, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Callable
 
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QMouseEvent
@@ -7,8 +9,10 @@ from PyQt6.QtWidgets import QHBoxLayout, QLabel, QListWidget, QListWidgetItem
 from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QWidget
 
 from ebl_coords.decorators import override
-from ebl_coords.graph_db.api import Api
 from ebl_coords.graph_db.data_elements.edge_relation_enum import EdgeRelation
+
+if TYPE_CHECKING:
+    from ebl_coords.graph_db.graph_db_api import GraphDbApi
 
 
 class ClickableLabel(QLabel):  # type: ignore
@@ -35,7 +39,7 @@ class ClickableLabel(QLabel):  # type: ignore
 class CustomBtn(QWidget):  # type: ignore
     """A Custom Container with a QPushButton."""
 
-    def __init__(self, text: str, guid: str, parent: Optional[QWidget] = None):
+    def __init__(self, text: str, guid: str, parent: QWidget | None = None):
         """Initialize the button with a guid in a layout."""
         super().__init__(parent)
         self.layout = QVBoxLayout(self)
@@ -48,7 +52,7 @@ class CustomZoneContainer(QWidget):  # type: ignore
     """A Custom Container with a label and three QPushButtons."""
 
     def __init__(
-        self, text: str, guid_0: str, guid_1: str, parent: Optional[QWidget] = None
+        self, text: str, guid_0: str, guid_1: str, parent: QWidget | None = None
     ) -> None:
         """Initialize the container from a double node.
 
@@ -91,7 +95,7 @@ def add_btn_to_list(
 
 
 def fill_list(
-    graph_db: Api, qlist: QListWidget, foo: Callable[[CustomBtn], None]
+    graph_db: GraphDbApi, qlist: QListWidget, foo: Callable[[CustomBtn], None]
 ) -> None:
     """Fill given list with train switches from the graph db.
 

@@ -1,13 +1,15 @@
 """Strecken Editor."""
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import numpy as np
 import pandas as pd
 
 from ebl_coords.decorators import override
 from ebl_coords.frontend.custom_widgets import CustomBtn, add_btn_to_list
 from ebl_coords.frontend.editor import Editor
-from ebl_coords.frontend.main_gui import Ui_MainWindow
-from ebl_coords.graph_db.api import Api
-from ebl_coords.graph_db.data_elements.bahnhof_enum import Bhf
+from ebl_coords.graph_db.data_elements.bpk_enum import Bpk
 from ebl_coords.graph_db.data_elements.edge_dc import Edge
 from ebl_coords.graph_db.data_elements.edge_relation_enum import EDGE_RELATION_TO_ENUM
 from ebl_coords.graph_db.data_elements.edge_relation_enum import TRAINRAILS
@@ -15,6 +17,9 @@ from ebl_coords.graph_db.data_elements.edge_relation_enum import EdgeRelation
 from ebl_coords.graph_db.data_elements.node_dc import Node
 from ebl_coords.graph_db.data_elements.switch_item_enum import SwitchItem
 from ebl_coords.graph_db.query_generator import single_edge
+
+if TYPE_CHECKING:
+    from ebl_coords.main import MainWindow
 
 
 class StreckenEditor(Editor):
@@ -24,14 +29,13 @@ class StreckenEditor(Editor):
         Editor (_type_): Base Editor class.
     """
 
-    def __init__(self, ui: Ui_MainWindow, graph_db: Api) -> None:
-        """Bind buttons and fill cache with data from graph db.
+    def __init__(self, main_window: MainWindow) -> None:
+        """Connect Button events and cache trainswitches.
 
         Args:
-            ui (Ui_MainWindow): main window
-            graph_db (Api): api of graph window
+            main_window (MainWindow): main_window
         """
-        super().__init__(ui, graph_db)
+        super().__init__(main_window)
 
         self.ui.strecken_new_btn.clicked.connect(self.reset)
         self.ui.strecken_speichern_btn.clicked.connect(self.save)
@@ -80,18 +84,18 @@ class StreckenEditor(Editor):
                         foo=self.select_strecke,
                     )
 
-    def _get_node(self, bhf: str, name: str, relation: str) -> Node:
+    def _get_node(self, bpk: str, ts_number: str, relation: str) -> Node:
         n = self.cache.loc[
-            (self.cache["node.bhf"] == bhf)
-            & (self.cache["node.name"] == name)
+            (self.cache["node.bhf"] == bpk)
+            & (self.cache["node.name"] == ts_number)
             & (self.cache.exit == relation)
         ].iloc[0, :]
         return Node(
             id=n["node.node_id"],
             ecos_id="",
             switch_item=SwitchItem.WEICHE,
-            name=n["node.name"],
-            bhf=Bhf[bhf],
+            ts_number=n["node.name"],
+            bpk=Bpk[bpk],
             coords=np.zeros((3,)),
         )
 

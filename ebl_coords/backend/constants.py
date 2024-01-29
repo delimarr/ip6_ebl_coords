@@ -1,5 +1,4 @@
-"""Constants used in the Notebooks and tvData.py."""
-from os.path import abspath
+"""Constants, server config."""
 
 # neo4j config
 NEO4J_URI_LOCAL = "bolt://localhost:7687"
@@ -7,25 +6,14 @@ NEO4J_URI_CONTAINER = "bolt://neo4j:7687"
 NEO4J_USR = "neo4j"
 NEO4J_PASSWD = "password"
 
-TOLERANCE: int = 30
-SCALE: float = 0.2
-LOWER_BND: int = -180
-UPPER_BND: int = 560
+# gtcommand websocket serverside
+# GTCOMMAND_IP: str = "192.168.128.50"
+# GTCOMMAND_PORT: int = 18002
+GTCOMMAND_IP: str = "127.0.0.1"
+GTCOMMAND_PORT: int = 42042
 
-DUMP: str = abspath("./data/dump/")
+# if true, set all z-coordinates to zero.
+IGNORE_Z_AXIS: bool = True
 
-FILES_S4 = [
-    "gr_ringstrecke_s4_04",
-    "gr_ringstrecke_s4_05",
-    "gr_ringstrecke_s4_06",
-    "gr_ringstrecke_s4_07",
-    "gr_ringstrecke_s4_08",
-    "gr_ringstrecke_s4_09",
-    "gr_ringstrecke_s4_10",
-    "gr_ringstrecke_s4_11",
-    "gr_ringstrecke_s4_12",
-    "gr_ringstrecke_s4_13",
-    "gr_ringstrecke_s4_14",
-]
-
-BEST_S4 = "gr_ringstrecke_s4_06"
+# callback deltatime in ms
+CALLBACK_DT: int = 100

@@ -1,20 +1,25 @@
 """Base Editor."""
-from ebl_coords.frontend.main_gui import Ui_MainWindow
-from ebl_coords.graph_db.api import Api
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ebl_coords.main import MainWindow
 
 
 class Editor:
     """Base Class for any Editors."""
 
-    def __init__(self, ui: Ui_MainWindow, graph_db: Api) -> None:
-        """Initialize the editor with a window and a graph_db api.
+    def __init__(self, main_window: MainWindow) -> None:
+        """Initialize the Editor with a main_window.
 
         Args:
-            ui (Ui_MainWindow): main window
-            graph_db (Api): graph db api
+            main_window (MainWindow): main_window
         """
-        self.ui = ui
-        self.graph_db = graph_db
+        self.main_window = main_window
+        self.ui = main_window.ui
+        self.graph_db = main_window.graph_db
+        self.gtcommand = main_window.gtcommand
 
     def reset(self) -> None:
         """Clears all text field and resets the values to the default.

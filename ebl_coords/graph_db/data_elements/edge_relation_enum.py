@@ -6,7 +6,7 @@ class EdgeRelation(Enum):
     """Enum edge relation."""
 
     DOUBLE_VERTEX = "DOUBLE_VERTEX"
-    NEUTRAL = "Neutral"
+    NEUTRAL = "Anfang"
     DEFLECTION = "Ablenkung"
     STRAIGHT = "Gerade"
 

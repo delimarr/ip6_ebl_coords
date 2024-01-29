@@ -1,41 +1,38 @@
 """Map Editor."""
+from __future__ import annotations
+
 import json
 from dataclasses import asdict
 from os import listdir
 from os.path import abspath, join
-from typing import Optional
+from typing import TYPE_CHECKING
 
 from PyQt6.QtWidgets import QListWidgetItem, QPushButton
 
-from ebl_coords.backend.abstract.gtcommand_subject import GtCommandSubject
-from ebl_coords.backend.abstract.ts_hit_observer import TsHitObserver
 from ebl_coords.decorators import override
 from ebl_coords.frontend.custom_widgets import ClickableLabel, CustomZoneContainer
 from ebl_coords.frontend.editor import Editor
-from ebl_coords.frontend.main_gui import Ui_MainWindow
-from ebl_coords.frontend.map_data_elements.map_train_switch_dc import MapTrainSwitch
+from ebl_coords.frontend.map_data_elements.map_train_switch_dc import MapTsTopopoint
 from ebl_coords.frontend.map_data_elements.zone_dc import Zone
 from ebl_coords.frontend.zone_maker import ZoneMaker
-from ebl_coords.graph_db.api import Api
 from ebl_coords.graph_db.data_elements.edge_relation_enum import EDGE_RELATION_TO_ENUM
 from ebl_coords.graph_db.data_elements.edge_relation_enum import EdgeRelation
+
+if TYPE_CHECKING:
+    from ebl_coords.main import MainWindow
 
 
 class MapEditor(Editor):
     """The Map editor."""
 
-    def __init__(
-        self, ui: Ui_MainWindow, graph_db: Api, gtcommand_subject: GtCommandSubject
-    ) -> None:
-        """Initialize the editor with a window and a graph_db api.
+    def __init__(self, main_window: MainWindow) -> None:
+        """Build zone and create clickable label.
 
         Args:
-            ui (Ui_MainWindow): main window
-            graph_db (Api): graph db api
-            gtcommand_subject (GtCommandSubject): GtCommand Subject
+            main_window (MainWindow): main_window
         """
-        super().__init__(ui, graph_db)
-        self.selected_ts: Optional[MapTrainSwitch] = None
+        super().__init__(main_window)
+        self.selected_ts: MapTsTopopoint | None = None
         self.path = abspath("./ebl_coords/frontend/zone_data/")
 
         self.map_label = ClickableLabel()
@@ -46,11 +43,6 @@ class MapEditor(Editor):
         self.ui.map_zone_speichern_btn.released.connect(self.save)
         self.ui.map_zone_select_combo_box.currentTextChanged.connect(self.load_json)
         self.ui.map_zone_neu_btn.released.connect(self.reset)
-
-        self.ts_hit_observer = TsHitObserver()
-        self.ts_hit_observer.redraw_zone_signal.connect(self._draw)
-        self.gtcommand_subject = gtcommand_subject
-        self.gtcommand_subject.attach(self.ts_hit_observer)
 
         self.zone = Zone(name="", block_size=41, width=0, height=0, switches={})
         self.zone_maker = ZoneMaker(self.map_label, block_size=self.zone.block_size)
@@ -68,7 +60,7 @@ class MapEditor(Editor):
                 zone_dict["switches"] = {}
                 self.zone = Zone(**zone_dict)
                 for key, val in map_ts_dict.items():
-                    self.zone.switches[key] = MapTrainSwitch(**val)
+                    self.zone.switches[key] = MapTsTopopoint(**val)
             for key, val in old_switches.items():
                 if not key in self.zone.switches.keys():
                     self.zone.switches[key] = val
@@ -90,18 +82,18 @@ class MapEditor(Editor):
         zone_container.straight_btn.released.connect(
             lambda: self.select_ts(guid_1, zone_container.straight_btn)
         )
-        neutral_switch = MapTrainSwitch(
-            description=text,
+        neutral_switch = MapTsTopopoint(
+            name=text,
             guid=guid_0,
             relation=EDGE_RELATION_TO_ENUM[zone_container.neutral_btn.text()].name,
         )
-        deflection_switch = MapTrainSwitch(
-            description=f"{text}_1",
+        deflection_switch = MapTsTopopoint(
+            name=f"{text}_1",
             guid=guid_1,
             relation=EDGE_RELATION_TO_ENUM[zone_container.deflection_btn.text()].name,
         )
-        straight_switch = MapTrainSwitch(
-            description=f"{text}_0",
+        straight_switch = MapTsTopopoint(
+            name=f"{text}_0",
             guid=guid_1,
             relation=EDGE_RELATION_TO_ENUM[zone_container.straight_btn.text()].name,
         )
@@ -217,7 +209,7 @@ class MapEditor(Editor):
             if ts.coords is not None:
                 u, v = ts.coords
                 self.zone_maker.draw_grid_point(u, v)
-                self.zone_maker.draw_grid_text(ts.description, u, v)
+                self.zone_maker.draw_grid_text(ts.name, u, v)
 
         self._draw_connect_topo()
         self._draw_connect_ts()

@@ -21,9 +21,9 @@ def single_node(node: Node) -> str:
         {node.id}:{node.switch_item.name} \
             {{\
                 node_id: '{node.id}', \
-                name: '{node.name}', \
+                name: '{node.ts_number}', \
                 ecos_id: '{node.ecos_id}', \
-                bhf: '{node.bhf.name}', \
+                bhf: '{node.bpk.name}', \
                 x: {node.coords[0]}, \
                 y: {node.coords[1]}, \
                 z: {node.coords[2]} \
@@ -134,10 +134,10 @@ def update_double_nodes(node: Node) -> str:
     weiche = SwitchItem.WEICHE.name
     return f"""
     MATCH(n1:WEICHE{{node_id:'{node.id}'}})-[:{double_vertex}]->(n2:{weiche})\
-    SET n1.bhf = '{node.bhf.name}'\
-    SET n2.bhf = '{node.bhf.name}'\
-    SET n1.name = '{node.name}'\
-    SET n2.name = '{node.name}'\
+    SET n1.bhf = '{node.bpk.name}'\
+    SET n2.bhf = '{node.bpk.name}'\
+    SET n1.name = '{node.ts_number}'\
+    SET n2.name = '{node.ts_number}'\
     SET n1.ecos_id = '{node.ecos_id}'\
     SET n2.ecos_id = '{node.ecos_id}';
     """

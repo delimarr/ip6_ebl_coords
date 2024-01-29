@@ -1,8 +1,11 @@
 """Map json class."""
-from dataclasses import dataclass
-from typing import Dict
+from __future__ import annotations
 
-from ebl_coords.frontend.map_data_elements.map_train_switch_dc import MapTrainSwitch
+from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ebl_coords.frontend.map_data_elements.map_train_switch_dc import MapTsTopopoint
 
 
 @dataclass(unsafe_hash=True)
@@ -13,4 +16,4 @@ class Zone:
     block_size: int
     width: int
     height: int
-    switches: Dict[str, MapTrainSwitch]
+    switches: dict[str, MapTsTopopoint]

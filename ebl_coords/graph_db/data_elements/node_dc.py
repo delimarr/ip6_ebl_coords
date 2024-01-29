@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from ebl_coords.graph_db.data_elements.bahnhof_enum import Bhf
+from ebl_coords.graph_db.data_elements.bpk_enum import Bpk
 from ebl_coords.graph_db.data_elements.switch_item_enum import SwitchItem
 
 
@@ -14,6 +14,6 @@ class Node:
     id: str
     ecos_id: str
     switch_item: SwitchItem
-    name: str
-    bhf: Bhf
+    ts_number: str
+    bpk: Bpk
     coords: np.ndarray

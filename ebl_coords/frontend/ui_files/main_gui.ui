@@ -22,7 +22,7 @@
       </property>
       <widget class="QWidget" name="map_tab">
        <attribute name="title">
-        <string>Karte</string>
+        <string>Gleisnetz</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
@@ -59,7 +59,7 @@
                <item row="2" column="0">
                 <widget class="QLabel" name="label_5">
                  <property name="text">
-                  <string>Zonename</string>
+                  <string>Netzname</string>
                  </property>
                 </widget>
                </item>
@@ -76,14 +76,14 @@
                <item row="3" column="0">
                 <widget class="QLabel" name="label_6">
                  <property name="text">
-                  <string>Zonenbreite</string>
+                  <string>Netzbreite</string>
                  </property>
                 </widget>
                </item>
                <item row="4" column="0">
                 <widget class="QLabel" name="label_7">
                  <property name="text">
-                  <string>Zonenhöhe</string>
+                  <string>Netzhöhe</string>
                  </property>
                 </widget>
                </item>
@@ -96,7 +96,7 @@
                <item row="1" column="0">
                 <widget class="QLabel" name="label_8">
                  <property name="text">
-                  <string>Zone</string>
+                  <string>Datei</string>
                  </property>
                 </widget>
                </item>
@@ -106,7 +106,7 @@
                <item row="6" column="1">
                 <widget class="QPushButton" name="map_zone_neu_btn">
                  <property name="text">
-                  <string>Neue Zone</string>
+                  <string>Neues Netz</string>
                  </property>
                 </widget>
                </item>
@@ -166,7 +166,7 @@
                <item row="0" column="0">
                 <widget class="QLabel" name="label_2">
                  <property name="text">
-                  <string>Weichename</string>
+                  <string>Weichenummer</string>
                  </property>
                 </widget>
                </item>
@@ -186,7 +186,7 @@
                <item row="2" column="0">
                 <widget class="QLabel" name="label_4">
                  <property name="text">
-                  <string>Bahnhof</string>
+                  <string>Betriebspunkt</string>
                  </property>
                 </widget>
                </item>
@@ -231,7 +231,7 @@
       </widget>
       <widget class="QWidget" name="strecken_tab">
        <attribute name="title">
-        <string>Strecken</string>
+        <string>Kanten</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
@@ -265,7 +265,7 @@
             <item>
              <widget class="QPushButton" name="strecken_new_btn">
               <property name="text">
-               <string>Neue Strecke</string>
+               <string>Neue Kante</string>
               </property>
              </widget>
             </item>
@@ -276,7 +276,7 @@
             <item row="0" column="0">
              <widget class="QLabel" name="label">
               <property name="text">
-               <string>Weiche A</string>
+               <string>Weichenpunkt A</string>
               </property>
              </widget>
             </item>
@@ -286,7 +286,7 @@
             <item row="1" column="0">
              <widget class="QLabel" name="label_10">
               <property name="text">
-               <string>Weiche B</string>
+               <string>Weichenpunkt B</string>
               </property>
              </widget>
             </item>
@@ -332,14 +332,6 @@
      <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuZonen">
-    <property name="title">
-     <string>Zonen</string>
-    </property>
-    <addaction name="actionneue_Zone"/>
-    <addaction name="actionZone_laden"/>
-   </widget>
-   <addaction name="menuZonen"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionneue_Zone">
@@ -353,6 +345,28 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>weichen_weichenname_txt</tabstop>
+  <tabstop>weichen_dcc_txt</tabstop>
+  <tabstop>weichen_bhf_txt</tabstop>
+  <tabstop>weichen_speichern_btn</tabstop>
+  <tabstop>weichen_einmessen_btn</tabstop>
+  <tabstop>map_zone_select_combo_box</tabstop>
+  <tabstop>map_zonename_txt</tabstop>
+  <tabstop>map_zone_width</tabstop>
+  <tabstop>map_zone_height</tabstop>
+  <tabstop>map_zone_speichern_btn</tabstop>
+  <tabstop>map_zone_neu_btn</tabstop>
+  <tabstop>strecken_comboBox_a</tabstop>
+  <tabstop>strecken_comboBox_b</tabstop>
+  <tabstop>strecken_speichern_btn</tabstop>
+  <tabstop>weichen_list</tabstop>
+  <tabstop>strecken_list</tabstop>
+  <tabstop>strecken_new_btn</tabstop>
+  <tabstop>map_weichen_list</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>weichen_new_btn</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

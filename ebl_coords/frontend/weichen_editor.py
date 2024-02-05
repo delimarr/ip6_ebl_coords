@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
+from ebl_coords.backend.observable.ts_measure_observer import TsMeasureObserver
 from ebl_coords.decorators import override
 from ebl_coords.frontend.custom_widgets import CustomBtn, fill_list
 from ebl_coords.frontend.editor import Editor
@@ -96,4 +97,8 @@ class WeichenEditor(Editor):
     def start_measurement(self) -> None:
         """Start measure coordinates for this trainswitch."""
         if self.selected_ts is not None:
-            raise NotImplementedError
+            ts_measure_observer = TsMeasureObserver(
+                selected_ts=self.selected_ts,
+                command_queue=self.main_window.command_queue,
+            )
+            self.gtcommand.attach(ts_measure_observer)

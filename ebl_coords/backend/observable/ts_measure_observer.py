@@ -13,10 +13,9 @@ from ebl_coords.graph_db.data_elements.switch_item_enum import SwitchItem
 
 if TYPE_CHECKING:
     from ebl_coords.backend.command.base import Command
-    from ebl_coords.backend.observable.gtcommand_subject import GtCommandSubject
 
 
-class MeasureTsObserver(Observer):
+class TsMeasureObserver(Observer):
     """Measure trainswitch observer.
 
     Args:
@@ -26,7 +25,6 @@ class MeasureTsObserver(Observer):
     def __init__(
         self,
         selected_ts: str,
-        gtcommand: GtCommandSubject,
         command_queue: Queue[Command],
         points_needed: int = 150,
     ) -> None:
@@ -34,7 +32,6 @@ class MeasureTsObserver(Observer):
 
         Args:
             selected_ts (str): guid of trainswitch in db.
-            gtcommand (GtCommandSubject): GtCommand Api Subject
             command_queue (Queue[Command]): put command in queue with db and Gui updates.
             points_needed (int, optional): How many point should be used for the measurement. Defaults to 150.
         """
@@ -43,14 +40,12 @@ class MeasureTsObserver(Observer):
         self.points_needed = points_needed
         self.buffer = np.empty((points_needed, 3), dtype=np.float32)
         self.index: int = 0
-        self.gtcommand = gtcommand
-        self.gtcommand.attach(self)
 
     @override
     def update(self) -> None:
         """Build buffer of coords and put command into queue."""
         if self.index == self.points_needed:
-            self.gtcommand.detach(self)
+            self.subject.detach(self)
             ts_coord = np.median(self.buffer, axis=0)
             double_vertex = EdgeRelation.DOUBLE_VERTEX.name
             weiche = SwitchItem.WEICHE.name
@@ -65,5 +60,6 @@ class MeasureTsObserver(Observer):
             """
             # TO DO put graphcmd into self.command_queue
             print(cmd)
+            return
         self.buffer[self.index, :] = self.result
         self.index += 1

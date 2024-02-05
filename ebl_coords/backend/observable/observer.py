@@ -1,6 +1,11 @@
 """Observer Interface."""
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from ebl_coords.backend.observable.subject import Subject
 
 
 class Observer(ABC):
@@ -14,6 +19,7 @@ class Observer(ABC):
     """
 
     result: Any
+    subject: Subject
 
     @abstractmethod
     def update(self) -> None:

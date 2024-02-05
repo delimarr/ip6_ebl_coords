@@ -40,7 +40,7 @@ def get_track_switches_hit(
     Args:
         labels (np.ndarray): lables of coords, labels-length = number of label_coords
         label_coords (np.ndarray): coordinates of labels
-        waypoints (np.ndarray): any waypoints
+        waypoints (np.ndarray): any waypoints, dim = Nx3
         threshold (float): radius <= of sphere around label_coords
 
     Returns:

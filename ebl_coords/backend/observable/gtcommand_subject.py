@@ -69,7 +69,7 @@ class _InnerGtCommandSubject(Subject):
         self._noise_buffer[-1] = coord
         if get_tolerance_mask(self._noise_buffer, noise_filter_threshold)[0]:
             self._median_buffer[-1] = self._noise_buffer[1]
-            if np.isnan(self._median_buffer).any():
+            if not np.isnan(self._median_buffer).any():
                 med_coord = np.median(self._median_buffer, axis=0)
             self._median_buffer = np.roll(self._median_buffer, shift=-1)
 
@@ -93,20 +93,20 @@ class _InnerGtCommandSubject(Subject):
             if IGNORE_Z_AXIS:
                 coord[2] = 0
             filtered_coord = self._filter_coord(coord, noise_filter_threshold)
-            if (filtered_coord is not None) and (
-                not (filtered_coord == last_coord).any()
-            ):
+            if filtered_coord is not None and not np.any(filtered_coord == last_coord):
                 self.notify(self.coords_observers, filtered_coord)
-                hit_labels = get_track_switches_hit(
-                    self.ts_labels,
-                    self.ts_coords,
-                    filtered_coord,
-                    self.ts_hit_threshold,
-                )
-                last_coord = filtered_coord
-                if not (ts_last_hit == hit_labels).any():
-                    self.notify(self.ts_hit_observers, hit_labels)
-                    ts_last_hit = hit_labels
+                self.notify(self.measure_observers, filtered_coord)
+                if self.ts_hit_observers:
+                    hit_labels = get_track_switches_hit(
+                        self.ts_labels,
+                        self.ts_coords,
+                        filtered_coord.reshape(1, -1),
+                        self.ts_hit_threshold,
+                    )
+                    last_coord = filtered_coord
+                    if not np.any(ts_last_hit == hit_labels):
+                        self.notify(self.ts_hit_observers, hit_labels)
+                        ts_last_hit = hit_labels
 
     @override
     def attach(self, observer: Observer) -> None:
@@ -120,6 +120,7 @@ class _InnerGtCommandSubject(Subject):
             self.measure_observers.append(observer)
         elif observer_name == "TsHitObserver":
             self.ts_hit_observers.append(observer)
+        observer.subject = self
 
     @override
     def detach(self, observer: Observer) -> None:

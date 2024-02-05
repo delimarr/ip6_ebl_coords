@@ -93,6 +93,9 @@ class WeichenEditor(Editor):
         self.ui.weichen_bhf_txt.setText(df["n1.bhf"][0])
         self.ui.weichen_dcc_txt.setText(df["n1.ecos_id"][0])
         self.ui.weichen_weichenname_txt.setText(df["n1.name"][0])
+        self.ui.weichen_coord_label.setText(
+            f"({df['n1.x'][0]}, {df['n1.y'][0]}, {df['n1.z'][0]})"
+        )
 
     def start_measurement(self) -> None:
         """Start measure coordinates for this trainswitch."""

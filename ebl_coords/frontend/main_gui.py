@@ -167,15 +167,30 @@ class Ui_MainWindow:
         self.formLayout_2.setWidget(
             2, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_4
         )
+        self.weichen_bhf_txt = QtWidgets.QLineEdit(parent=self.weichen_widget)
+        self.weichen_bhf_txt.setObjectName("weichen_bhf_txt")
+        self.formLayout_2.setWidget(
+            2, QtWidgets.QFormLayout.ItemRole.FieldRole, self.weichen_bhf_txt
+        )
+        self.label_9 = QtWidgets.QLabel(parent=self.weichen_widget)
+        self.label_9.setObjectName("label_9")
+        self.formLayout_2.setWidget(
+            3, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_9
+        )
         self.weichen_einmessen_btn = QtWidgets.QPushButton(parent=self.weichen_widget)
         self.weichen_einmessen_btn.setObjectName("weichen_einmessen_btn")
         self.formLayout_2.setWidget(
-            4, QtWidgets.QFormLayout.ItemRole.FieldRole, self.weichen_einmessen_btn
+            5, QtWidgets.QFormLayout.ItemRole.FieldRole, self.weichen_einmessen_btn
         )
         self.weichen_speichern_btn = QtWidgets.QPushButton(parent=self.weichen_widget)
         self.weichen_speichern_btn.setObjectName("weichen_speichern_btn")
         self.formLayout_2.setWidget(
-            5, QtWidgets.QFormLayout.ItemRole.FieldRole, self.weichen_speichern_btn
+            6, QtWidgets.QFormLayout.ItemRole.FieldRole, self.weichen_speichern_btn
+        )
+        self.weichen_coord_label = QtWidgets.QLabel(parent=self.weichen_widget)
+        self.weichen_coord_label.setObjectName("weichen_coord_label")
+        self.formLayout_2.setWidget(
+            3, QtWidgets.QFormLayout.ItemRole.FieldRole, self.weichen_coord_label
         )
         spacerItem = QtWidgets.QSpacerItem(
             20,
@@ -184,12 +199,7 @@ class Ui_MainWindow:
             QtWidgets.QSizePolicy.Policy.Expanding,
         )
         self.formLayout_2.setItem(
-            3, QtWidgets.QFormLayout.ItemRole.FieldRole, spacerItem
-        )
-        self.weichen_bhf_txt = QtWidgets.QLineEdit(parent=self.weichen_widget)
-        self.weichen_bhf_txt.setObjectName("weichen_bhf_txt")
-        self.formLayout_2.setWidget(
-            2, QtWidgets.QFormLayout.ItemRole.FieldRole, self.weichen_bhf_txt
+            4, QtWidgets.QFormLayout.ItemRole.FieldRole, spacerItem
         )
         self.verticalLayout_2.addWidget(self.weichen_widget)
         self.horizontalLayout_4.addWidget(self.weichen_splitter)
@@ -280,7 +290,7 @@ class Ui_MainWindow:
         self.actionZone_laden.setObjectName("actionZone_laden")
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.weichen_weichenname_txt, self.weichen_dcc_txt)
         MainWindow.setTabOrder(self.weichen_dcc_txt, self.weichen_bhf_txt)
@@ -322,8 +332,10 @@ class Ui_MainWindow:
         self.label_2.setText(_translate("MainWindow", "Weichenummer"))
         self.label_3.setText(_translate("MainWindow", "DCC"))
         self.label_4.setText(_translate("MainWindow", "Betriebspunkt"))
+        self.label_9.setText(_translate("MainWindow", "Koordinaten"))
         self.weichen_einmessen_btn.setText(_translate("MainWindow", "Einmessen"))
         self.weichen_speichern_btn.setText(_translate("MainWindow", "Speichern"))
+        self.weichen_coord_label.setText(_translate("MainWindow", "(x, y ,z)"))
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.weichen_tab),
             _translate("MainWindow", "Weichen"),

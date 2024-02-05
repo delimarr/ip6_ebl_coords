@@ -69,20 +69,13 @@ class StreckenEditor(Editor):
         self.ui.strecken_comboBox_b.addItems(items)
 
     def _fill_list(self) -> None:
-        for relation in EdgeRelation:
-            if relation == EdgeRelation.DOUBLE_VERTEX:
-                continue
-            cmd = f"MATCH (n1)-[:{relation.name}]->(n2) RETURN n1.bhf, n1.name, n1.node_id, n2.bhf, n2.name"
-            df = self.graph_db.run_query(cmd)
-            df.sort_values(by=["n1.bhf", "n1.name"], inplace=True)
-            if df.size > 0:
-                for _, row in df.iterrows():
-                    add_btn_to_list(
-                        qlist=self.ui.strecken_list,
-                        text=f"{row['n1.bhf']}_{row['n1.name']}\t{relation.value}\t{row['n2.bhf']}_{row['n2.name']}",
-                        guid=row["n1.node_id"],
-                        foo=self.select_strecke,
-                    )
+        for guid, edge in self.graph_db.edges_tostring():
+            add_btn_to_list(
+                qlist=self.ui.strecken_list,
+                text=edge,
+                guid=guid,
+                foo=self.select_strecke,
+            )
 
     def _get_node(self, bpk: str, ts_number: str, relation: str) -> Node:
         n = self.cache.loc[

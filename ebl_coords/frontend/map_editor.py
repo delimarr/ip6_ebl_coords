@@ -46,6 +46,7 @@ class MapEditor(Editor):
         self.zone = Zone(name="", block_size=41, width=0, height=0, switches={})
         self.zone_maker = ZoneMaker(self.map_label, block_size=self.zone.block_size)
         self.fill_list()
+        self.fill_combobox()
         self.load_json()
 
     def load_json(self) -> None:
@@ -120,6 +121,13 @@ class MapEditor(Editor):
                 guid_0=guid,
                 guid_1=guid[:-1] + "1",
             )
+
+    def fill_combobox(self) -> None:
+        """Fill position combobox."""
+        self.ui.map_position_CBox.clear()
+        self.ui.map_position_CBox.addItems(
+            map(lambda e: e[1], self.graph_db.edges_tostring())
+        )
 
     @override
     def reset(self) -> None:

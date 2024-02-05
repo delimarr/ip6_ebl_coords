@@ -15,5 +15,5 @@ GTCOMMAND_PORT: int = 42042
 # if true, set all z-coordinates to zero.
 IGNORE_Z_AXIS: bool = True
 
-# callback deltatime in ms
-CALLBACK_DT: int = 100
+# callback deltatime in ms, 30 FPS
+CALLBACK_DT: int = 1000 // 30

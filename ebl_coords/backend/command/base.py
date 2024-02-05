@@ -1,11 +1,6 @@
 """Base Command. Command-Pattern."""
-from __future__ import annotations
-
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from ebl_coords.main import MainWindow
+from typing import Any, Optional
 
 
 class Command(ABC):
@@ -18,13 +13,15 @@ class Command(ABC):
         NotImplementedError: interface
     """
 
-    def __init__(self, main_window: MainWindow) -> None:
-        """Initialize Command with main_window as context.
+    def __init__(self, content: Any, context: Optional[Any] = None) -> None:
+        """Initialize Command.
 
         Args:
-            main_window (MainWindow): main_window
+            content (Any): New content.
+            context (Optional[Any], optional): Object to be worked on. Defaults to None.
         """
-        self.main_window = main_window
+        self.context = context
+        self.content = content
 
     @abstractmethod
     def run(self) -> None:

@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
+from ebl_coords.backend.command.db_cmd import DbCommand
 from ebl_coords.backend.observable.observer import Observer
 from ebl_coords.decorators import override
 from ebl_coords.graph_db.data_elements.edge_relation_enum import EdgeRelation
@@ -58,8 +59,8 @@ class TsMeasureObserver(Observer):
             SET n1.z = '{ts_coord[2]}'\
             SET n2.z = '{ts_coord[2]}';
             """
-            # TO DO put graphcmd into self.command_queue
-            print(cmd)
+            db_cmd = DbCommand(content=cmd)
+            self.command_queue.put(db_cmd)
             return
         self.buffer[self.index, :] = self.result
         self.index += 1

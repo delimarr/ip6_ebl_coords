@@ -15,8 +15,9 @@ GTCOMMAND_PORT: int = 42042
 # if true, set all z-coordinates to zero.
 IGNORE_Z_AXIS: bool = True
 
-# callback deltatime in ms, 30 FPS
-CALLBACK_DT: int = 1000 // 30
+# callback deltatime in ms, 30 Calls per Second
+CPS: int = 30
+CALLBACK_DT: int = 1000 // CPS
 
 # zone dump file
 ZONE_FILE: str = "zone_dump.json"

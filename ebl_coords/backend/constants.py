@@ -17,3 +17,6 @@ IGNORE_Z_AXIS: bool = True
 
 # callback deltatime in ms, 30 FPS
 CALLBACK_DT: int = 1000 // 30
+
+# zone dump file
+ZONE_FILE: str = "zone_dump.json"

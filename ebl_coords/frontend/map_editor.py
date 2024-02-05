@@ -3,12 +3,12 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict
-from os import listdir
 from os.path import abspath, join
 from typing import TYPE_CHECKING
 
 from PyQt6.QtWidgets import QListWidgetItem, QPushButton
 
+from ebl_coords.backend.constants import ZONE_FILE
 from ebl_coords.decorators import override
 from ebl_coords.frontend.custom_widgets import ClickableLabel, CustomZoneContainer
 from ebl_coords.frontend.editor import Editor
@@ -41,34 +41,30 @@ class MapEditor(Editor):
         self.ui.map_right.layout().addWidget(self.map_label)
 
         self.ui.map_zone_speichern_btn.released.connect(self.save)
-        self.ui.map_zone_select_combo_box.currentTextChanged.connect(self.load_json)
         self.ui.map_zone_neu_btn.released.connect(self.reset)
 
         self.zone = Zone(name="", block_size=41, width=0, height=0, switches={})
         self.zone_maker = ZoneMaker(self.map_label, block_size=self.zone.block_size)
-        self._fill_list()
-        self._fill_zone_combobox()
+        self.fill_list()
+        self.load_json()
 
     def load_json(self) -> None:
         """Create scene from a json file."""
-        filename = self.ui.map_zone_select_combo_box.currentText()
         old_switches = self.zone.switches
-        if filename:
-            with open(join(self.path, filename), encoding="utf-8") as fd:
-                zone_dict = json.load(fd)
-                map_ts_dict = zone_dict["switches"]
-                zone_dict["switches"] = {}
-                self.zone = Zone(**zone_dict)
-                for key, val in map_ts_dict.items():
-                    self.zone.switches[key] = MapTsTopopoint(**val)
-            for key, val in old_switches.items():
-                if not key in self.zone.switches.keys():
-                    self.zone.switches[key] = val
-            self.zone_maker = ZoneMaker(self.map_label, self.zone.block_size)
-            self.ui.map_zonename_txt.setText(self.zone.name)
-            self.ui.map_zone_width.setValue(self.zone.width)
-            self.ui.map_zone_height.setValue(self.zone.height)
-            self._draw()
+        with open(join(self.path, ZONE_FILE), encoding="utf-8") as fd:
+            zone_dict = json.load(fd)
+            map_ts_dict = zone_dict["switches"]
+            zone_dict["switches"] = {}
+            self.zone = Zone(**zone_dict)
+            for key, val in map_ts_dict.items():
+                self.zone.switches[key] = MapTsTopopoint(**val)
+        for key, val in old_switches.items():
+            if not key in self.zone.switches.keys():
+                self.zone.switches[key] = val
+        self.zone_maker = ZoneMaker(self.map_label, self.zone.block_size)
+        self.ui.map_zone_width.setValue(self.zone.width)
+        self.ui.map_zone_height.setValue(self.zone.height)
+        self._draw()
 
     def _add_btns_to_list(self, text: str, guid_0: str, guid_1: str) -> None:
         item = QListWidgetItem(self.ui.map_weichen_list)
@@ -110,7 +106,9 @@ class MapEditor(Editor):
         item.setSizeHint(zone_container.sizeHint())
         self.ui.map_weichen_list.setItemWidget(item, zone_container)
 
-    def _fill_list(self) -> None:
+    def fill_list(self) -> None:
+        """Fill list with trainswitch buttons."""
+        self.ui.map_weichen_list.clear()
         cmd = "MATCH (node:WEICHE) RETURN node.bhf, node.name, node.node_id"
         df = self.graph_db.run_query(cmd)[::2]
         df.sort_values(by=["node.bhf", "node.name"], inplace=True)
@@ -128,28 +126,22 @@ class MapEditor(Editor):
         """Clear the form and reset the zone and zonemaker."""
         self.ui.map_weichen_list.clear()
         self.selected_ts = None
-        self.ui.map_zonename_txt.clear()
         self.ui.map_zone_width.clear()
         self.ui.map_zone_height.clear()
         self.map_label.clear()
-        self._fill_list()
+        self.fill_list()
 
     @override
     def save(self) -> None:
         """Draw the zone and export to json."""
-        zone_name = self.ui.map_zonename_txt.text()
         width = self.ui.map_zone_width.text()
         height = self.ui.map_zone_height.text()
-        if zone_name and width and height:
-            self.zone.name = zone_name
+        if width and height:
             self.zone.width = int(width)
             self.zone.height = int(height)
             # write to file
-            filename = zone_name + ".json"
-            with open(join(self.path, filename), "w", encoding="utf-8") as fd:
+            with open(join(self.path, ZONE_FILE), "w", encoding="utf-8") as fd:
                 json.dump(asdict(self.zone), fd, indent=4)
-            self.ui.map_zone_select_combo_box.clear()
-            self._fill_zone_combobox()
             self._draw()
 
     def select_ts(self, guid: str, btn: QPushButton) -> None:
@@ -162,9 +154,6 @@ class MapEditor(Editor):
         self.selected_ts = self.zone.switches[
             f"{guid}{EDGE_RELATION_TO_ENUM[btn.text()].name}"
         ]
-
-    def _fill_zone_combobox(self) -> None:
-        self.ui.map_zone_select_combo_box.addItems(listdir(self.path))
 
     def _draw_connect_topo(self) -> None:
         switches = list(self.zone.switches.values())

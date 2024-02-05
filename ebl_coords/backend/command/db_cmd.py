@@ -1,6 +1,4 @@
 """Command pattern Graph Db."""
-from __future__ import annotations
-
 from ebl_coords.backend.command.base import Command
 from ebl_coords.decorators import override
 from ebl_coords.graph_db.graph_db_api import GraphDbApi

@@ -5,7 +5,6 @@ import sys
 from queue import Queue
 from typing import TYPE_CHECKING
 
-import numpy as np
 import pandas as pd
 from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QApplication, QMainWindow
@@ -41,12 +40,7 @@ class MainWindow(QMainWindow):  # type: ignore
 
         self.ts_df: pd.DataFrame
 
-        self.ts_labels: np.ndarray = np.zeros((2,))
-        self.ts_coords: np.ndarray = np.zeros((2, 3))
-
-        self.gtcommand = GtCommandSubject(
-            ts_labels=self.ts_labels, ts_coords=self.ts_coords
-        )
+        self.gtcommand = GtCommandSubject()
 
         self.strecken_editor = StreckenEditor(self)
         self.weichen_editor = WeichenEditor(self)

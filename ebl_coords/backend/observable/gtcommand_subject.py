@@ -11,6 +11,7 @@ from ebl_coords.backend.constants import GTCOMMAND_IP, GTCOMMAND_PORT, IGNORE_Z_
 from ebl_coords.backend.observable.subject import Subject
 from ebl_coords.backend.transform_data import get_tolerance_mask, get_track_switches_hit
 from ebl_coords.decorators import override
+from ebl_coords.graph_db.graph_db_api import GraphDbApi
 
 if TYPE_CHECKING:
     from ebl_coords.backend.observable.observer import Observer
@@ -21,8 +22,6 @@ class _InnerGtCommandSubject(Subject):
 
     def __init__(
         self,
-        ts_labels: np.ndarray,
-        ts_coords: np.ndarray,
         median_kernel_size: int = 11,
         noise_filter_threshold: int = 30,
         ip: str = GTCOMMAND_IP,
@@ -32,18 +31,15 @@ class _InnerGtCommandSubject(Subject):
         """Initialize the buffer and the socket.
 
         Args:
-            ts_labels (np.ndarray): labels of trainswitches, labels[i] <-> coords[i]
-            ts_coords (np.ndarray): coords of trainswitches, labels[i] <-> coords[i]
             median_kernel_size (int, optional): kernel size used for median filter. Defaults to 11.
             noise_filter_threshold (int, optional): Maximal allowed distance between neighbouring points. Defaults to 30.
             ip (str, optional): ip of GtCommand. Defaults to GTCOMMAND_IP.
             port (int, optional): port of GtCommand. Defaults to GTCOMMAND_PORT.
             ts_hit_threshold(int, optional): Maximal distance coord to trainswitch to be considered valid hit. Defaults to TS_HIT_THRESHOLD.
         """
-        self.ts_labels = ts_labels
-        self.ts_coords = ts_coords
-        if IGNORE_Z_AXIS:
-            self.ts_coords[:, 2] = 0
+        self.graph_db = GraphDbApi()
+        self.ts_coords: np.ndarray
+        self.ts_labels: np.ndarray
         self.ip: str = ip
         self.port: int = port
         self.ts_hit_threshold = ts_hit_threshold

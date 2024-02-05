@@ -15,6 +15,7 @@ from ebl_coords.graph_db.data_elements.switch_item_enum import SwitchItem
 
 if TYPE_CHECKING:
     from ebl_coords.backend.command.base import Command
+    from ebl_coords.backend.observable.gtcommand_subject import GtCommandSubject
     from ebl_coords.frontend.main_gui import Ui_MainWindow
 
 
@@ -40,6 +41,7 @@ class TsMeasureObserver(Observer):
             ui (Ui_MainWindow): ui
             points_needed (int, optional): How many point should be used for the measurement. Defaults to 150.
         """
+        self.subject: GtCommandSubject
         self.selected_ts = selected_ts
         self.command_queue = command_queue
         self.ui = ui

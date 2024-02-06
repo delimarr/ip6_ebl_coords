@@ -373,7 +373,7 @@ class Ui_MainWindow:
         self.actionZone_laden.setObjectName("actionZone_laden")
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.weichen_weichenname_txt, self.weichen_dcc_txt)
         MainWindow.setTabOrder(self.weichen_dcc_txt, self.weichen_bhf_txt)

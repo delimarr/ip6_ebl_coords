@@ -11,7 +11,7 @@ from ebl_coords.backend.constants import GTCOMMAND_IP, GTCOMMAND_PORT, IGNORE_Z_
 from ebl_coords.backend.observable.subject import Subject
 from ebl_coords.backend.transform_data import get_tolerance_mask, get_track_switches_hit
 from ebl_coords.decorators import override
-from ebl_coords.graph_db.data_elements.edge_dc import Edge
+from ebl_coords.graph_db.data_elements.switch_item_enum import SwitchItem
 from ebl_coords.graph_db.graph_db_api import GraphDbApi
 
 if TYPE_CHECKING:
@@ -27,7 +27,7 @@ class _InnerGtCommandSubject(Subject):
         noise_filter_threshold: int = 30,
         ip: str = GTCOMMAND_IP,
         port: int = GTCOMMAND_PORT,
-        ts_hit_threshold: int = 35,
+        ts_hit_threshold: int = 1000,
     ) -> None:
         """Initialize the buffer and the socket.
 
@@ -36,10 +36,9 @@ class _InnerGtCommandSubject(Subject):
             noise_filter_threshold (int, optional): Maximal allowed distance between neighbouring points. Defaults to 30.
             ip (str, optional): ip of GtCommand. Defaults to GTCOMMAND_IP.
             port (int, optional): port of GtCommand. Defaults to GTCOMMAND_PORT.
-            ts_hit_threshold(int, optional): Maximal distance coord to trainswitch to be considered valid hit. Defaults to TS_HIT_THRESHOLD.
+            ts_hit_threshold(int, optional): Maximal distance coord to trainswitch to be considered valid hit. Defaults to 35.
         """
         self.graph_db = GraphDbApi()
-        self.current_edge: Edge
         self.ts_coords: np.ndarray
         self.ts_labels: np.ndarray
         self.ip: str = ip
@@ -59,6 +58,25 @@ class _InnerGtCommandSubject(Subject):
 
         self._noise_buffer = np.empty((3, 3), dtype=np.float32)
         self._median_buffer = np.empty((median_kernel_size, 3), dtype=np.float32)
+
+    def set_next_ts(self, edge_id: str) -> None:
+        """Set coordinates and label of following node after this edge.
+
+        Args:
+            edge_id (str): edge_id
+        """
+        if edge_id is not None:
+            weiche = SwitchItem.WEICHE.name
+            cmd = f"""
+            MATCH ({weiche})-[r]->(n:{weiche})\
+            WHERE r.edge_id='{edge_id}'\
+            RETURN n.node_id, n.x, n.y, n.z
+            """
+            df = self.graph_db.run_query(cmd)
+            self.ts_coords = df[["n.x", "n.y", "n.z"]].to_numpy().astype(np.float32)
+            if IGNORE_Z_AXIS:
+                self.ts_coords[:, 2] = 0
+            self.ts_labels = df["n.node_id"].to_numpy()
 
     def _filter_coord(
         self, coord: np.ndarray, noise_filter_threshold: int
@@ -88,12 +106,12 @@ class _InnerGtCommandSubject(Subject):
 
             ds = line_string.split(",")
             coord = np.array([ds[4], ds[5], ds[6]], dtype=np.float32)
-            if IGNORE_Z_AXIS:
-                coord[2] = 0
             filtered_coord = self._filter_coord(coord, noise_filter_threshold)
             if filtered_coord is not None and not np.any(filtered_coord == last_coord):
-                self.notify(self.coords_observers, filtered_coord)
                 self.notify(self.measure_observers, filtered_coord)
+                if IGNORE_Z_AXIS:
+                    filtered_coord[2] = 0
+                self.notify(self.coords_observers, filtered_coord)
                 if self.ts_hit_observers:
                     hit_labels = get_track_switches_hit(
                         self.ts_labels,
@@ -102,7 +120,7 @@ class _InnerGtCommandSubject(Subject):
                         self.ts_hit_threshold,
                     )
                     last_coord = filtered_coord
-                    if not np.any(ts_last_hit == hit_labels):
+                    if not np.any(ts_last_hit == hit_labels) and hit_labels.size > 0:
                         self.notify(self.ts_hit_observers, hit_labels)
                         ts_last_hit = hit_labels
 

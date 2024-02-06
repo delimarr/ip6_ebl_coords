@@ -1,4 +1,5 @@
 """Constants, server config."""
+from os.path import abspath
 
 # neo4j config
 NEO4J_URI_LOCAL = "bolt://localhost:7687"
@@ -20,4 +21,4 @@ CPS: int = 30
 CALLBACK_DT: int = 1000 // CPS
 
 # zone dump file
-ZONE_FILE: str = "zone_dump.json"
+ZONE_FILE: str = str(abspath("./zone_data/zone_dump.json"))

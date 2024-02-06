@@ -3,12 +3,13 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict
-from os.path import abspath, join
+from os.path import exists
 from typing import TYPE_CHECKING
 
 from PyQt6.QtWidgets import QListWidgetItem, QPushButton
 
 from ebl_coords.backend.constants import ZONE_FILE
+from ebl_coords.backend.observable.ts_hit_observer import TsHitObserver
 from ebl_coords.decorators import override
 from ebl_coords.frontend.custom_widgets import ClickableLabel, CustomZoneContainer
 from ebl_coords.frontend.editor import Editor
@@ -33,7 +34,6 @@ class MapEditor(Editor):
         """
         super().__init__(main_window)
         self.selected_ts: MapTsTopopoint | None = None
-        self.path = abspath("./ebl_coords/frontend/zone_data/")
 
         self.map_label = ClickableLabel()
         self.map_label.setObjectName("map_label")
@@ -42,17 +42,29 @@ class MapEditor(Editor):
 
         self.ui.map_zone_speichern_btn.released.connect(self.save)
         self.ui.map_zone_neu_btn.released.connect(self.reset)
+        self.ui.map_position_CBox.currentIndexChanged.connect(self._map_pos_changed)
 
         self.zone = Zone(name="", block_size=41, width=0, height=0, switches={})
         self.zone_maker = ZoneMaker(self.map_label, block_size=self.zone.block_size)
         self.fill_list()
         self.fill_combobox()
-        self.load_json()
+        if exists(ZONE_FILE):
+            self.load_json()
+
+        self.ts_hit_observer = TsHitObserver(
+            command_queue=self.main_window.command_queue, ui=self.ui
+        )
+        self.gtcommand.attach(self.ts_hit_observer)
+
+    def _map_pos_changed(self) -> None:
+        """Invoke update of gtcommand subject on QCombobox change."""
+        edge_id = self.ui.map_position_CBox.currentData()
+        self.main_window.gtcommand.set_next_ts(edge_id=edge_id)
 
     def load_json(self) -> None:
         """Create scene from a json file."""
         old_switches = self.zone.switches
-        with open(join(self.path, ZONE_FILE), encoding="utf-8") as fd:
+        with open(ZONE_FILE, encoding="utf-8") as fd:
             zone_dict = json.load(fd)
             map_ts_dict = zone_dict["switches"]
             zone_dict["switches"] = {}
@@ -125,9 +137,8 @@ class MapEditor(Editor):
     def fill_combobox(self) -> None:
         """Clear and fill position combobox."""
         self.ui.map_position_CBox.clear()
-        self.ui.map_position_CBox.addItems(
-            map(lambda e: e[1], self.graph_db.edges_tostring())
-        )
+        for guid, name in self.graph_db.edges_tostring():
+            self.ui.map_position_CBox.addItem(name, guid)
 
     @override
     def reset(self) -> None:
@@ -148,7 +159,7 @@ class MapEditor(Editor):
             self.zone.width = int(width)
             self.zone.height = int(height)
             # write to file
-            with open(join(self.path, ZONE_FILE), "w", encoding="utf-8") as fd:
+            with open(ZONE_FILE, "w", encoding="utf-8") as fd:
                 json.dump(asdict(self.zone), fd, indent=4)
             self._draw()
 

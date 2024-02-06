@@ -1,7 +1,6 @@
 """Observer in order to measure trainswitches."""
 from __future__ import annotations
 
-from queue import Queue
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -14,6 +13,8 @@ from ebl_coords.graph_db.data_elements.edge_relation_enum import EdgeRelation
 from ebl_coords.graph_db.data_elements.switch_item_enum import SwitchItem
 
 if TYPE_CHECKING:
+    from queue import Queue
+
     from ebl_coords.backend.command.base import Command
     from ebl_coords.backend.observable.gtcommand_subject import GtCommandSubject
     from ebl_coords.frontend.main_gui import Ui_MainWindow
@@ -59,7 +60,7 @@ class TsMeasureObserver(Observer):
             weiche = SwitchItem.WEICHE.name
             x, y, z = ts_coord
             cmd = f"""
-            MATCH(n1:WEICHE{{node_id:'{self.selected_ts}'}})-[:{double_vertex}]->(n2:{weiche})\
+            MATCH(n1:{weiche}{{node_id:'{self.selected_ts}'}})-[:{double_vertex}]->(n2:{weiche})\
             SET n1.x = '{x}'\
             SET n2.x = '{x}'\
             SET n1.y = '{y}'\

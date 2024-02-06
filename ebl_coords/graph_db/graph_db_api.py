@@ -1,7 +1,6 @@
 """Module to interact with neo4j."""
 from os import environ
 from typing import List, Tuple
-from uuid import uuid4
 
 import pandas as pd
 from neo4j import GraphDatabase
@@ -46,27 +45,23 @@ class _InnerApi:
         """Deletes all data on DB."""
         self.session.run(drop_db())
 
-    def generate_guid(self) -> str:
-        """Generate a random guid."""
-        return "guid_" + str(uuid4()).partition("-")[0]
-
     def edges_tostring(self) -> List[Tuple[str, str]]:
         r"""Return all non-doublevertex edges in db as string.
 
         Returns:
-            List[Tuple[str, str]]: list of: (guid, edge string: bpk1_number1\trelation\tbpk2_number2)
+            List[Tuple[str, str]]: list of: (guid edge, edge string: bpk1_number1\trelation\tbpk2_number2)
         """
         edges = []
         for relation in EdgeRelation:
             if relation == EdgeRelation.DOUBLE_VERTEX:
                 continue
-            cmd = f"MATCH (n1)-[:{relation.name}]->(n2) RETURN n1.bhf, n1.name, n1.node_id, n2.bhf, n2.name"
+            cmd = f"MATCH (n1)-[r:{relation.name}]->(n2) RETURN n1.bhf, n1.name, n1.node_id, n2.bhf, n2.name, r.edge_id"
             df = self.run_query(cmd)
             df.sort_values(by=["n1.bhf", "n1.name"], inplace=True)
             if df.size > 0:
                 for _, row in df.iterrows():
                     edge = f"{row['n1.bhf']}_{row['n1.name']}\t{relation.value}\t{row['n2.bhf']}_{row['n2.name']}"
-                    edges.append((row["n1.node_id"], edge))
+                    edges.append((row["r.edge_id"], edge))
         return edges
 
 

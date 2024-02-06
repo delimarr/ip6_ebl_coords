@@ -12,8 +12,8 @@ from ebl_coords.frontend.editor import Editor
 from ebl_coords.graph_db.data_elements.bpk_enum import Bpk
 from ebl_coords.graph_db.data_elements.node_dc import Node
 from ebl_coords.graph_db.data_elements.switch_item_enum import SwitchItem
-from ebl_coords.graph_db.query_generator import double_node, get_double_nodes
-from ebl_coords.graph_db.query_generator import update_double_nodes
+from ebl_coords.graph_db.query_generator import double_node, generate_guid
+from ebl_coords.graph_db.query_generator import get_double_nodes, update_double_nodes
 
 if TYPE_CHECKING:
     from ebl_coords.main import MainWindow
@@ -64,7 +64,7 @@ class WeichenEditor(Editor):
         bpk = self.ui.weichen_bhf_txt.text()
         if bpk and dcc and ts_number:
             node = Node(
-                id=self.graph_db.generate_guid(),
+                id=generate_guid(),
                 ecos_id=dcc,
                 switch_item=SwitchItem.WEICHE,
                 ts_number=ts_number,

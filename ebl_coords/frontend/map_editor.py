@@ -108,7 +108,7 @@ class MapEditor(Editor):
         self.ui.map_weichen_list.setItemWidget(item, zone_container)
 
     def fill_list(self) -> None:
-        """Fill list with trainswitch buttons."""
+        """Clear and fill list with trainswitch buttons."""
         self.ui.map_weichen_list.clear()
         cmd = "MATCH (node:WEICHE) RETURN node.bhf, node.name, node.node_id"
         df = self.graph_db.run_query(cmd)[::2]
@@ -123,7 +123,7 @@ class MapEditor(Editor):
             )
 
     def fill_combobox(self) -> None:
-        """Fill position combobox."""
+        """Clear and fill position combobox."""
         self.ui.map_position_CBox.clear()
         self.ui.map_position_CBox.addItems(
             map(lambda e: e[1], self.graph_db.edges_tostring())

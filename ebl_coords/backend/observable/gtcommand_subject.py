@@ -11,6 +11,7 @@ from ebl_coords.backend.constants import GTCOMMAND_IP, GTCOMMAND_PORT, IGNORE_Z_
 from ebl_coords.backend.observable.subject import Subject
 from ebl_coords.backend.transform_data import get_tolerance_mask, get_track_switches_hit
 from ebl_coords.decorators import override
+from ebl_coords.graph_db.data_elements.edge_dc import Edge
 from ebl_coords.graph_db.graph_db_api import GraphDbApi
 
 if TYPE_CHECKING:
@@ -38,6 +39,7 @@ class _InnerGtCommandSubject(Subject):
             ts_hit_threshold(int, optional): Maximal distance coord to trainswitch to be considered valid hit. Defaults to TS_HIT_THRESHOLD.
         """
         self.graph_db = GraphDbApi()
+        self.current_edge: Edge
         self.ts_coords: np.ndarray
         self.ts_labels: np.ndarray
         self.ip: str = ip

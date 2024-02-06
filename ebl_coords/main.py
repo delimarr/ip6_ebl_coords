@@ -5,7 +5,6 @@ import sys
 from queue import Queue
 from typing import TYPE_CHECKING
 
-import pandas as pd
 from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QApplication, QMainWindow
 
@@ -38,13 +37,11 @@ class MainWindow(QMainWindow):  # type: ignore
 
         self.command_queue: Queue[Command] = Queue()
 
-        self.ts_df: pd.DataFrame
-
         self.gtcommand = GtCommandSubject()
 
+        self.map_editor = MapEditor(self)
         self.strecken_editor = StreckenEditor(self)
         self.weichen_editor = WeichenEditor(self)
-        self.map_editor = MapEditor(self)
 
         self.show()
 

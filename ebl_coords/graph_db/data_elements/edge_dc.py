@@ -9,6 +9,7 @@ from ebl_coords.graph_db.data_elements.node_dc import Node
 class Edge:
     """A single directional edge."""
 
+    id: str
     source: Node
     dest: Node
     relation: EdgeRelation

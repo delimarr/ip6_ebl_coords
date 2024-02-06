@@ -1,10 +1,17 @@
 """Get query to generate double nodes and eges in neo4j."""
-from typing import Tuple
+from __future__ import annotations
+
+from uuid import uuid4
 
 from ebl_coords.graph_db.data_elements.edge_dc import Edge
 from ebl_coords.graph_db.data_elements.edge_relation_enum import EdgeRelation
 from ebl_coords.graph_db.data_elements.node_dc import Node
 from ebl_coords.graph_db.data_elements.switch_item_enum import SwitchItem
+
+
+def generate_guid() -> str:
+    """Generate a random guid."""
+    return "guid_" + str(uuid4()).partition("-")[0]
 
 
 def single_node(node: Node) -> str:
@@ -34,7 +41,7 @@ def single_node(node: Node) -> str:
     )
 
 
-def double_node(template_node: Node) -> Tuple[str, Tuple[Node, Node]]:
+def double_node(template_node: Node) -> tuple[str, tuple[Node, Node]]:
     """Create query for bidirectional double node.
 
     Args:
@@ -47,7 +54,13 @@ def double_node(template_node: Node) -> Tuple[str, Tuple[Node, Node]]:
     node1.id = node1.id + "_0"
     node2 = Node(**template_node.__dict__)
     node2.id = node2.id + "_1"
-    edge = Edge(node1, node2, EdgeRelation.DOUBLE_VERTEX, distance=0)
+    edge = Edge(
+        id=generate_guid(),
+        source=node1,
+        dest=node2,
+        relation=EdgeRelation.DOUBLE_VERTEX,
+        distance=0,
+    )
 
     node1_cmd = single_node(node1)
     node2_cmd = single_node(node2)
@@ -72,7 +85,7 @@ def single_edge(edge: Edge) -> str:
     cmd = f"""\
         MATCH(source:{edge.source.switch_item.name}{{node_id: '{edge.source.id}'}})\
         MATCH(dest:{edge.dest.switch_item.name}{{node_id: '{edge.dest.id}'}})\
-        CREATE(source)-[:{edge.relation.name}{{distance: {edge.distance}, target: '{edge.target.name}'}}]->(dest);\
+        CREATE(source)-[:{edge.relation.name}{{distance: {edge.distance}, target: '{edge.target.name}', edge_id: '{edge.id}'}}]->(dest);\
     """.replace(
         " ", ""
     )
@@ -88,6 +101,7 @@ def bidirectional_edge(template_edge: Edge) -> str:
     Returns:
         str : query call
     """
+    edge_id = template_edge.id
     source = template_edge.source
     dest = template_edge.dest
     distance = template_edge.distance
@@ -96,8 +110,8 @@ def bidirectional_edge(template_edge: Edge) -> str:
     cmd = f"""\
         MATCH(source:{source.switch_item.name}{{node_id: '{source.id}'}})
         MATCH(dest:{dest.switch_item.name}{{node_id: '{dest.id}'}})
-        CREATE(source)-[:{relation}{{distance: {distance}}}]->(dest)
-        CREATE(dest)-[:{relation}{{distance: {distance}}}]->(source)
+        CREATE(source)-[:{relation}{{distance: {distance}, target: '{relation}', edge_id: '{edge_id}_0'}}]->(dest)
+        CREATE(dest)-[:{relation}{{distance: {distance}, target: '{relation}', edge_id: '{edge_id}_1'}}]->(source)
     """.replace(
         " ", ""
     )

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 from ebl_coords.backend.command.db_cmd import DbCommand
-from ebl_coords.backend.command.gui_cmd import StatusBarCommand
+from ebl_coords.backend.command.gui_cmd import SetTextCommand, StatusBarCommand
 from ebl_coords.backend.observable.observer import Observer
 from ebl_coords.decorators import override
 from ebl_coords.graph_db.data_elements.edge_relation_enum import EdgeRelation
@@ -71,6 +71,11 @@ class TsMeasureObserver(Observer):
             self.command_queue.put(
                 StatusBarCommand(
                     content=f"Weiche bei: ({x}, {y}, {z}) eingemessen.", context=self.ui
+                )
+            )
+            self.command_queue.put(
+                SetTextCommand(
+                    content=f"({x}, {y}, {z})", context=self.ui.weichen_coord_label
                 )
             )
             return

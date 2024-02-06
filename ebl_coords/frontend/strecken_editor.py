@@ -16,7 +16,7 @@ from ebl_coords.graph_db.data_elements.edge_relation_enum import TRAINRAILS
 from ebl_coords.graph_db.data_elements.edge_relation_enum import EdgeRelation
 from ebl_coords.graph_db.data_elements.node_dc import Node
 from ebl_coords.graph_db.data_elements.switch_item_enum import SwitchItem
-from ebl_coords.graph_db.query_generator import single_edge
+from ebl_coords.graph_db.query_generator import generate_guid, single_edge
 
 if TYPE_CHECKING:
     from ebl_coords.main import MainWindow
@@ -101,6 +101,7 @@ class StreckenEditor(Editor):
         self.ui.strecken_list.clear()
         self._fill_list()
         self._fill_comboboxes()
+        self.main_window.map_editor.fill_combobox()
 
     @override
     def save(self) -> None:
@@ -109,7 +110,9 @@ class StreckenEditor(Editor):
         bhf2, name2, relation2 = self.ui.strecken_comboBox_b.currentText().split("\t")
         n1 = self._get_node(bhf1, name1, relation1)
         n2 = self._get_node(bhf2, name2, relation2)
+        guid = generate_guid()
         edge1 = Edge(
+            id=f"{guid}_0",
             source=n1,
             dest=n2,
             relation=EDGE_RELATION_TO_ENUM[relation1],
@@ -117,6 +120,7 @@ class StreckenEditor(Editor):
             distance=0,
         )
         edge2 = Edge(
+            id=f"{guid}_1",
             source=n2,
             dest=n1,
             relation=EDGE_RELATION_TO_ENUM[relation2],
@@ -140,7 +144,7 @@ class StreckenEditor(Editor):
         relation = EDGE_RELATION_TO_ENUM[relation].name
         cmd = f"""\
             MATCH (a:{weiche})-[r:{relation}]->(b:{weiche})\
-            WHERE a.node_id = '{custom_btn.guid}'\
+            WHERE r.edge_id = '{custom_btn.guid}'\
             DELETE r;\
         """
         self.graph_db.run_query(cmd)

@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 from PyQt6.QtWidgets import QListWidgetItem, QPushButton
 
+from ebl_coords.backend.command.gui_cmd import DrawOccupiedNetCommand
 from ebl_coords.backend.constants import BLOCK_SIZE, ZONE_FILE
 from ebl_coords.backend.observable.ecos_oberver import EcosObserver
 from ebl_coords.backend.observable.ts_hit_observer import TsHitObserver
@@ -19,6 +20,7 @@ from ebl_coords.frontend.map_data_elements.zone_dc import Zone
 from ebl_coords.frontend.net_maker import NetMaker
 from ebl_coords.graph_db.data_elements.edge_relation_enum import EDGE_RELATION_TO_ENUM
 from ebl_coords.graph_db.data_elements.edge_relation_enum import EdgeRelation
+from ebl_coords.graph_db.data_elements.switch_item_enum import SwitchItem
 
 if TYPE_CHECKING:
     from ebl_coords.main import MainWindow
@@ -34,27 +36,30 @@ class MapEditor(Editor):
             main_window (MainWindow): main_window
         """
         super().__init__(main_window)
-        self.ecos_df = self.main_window.ecos_df
+        self.ts_hit_observer: TsHitObserver
+        self.ecos_oberver: EcosObserver
+
         self.selected_ts: MapTsTopopoint | None = None
 
         self._connect_ui_elements()
 
-        self.zone = Zone(
+        self.zone: Zone = Zone(
             name="my_zone",
             block_size=BLOCK_SIZE,
             width=self.ui.map_zone_width.value(),
             height=self.ui.map_zone_height.value(),
             switches={},
         )
-        self.net_maker = NetMaker(self.map_label, block_size=self.zone.block_size)
+        self.net_maker: NetMaker = NetMaker(
+            self.map_label, block_size=self.zone.block_size
+        )
         self.fill_list()
         self.fill_combobox()
         if exists(ZONE_FILE):
             self.load_json()
 
-        self._register_observers()
-
     def _connect_ui_elements(self) -> None:
+        """Make map label and connect events."""
         self.map_label = ClickableLabel()
         self.map_label.setObjectName("map_label")
         self.map_label.clicked.connect(self.click_map)
@@ -64,9 +69,10 @@ class MapEditor(Editor):
         self.ui.map_zone_neu_btn.released.connect(self.reset)
         self.ui.map_position_CBox.currentIndexChanged.connect(self._map_pos_changed)
 
-    def _register_observers(self) -> None:
+    def register_observers(self) -> None:
+        """Make and attach observers."""
         command_queue = self.main_window.command_queue
-        self.ts_hit_observer = TsHitObserver(command_queue=command_queue, ui=self.ui)
+        self.ts_hit_observer = TsHitObserver(self.main_window)
         self.gtcommand.attach(self.ts_hit_observer)
         self.ecos_oberver = EcosObserver(
             command_queue=command_queue, ecos_df=self.main_window.ecos_df
@@ -76,7 +82,21 @@ class MapEditor(Editor):
     def _map_pos_changed(self) -> None:
         """Invoke update of gtcommand subject on QCombobox change."""
         edge_id = self.ui.map_position_CBox.currentData()
-        self.main_window.gtcommand.set_next_ts(edge_id=edge_id)
+        if edge_id:
+            self.main_window.gtcommand.set_next_ts(edge_id=edge_id)
+
+            weiche = SwitchItem.WEICHE.name
+            cmd = f"""
+            MATCH(n1:{weiche})-[r]->(n2:{weiche})
+            WHERE r.edge_id = '{edge_id}'
+            RETURN r.edge_id AS edge_id, type(r) AS ts_source, r.target AS ts_dest, n1.node_id AS source_id, n2.node_id as dest_id
+            """
+            df = self.graph_db.run_query(cmd)
+            assert df.shape[0] == 1
+
+            self.main_window.command_queue.put(
+                DrawOccupiedNetCommand(content=df, context=self)
+            )
 
     def load_json(self) -> None:
         """Create scene from a json file."""
@@ -94,7 +114,7 @@ class MapEditor(Editor):
         self.net_maker = NetMaker(self.map_label, self.zone.block_size)
         self.ui.map_zone_width.setValue(self.zone.width)
         self.ui.map_zone_height.setValue(self.zone.height)
-        self._draw()
+        self.draw()
 
     def _add_btns_to_list(self, text: str, guid_0: str, guid_1: str) -> None:
         item = QListWidgetItem(self.ui.map_weichen_list)
@@ -178,7 +198,7 @@ class MapEditor(Editor):
             # write to file
             with open(ZONE_FILE, "w", encoding="utf-8") as fd:
                 json.dump(asdict(self.zone), fd, indent=4)
-            self._draw()
+            self.draw()
 
     def select_ts(self, guid: str, btn: QPushButton) -> None:
         """Select a train switch with its direction.
@@ -201,9 +221,9 @@ class MapEditor(Editor):
                 continue
 
             u, v = neutral.coords
-            state = self.ecos_df.loc[
-                self.ecos_df.guid == neutral.guid
-            ].state.to_numpy()[0]
+            state = self.main_window.ecos_df.loc[
+                self.main_window.ecos_df.guid == neutral.guid
+            ].state.iloc[0]
 
             if n1.coords is not None:
                 ut, vt = n1.coords
@@ -213,9 +233,7 @@ class MapEditor(Editor):
                     or n1.relation == EdgeRelation.DEFLECTION.name
                     and state == 0
                 )
-                self.net_maker.draw_grid_line(
-                    u, v, ut, vt, snap_to_border=snap_to_border
-                )
+                self.net_maker.draw_grid_line(u, v, ut, vt, snap_first=snap_to_border)
             if n2.coords is not None:
                 ut, vt = n2.coords
                 snap_to_border = (
@@ -224,9 +242,7 @@ class MapEditor(Editor):
                     or n2.relation == EdgeRelation.DEFLECTION.name
                     and state == 0
                 )
-                self.net_maker.draw_grid_line(
-                    u, v, ut, vt, snap_to_border=snap_to_border
-                )
+                self.net_maker.draw_grid_line(u, v, ut, vt, snap_first=snap_to_border)
 
     def _draw_connect_ts(self) -> None:
         double_vertex = EdgeRelation.DOUBLE_VERTEX.name
@@ -244,11 +260,10 @@ class MapEditor(Editor):
                     if ts1.coords and ts2.coords:
                         u1, v1 = ts1.coords
                         u2, v2 = ts2.coords
-                        self.net_maker.draw_grid_line(
-                            u1, v1, u2, v2, snap_to_border=False
-                        )
+                        self.net_maker.draw_grid_line(u1, v1, u2, v2, snap_first=False)
 
-    def _draw(self) -> None:
+    def draw(self) -> None:
+        """Draw the net."""
         # draw colored line, based on train position. Use ecos lookup tabel and self.ts_hit_observer.result (current ts)
         self.net_maker.draw_grid(self.zone.width, self.zone.height)
 
@@ -269,4 +284,4 @@ class MapEditor(Editor):
             coords = self.net_maker.get_grid_coords(position.x(), position.y())
             self.selected_ts.coords = (int(coords[0]), int(coords[1]))
             self.selected_ts = None
-            self._draw()
+            self.draw()

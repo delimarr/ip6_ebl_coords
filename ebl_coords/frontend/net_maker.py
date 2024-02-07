@@ -137,7 +137,8 @@ class NetMaker:
         v1: int,
         u2: int,
         v2: int,
-        snap_to_border: bool,
+        snap_first: bool,
+        snap_second: bool = False,
         color: QColor = LINE_HEX,
         width: int = GRID_LINE_WIDTH,
     ) -> None:
@@ -148,22 +149,27 @@ class NetMaker:
             v1 (int): Point1 v-coordinate
             u2 (int): Point2 u-coordinate
             v2 (int): Point2 v-coordinate
-            snap_to_border (Tuple[bool, bool]): snap points to rectangular border
+            snap_first (bool): snap firt point to border flag.
+            snap_second (bool, optional): snap second point to border flag. Defaults to False.
             color (QColor, optional): color. Defaults to LINE_HEX.
             width (int): line width in pixel. Defaults to GRID_LINE_WIDTH.
         """
-        x1: int
-        y1: int
-        if snap_to_border:
+        x1 = u1 * self.block_size + self.block_size // 2
+        y1 = v1 * self.block_size + self.block_size // 2
+        x2 = u2 * self.block_size + self.block_size // 2
+        y2 = v2 * self.block_size + self.block_size // 2
+
+        if snap_first:
             border_coords = self.get_boundary_point(u1, v1, u2, v2)
             if border_coords:
                 x1, y1 = border_coords
-        else:
-            x1 = u1 * self.block_size + self.block_size // 2
-            y1 = v1 * self.block_size + self.block_size // 2
+        if snap_second:
+            border_coords = self.get_boundary_point(  # pylint: disable=W1114
+                u2, v2, u1, v1
+            )
+            if border_coords:
+                x2, y2 = border_coords
 
-        x2 = u2 * self.block_size + self.block_size // 2
-        y2 = v2 * self.block_size + self.block_size // 2
         self.draw_line(x1, y1, x2, y2, color, width)
 
     def _get_block_border_segments(

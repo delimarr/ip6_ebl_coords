@@ -79,6 +79,7 @@ class WeichenEditor(Editor):
                 node.id = self.selected_ts
                 cmd = update_double_nodes(node)
             self.graph_db.run_query(cmd)
+            self.main_window.set_ecos_df()
             self.main_window.map_editor.fill_list()
             self.reset()
 

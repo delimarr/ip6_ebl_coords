@@ -65,18 +65,17 @@ class _InnerGtCommandSubject(Subject):
         Args:
             edge_id (str): edge_id
         """
-        if edge_id is not None:
-            weiche = SwitchItem.WEICHE.name
-            cmd = f"""
-            MATCH ({weiche})-[r]->(n:{weiche})\
-            WHERE r.edge_id='{edge_id}'\
-            RETURN n.node_id, n.x, n.y, n.z
-            """
-            df = self.graph_db.run_query(cmd)
-            self.ts_coords = df[["n.x", "n.y", "n.z"]].to_numpy().astype(np.float32)
-            if IGNORE_Z_AXIS:
-                self.ts_coords[:, 2] = 0
-            self.ts_labels = df["n.node_id"].to_numpy()
+        weiche = SwitchItem.WEICHE.name
+        cmd = f"""
+        MATCH ({weiche})-[r]->(n:{weiche})\
+        WHERE r.edge_id='{edge_id}'\
+        RETURN n.node_id, n.x, n.y, n.z
+        """
+        df = self.graph_db.run_query(cmd)
+        self.ts_coords = df[["n.x", "n.y", "n.z"]].to_numpy().astype(np.float32)
+        if IGNORE_Z_AXIS:
+            self.ts_coords[:, 2] = 0
+        self.ts_labels = df["n.node_id"].to_numpy()
 
     def _filter_coord(
         self, coord: np.ndarray, noise_filter_threshold: int

@@ -22,4 +22,4 @@ ignore-imports=yes
 min-similarity-lines=7
 
 [DESIGN]
-max-locals = 16
+max-locals = 20

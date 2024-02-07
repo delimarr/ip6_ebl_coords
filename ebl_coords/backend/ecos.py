@@ -36,11 +36,12 @@ def get_ecos_df(config: Dict[str, Any]) -> pd.DataFrame:
             skt.settimeout(0.5)
             skt.connect((ip, port))
 
-            # hardcoded in api: ausgeben kompletter liste schaltartikel
+            # hardcoded in api: ausgeben kompletter Liste Schaltartikel
             skt.sendall(b"queryObjects(11)" + b"\n")
 
             buffer = b""
 
+            # check delimiter
             while b"<END 0 (OK)>" not in buffer:
                 buffer += skt.recv(1024)
 
@@ -49,6 +50,7 @@ def get_ecos_df(config: Dict[str, Any]) -> pd.DataFrame:
 
             for ecos_id in ecos_ids:
                 skt.sendall(f"get({ecos_id})".encode() + b"\n")
+                # TO DO clean up 10_000 recv
                 data = skt.recv(10_000).decode("utf-8")
                 switch_device = data.split("\r\n")[1:-2]
 
@@ -59,6 +61,7 @@ def get_ecos_df(config: Dict[str, Any]) -> pd.DataFrame:
                     val = val[:-1]
                     d[name] = val
                 d["id"] = ecos_id
+                d["ip"] = ip
                 df_dicts.append(d)
 
     df = pd.DataFrame(df_dicts)

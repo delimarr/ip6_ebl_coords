@@ -14,6 +14,7 @@ from PyQt6.QtWidgets import QApplication, QMainWindow
 
 from ebl_coords.backend.constants import CALLBACK_DT, CONFIG_JSON
 from ebl_coords.backend.ecos import get_ecos_df, load_config
+from ebl_coords.backend.observable.ecos_subject import EcosSubject
 from ebl_coords.backend.observable.gtcommand_subject import GtCommandSubject
 from ebl_coords.frontend.main_gui import Ui_MainWindow
 from ebl_coords.frontend.map_editor import MapEditor
@@ -42,8 +43,6 @@ class MainWindow(QMainWindow):  # type: ignore
 
         self.command_queue: Queue[Command] = Queue()
 
-        self.gtcommand = GtCommandSubject()
-
         self.bpks, self.ecos_config = load_config(CONFIG_JSON)
         self.ecos_df: pd.DataFrame
         try:
@@ -64,7 +63,20 @@ class MainWindow(QMainWindow):  # type: ignore
                 df.guid.loc[
                     (df["name1"] == row.bpk) & (df["addr"] == int(row.dcc))
                 ] = row.node_id
+
+            df.insert(df.shape[1], column="ip", value=np.nan)
+            k = -1
+            ips = list(self.ecos_config["bpk_ip"].values())[1:]
+            for i, row in df.iterrows():
+                if row.id == 20_000:
+                    k += 1
+                df.loc[i, "ip"] = ips[k]
+
             self.ecos_df = df.dropna()
+
+        self.gtcommand = GtCommandSubject()
+        self.ecos = EcosSubject(self.ecos_config, self.ecos_df["id"])
+        self.ecos.start_record()
 
         self.map_editor = MapEditor(self)
         self.strecken_editor = StreckenEditor(self)

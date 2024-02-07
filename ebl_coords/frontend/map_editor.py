@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 from PyQt6.QtWidgets import QListWidgetItem, QPushButton
 
 from ebl_coords.backend.constants import BLOCK_SIZE, ZONE_FILE
+from ebl_coords.backend.observable.ecos_oberver import EcosObserver
 from ebl_coords.backend.observable.ts_hit_observer import TsHitObserver
 from ebl_coords.decorators import override
 from ebl_coords.frontend.custom_widgets import ClickableLabel, CustomZoneContainer
@@ -36,14 +37,7 @@ class MapEditor(Editor):
         self.ecos_df = self.main_window.ecos_df
         self.selected_ts: MapTsTopopoint | None = None
 
-        self.map_label = ClickableLabel()
-        self.map_label.setObjectName("map_label")
-        self.map_label.clicked.connect(self.click_map)
-        self.ui.map_right.layout().addWidget(self.map_label)
-
-        self.ui.map_zone_speichern_btn.released.connect(self.save)
-        self.ui.map_zone_neu_btn.released.connect(self.reset)
-        self.ui.map_position_CBox.currentIndexChanged.connect(self._map_pos_changed)
+        self._connect_ui_elements()
 
         self.zone = Zone(
             name="my_zone",
@@ -58,10 +52,26 @@ class MapEditor(Editor):
         if exists(ZONE_FILE):
             self.load_json()
 
-        self.ts_hit_observer = TsHitObserver(
-            command_queue=self.main_window.command_queue, ui=self.ui
-        )
+        self._register_observers()
+
+    def _connect_ui_elements(self) -> None:
+        self.map_label = ClickableLabel()
+        self.map_label.setObjectName("map_label")
+        self.map_label.clicked.connect(self.click_map)
+        self.ui.map_right.layout().addWidget(self.map_label)
+
+        self.ui.map_zone_speichern_btn.released.connect(self.save)
+        self.ui.map_zone_neu_btn.released.connect(self.reset)
+        self.ui.map_position_CBox.currentIndexChanged.connect(self._map_pos_changed)
+
+    def _register_observers(self) -> None:
+        command_queue = self.main_window.command_queue
+        self.ts_hit_observer = TsHitObserver(command_queue=command_queue, ui=self.ui)
         self.gtcommand.attach(self.ts_hit_observer)
+        self.ecos_oberver = EcosObserver(
+            command_queue=command_queue, ecos_df=self.main_window.ecos_df
+        )
+        self.main_window.ecos.attach(self.ecos_oberver)
 
     def _map_pos_changed(self) -> None:
         """Invoke update of gtcommand subject on QCombobox change."""
@@ -189,14 +199,34 @@ class MapEditor(Editor):
             n2 = switches[i + 2]
             if neutral.coords is None:
                 continue
-            # TO DO, modify u, v with ecos
+
             u, v = neutral.coords
+            state = self.ecos_df.loc[
+                self.ecos_df.guid == neutral.guid
+            ].state.to_numpy()[0]
+
             if n1.coords is not None:
                 ut, vt = n1.coords
-                self.net_maker.draw_grid_line(u, v, ut, vt)
+                snap_to_border = (
+                    n1.relation == EdgeRelation.STRAIGHT.name
+                    and state == 1
+                    or n1.relation == EdgeRelation.DEFLECTION.name
+                    and state == 0
+                )
+                self.net_maker.draw_grid_line(
+                    u, v, ut, vt, snap_to_border=snap_to_border
+                )
             if n2.coords is not None:
                 ut, vt = n2.coords
-                self.net_maker.draw_grid_line(u, v, ut, vt)
+                snap_to_border = (
+                    n2.relation == EdgeRelation.STRAIGHT.name
+                    and state == 1
+                    or n2.relation == EdgeRelation.DEFLECTION.name
+                    and state == 0
+                )
+                self.net_maker.draw_grid_line(
+                    u, v, ut, vt, snap_to_border=snap_to_border
+                )
 
     def _draw_connect_ts(self) -> None:
         double_vertex = EdgeRelation.DOUBLE_VERTEX.name
@@ -214,7 +244,9 @@ class MapEditor(Editor):
                     if ts1.coords and ts2.coords:
                         u1, v1 = ts1.coords
                         u2, v2 = ts2.coords
-                        self.net_maker.draw_grid_line(u1, v1, u2, v2)
+                        self.net_maker.draw_grid_line(
+                            u1, v1, u2, v2, snap_to_border=False
+                        )
 
     def _draw(self) -> None:
         # draw colored line, based on train position. Use ecos lookup tabel and self.ts_hit_observer.result (current ts)

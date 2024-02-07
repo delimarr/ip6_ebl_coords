@@ -31,6 +31,7 @@ CONFIG_JSON: str = str(abspath("./ebl_config.json"))
 # Net Config, always odd number
 BLOCK_SIZE: int = 41
 BLOCK_SIZE = BLOCK_SIZE // 2 * 2 + 1
+GRID_LINE_WIDTH: int = 3
 
 # domino colors
 GRAY_HEX = QColor("#8F8F8F")

@@ -56,13 +56,13 @@ class TsHitObserver(Observer):
             next_edge_id = df.edge_id[0]
         else:
             if temp_ecos == 0:
-                next_edge_id = df.loc[df.ts_exit == EdgeRelation.STRAIGHT.name].edge_id[
-                    0
-                ]
+                next_edge_id = df.loc[
+                    df.ts_exit == EdgeRelation.STRAIGHT.name
+                ].edge_id.values[0]
             elif temp_ecos == 1:
                 next_edge_id = df.loc[
                     df.ts_exit == EdgeRelation.DEFLECTION.name
-                ].edge_id[0]
+                ].edge_id.values[0]
 
         self.command_queue.put(
             SetComboBoxCommand(content=next_edge_id, context=self.ui.map_position_CBox)

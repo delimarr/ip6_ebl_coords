@@ -80,5 +80,11 @@ class TsMeasureObserver(Observer):
                 )
             )
             return
+        self.command_queue.put(
+            StatusBarCommand(
+                content=f"Bitte warten. Weiche wird eingemessen: {self.index}/{self.points_needed}",
+                context=self.ui,
+            )
+        )
         self.buffer[self.index, :] = self.result
         self.index += 1

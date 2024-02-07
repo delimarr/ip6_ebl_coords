@@ -106,5 +106,4 @@ class WeichenEditor(Editor):
                 command_queue=self.main_window.command_queue,
                 ui=self.ui,
             )
-            self.ui.statusbar.showMessage("Bitte Warten. Weiche wird eingemessen.")
             self.gtcommand.attach(ts_measure_observer)

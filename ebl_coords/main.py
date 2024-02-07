@@ -1,14 +1,19 @@
 """Start the EBL-GUI application."""
 from __future__ import annotations
 
+import socket
 import sys
+import warnings
 from queue import Queue
 from typing import TYPE_CHECKING
 
+import numpy as np
+import pandas as pd
 from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QApplication, QMainWindow
 
-from ebl_coords.backend.constants import CALLBACK_DT
+from ebl_coords.backend.constants import CALLBACK_DT, CONFIG_JSON
+from ebl_coords.backend.ecos import get_ecos_df, load_config
 from ebl_coords.backend.observable.gtcommand_subject import GtCommandSubject
 from ebl_coords.frontend.main_gui import Ui_MainWindow
 from ebl_coords.frontend.map_editor import MapEditor
@@ -38,6 +43,28 @@ class MainWindow(QMainWindow):  # type: ignore
         self.command_queue: Queue[Command] = Queue()
 
         self.gtcommand = GtCommandSubject()
+
+        self.bpks, self.ecos_config = load_config(CONFIG_JSON)
+        self.ecos_df: pd.DataFrame
+        try:
+            self.ecos_df = get_ecos_df(self.ecos_config)
+        except socket.timeout:
+            self.ecos_df = pd.read_csv("./tmp/ecos.csv")
+            self.ecos_df = self.ecos_df.loc[self.ecos_df.protocol == "DCC"]
+            self.ecos_df = self.ecos_df.loc[self.ecos_df.name1.isin(list(self.bpks))]
+            warnings.warn("used ecos mock")
+            cmd = (
+                "MATCH (n) RETURN n.node_id AS node_id, n.ecos_id AS dcc, n.bhf AS bpk"
+            )
+            df = self.ecos_df
+            db = GraphDbApi().run_query(cmd)[::2]
+            db.bpk = '"' + db.bpk + '"'
+            df.insert(df.shape[1], column="guid", value=np.nan)
+            for _, row in db.iterrows():
+                df.guid.loc[
+                    (df["name1"] == row.bpk) & (df["addr"] == int(row.dcc))
+                ] = row.node_id
+            self.ecos_df = df.dropna()
 
         self.map_editor = MapEditor(self)
         self.strecken_editor = StreckenEditor(self)

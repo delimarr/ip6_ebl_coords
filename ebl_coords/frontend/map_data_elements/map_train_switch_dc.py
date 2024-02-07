@@ -8,7 +8,7 @@ from dataclasses_json import dataclass_json
 @dataclass_json
 @dataclass(unsafe_hash=True)
 class MapTsTopopoint:
-    """Represents a trainswitch for zone."""
+    """Represents a trainswitch point int the net."""
 
     name: str
     guid: str

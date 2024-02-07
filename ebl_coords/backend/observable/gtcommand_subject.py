@@ -27,7 +27,7 @@ class _InnerGtCommandSubject(Subject):
         noise_filter_threshold: int = 30,
         ip: str = GTCOMMAND_IP,
         port: int = GTCOMMAND_PORT,
-        ts_hit_threshold: int = 1000,
+        ts_hit_threshold: int = 35,
     ) -> None:
         """Initialize the buffer and the socket.
 
@@ -40,7 +40,7 @@ class _InnerGtCommandSubject(Subject):
         """
         self.graph_db = GraphDbApi()
         self.ts_coords: np.ndarray
-        self.ts_labels: np.ndarray
+        self.ts_labels: np.ndarray | None = None
         self.ip: str = ip
         self.port: int = port
         self.ts_hit_threshold = ts_hit_threshold
@@ -112,7 +112,7 @@ class _InnerGtCommandSubject(Subject):
                 if IGNORE_Z_AXIS:
                     filtered_coord[2] = 0
                 self.notify(self.coords_observers, filtered_coord)
-                if self.ts_hit_observers:
+                if self.ts_labels and self.ts_hit_observers:
                     hit_labels = get_track_switches_hit(
                         self.ts_labels,
                         self.ts_coords,

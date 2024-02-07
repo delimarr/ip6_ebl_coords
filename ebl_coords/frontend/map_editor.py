@@ -8,14 +8,14 @@ from typing import TYPE_CHECKING
 
 from PyQt6.QtWidgets import QListWidgetItem, QPushButton
 
-from ebl_coords.backend.constants import ZONE_FILE
+from ebl_coords.backend.constants import BLOCK_SIZE, ZONE_FILE
 from ebl_coords.backend.observable.ts_hit_observer import TsHitObserver
 from ebl_coords.decorators import override
 from ebl_coords.frontend.custom_widgets import ClickableLabel, CustomZoneContainer
 from ebl_coords.frontend.editor import Editor
 from ebl_coords.frontend.map_data_elements.map_train_switch_dc import MapTsTopopoint
 from ebl_coords.frontend.map_data_elements.zone_dc import Zone
-from ebl_coords.frontend.zone_maker import ZoneMaker
+from ebl_coords.frontend.net_maker import NetMaker
 from ebl_coords.graph_db.data_elements.edge_relation_enum import EDGE_RELATION_TO_ENUM
 from ebl_coords.graph_db.data_elements.edge_relation_enum import EdgeRelation
 
@@ -33,6 +33,7 @@ class MapEditor(Editor):
             main_window (MainWindow): main_window
         """
         super().__init__(main_window)
+        self.ecos_df = self.main_window.ecos_df
         self.selected_ts: MapTsTopopoint | None = None
 
         self.map_label = ClickableLabel()
@@ -44,8 +45,14 @@ class MapEditor(Editor):
         self.ui.map_zone_neu_btn.released.connect(self.reset)
         self.ui.map_position_CBox.currentIndexChanged.connect(self._map_pos_changed)
 
-        self.zone = Zone(name="", block_size=41, width=0, height=0, switches={})
-        self.zone_maker = ZoneMaker(self.map_label, block_size=self.zone.block_size)
+        self.zone = Zone(
+            name="my_zone",
+            block_size=BLOCK_SIZE,
+            width=self.ui.map_zone_width.value(),
+            height=self.ui.map_zone_height.value(),
+            switches={},
+        )
+        self.net_maker = NetMaker(self.map_label, block_size=self.zone.block_size)
         self.fill_list()
         self.fill_combobox()
         if exists(ZONE_FILE):
@@ -74,7 +81,7 @@ class MapEditor(Editor):
         for key, val in old_switches.items():
             if not key in self.zone.switches.keys():
                 self.zone.switches[key] = val
-        self.zone_maker = ZoneMaker(self.map_label, self.zone.block_size)
+        self.net_maker = NetMaker(self.map_label, self.zone.block_size)
         self.ui.map_zone_width.setValue(self.zone.width)
         self.ui.map_zone_height.setValue(self.zone.height)
         self._draw()
@@ -182,42 +189,43 @@ class MapEditor(Editor):
             n2 = switches[i + 2]
             if neutral.coords is None:
                 continue
+            # TO DO, modify u, v with ecos
             u, v = neutral.coords
             if n1.coords is not None:
                 ut, vt = n1.coords
-                self.zone_maker.draw_grid_line(u, v, ut, vt)
+                self.net_maker.draw_grid_line(u, v, ut, vt)
             if n2.coords is not None:
                 ut, vt = n2.coords
-                self.zone_maker.draw_grid_line(u, v, ut, vt)
+                self.net_maker.draw_grid_line(u, v, ut, vt)
 
     def _draw_connect_ts(self) -> None:
-        for relation in EdgeRelation:
-            if relation == EdgeRelation.DOUBLE_VERTEX:
-                continue
-            cmd = f"MATCH (n1)-[e:{relation.name}]->(n2) RETURN n1.node_id, n2.node_id, e.target"
-            df = self.graph_db.run_query(cmd)
-            if df.size > 0:
-                for _, row in df.iterrows():
-                    if row["e.target"] is not None:
-                        ts1 = self.zone.switches[f"{row['n1.node_id']}{relation.name}"]
-                        ts2 = self.zone.switches[
-                            f"{row['n2.node_id']}{row['e.target']}"
-                        ]
-                        if ts1.coords and ts2.coords:
-                            u1, v1 = ts1.coords
-                            u2, v2 = ts2.coords
-                            self.zone_maker.draw_grid_line(u1, v1, u2, v2)
+        double_vertex = EdgeRelation.DOUBLE_VERTEX.name
+        cmd = f"""
+        MATCH (n1)-[r]->(n2)\
+        WHERE NOT type(r) = '{double_vertex}'\
+        RETURN n1.node_id, n2.node_id, r.target AS target, type(r) AS relation
+        """
+        df = self.graph_db.run_query(cmd)
+        if df.size > 0:
+            for _, row in df.iterrows():
+                if row["target"] is not None:
+                    ts1 = self.zone.switches[f"{row['n1.node_id']}{row['relation']}"]
+                    ts2 = self.zone.switches[f"{row['n2.node_id']}{row['target']}"]
+                    if ts1.coords and ts2.coords:
+                        u1, v1 = ts1.coords
+                        u2, v2 = ts2.coords
+                        self.net_maker.draw_grid_line(u1, v1, u2, v2)
 
     def _draw(self) -> None:
         # draw colored line, based on train position. Use ecos lookup tabel and self.ts_hit_observer.result (current ts)
-        self.zone_maker.draw_grid(self.zone.width, self.zone.height)
+        self.net_maker.draw_grid(self.zone.width, self.zone.height)
 
         # draw topo points
         for ts in self.zone.switches.values():
             if ts.coords is not None:
                 u, v = ts.coords
-                self.zone_maker.draw_grid_point(u, v)
-                self.zone_maker.draw_grid_text(ts.name, u, v)
+                self.net_maker.draw_grid_point(u, v)
+                self.net_maker.draw_grid_text(ts.name, u, v)
 
         self._draw_connect_topo()
         self._draw_connect_ts()
@@ -226,7 +234,7 @@ class MapEditor(Editor):
         """Set a topo point on the map and redraw."""
         if self.selected_ts is not None:
             position = self.map_label.click_event.position()
-            coords = self.zone_maker.get_grid_coords(position.x(), position.y())
+            coords = self.net_maker.get_grid_coords(position.x(), position.y())
             self.selected_ts.coords = (int(coords[0]), int(coords[1]))
             self.selected_ts = None
             self._draw()

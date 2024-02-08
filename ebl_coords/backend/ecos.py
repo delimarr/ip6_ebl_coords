@@ -3,7 +3,10 @@ import json
 import socket
 from typing import Any, Dict, List, Tuple
 
+import numpy as np
 import pandas as pd
+
+from ebl_coords.graph_db.graph_db_api import GraphDbApi
 
 
 def load_config(config_file: str) -> Tuple[List[str], Dict[str, Any]]:
@@ -20,7 +23,7 @@ def load_config(config_file: str) -> Tuple[List[str], Dict[str, Any]]:
         return config["bpks"], config["ecos"]
 
 
-def get_ecos_df(config: Dict[str, Any]) -> pd.DataFrame:
+def get_ecos_df(config: Dict[str, Any], bpks: List[str]) -> pd.DataFrame:
     """Scrape all ecos devices for trainswitches.
 
     Args:
@@ -33,7 +36,6 @@ def get_ecos_df(config: Dict[str, Any]) -> pd.DataFrame:
     df_dicts = []
     for ip in list(config["bpk_ip"].values())[1:]:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as skt:
-            skt.settimeout(0.5)
             skt.connect((ip, port))
 
             # hardcoded in api: ausgeben kompletter Liste Schaltartikel
@@ -45,7 +47,7 @@ def get_ecos_df(config: Dict[str, Any]) -> pd.DataFrame:
             while b"<END 0 (OK)>" not in buffer:
                 buffer += skt.recv(1024)
 
-            data = skt.recv(1024).decode("utf-8")
+            data = buffer.decode("utf-8")
             ecos_ids = data.split("\r\n")[1:-2]
 
             for ecos_id in ecos_ids:
@@ -66,8 +68,13 @@ def get_ecos_df(config: Dict[str, Any]) -> pd.DataFrame:
 
     df = pd.DataFrame(df_dicts)
     df = df.loc[df.protocol == "DCC"]
-    df = df.loc[df.name1.isin(list(config["bpk_ip"].keys()))]
+    df = df.loc[df.name1.isin(bpks)]
 
-    # TO DO insert guid col
+    cmd = "MATCH (n) RETURN n.node_id AS node_id, n.ecos_id AS dcc, n.bhf AS bpk"
+    db = GraphDbApi().run_query(cmd)[::2]
+    db.bpk = '"' + db.bpk + '"'
+    df.insert(df.shape[1], column="guid", value=np.nan)
+    for _, row in db.iterrows():
+        df.guid.loc[(df["name1"] == row.bpk) & (df["addr"] == row.dcc)] = row.node_id
 
-    return df
+    return df.dropna()

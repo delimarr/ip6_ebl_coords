@@ -66,6 +66,8 @@ class OccupyNextEdgeCommand(Command):
         if self.node_id[-1] == "0":
             neutral_node_id = f"{self.node_id[:-1]}0"
             state = self.ecos_df.loc[self.ecos_df.guid == neutral_node_id].state.iloc[0]
+            state = int(state)
+            assert state in (0, 1)
             if state == 0:
                 relation = EdgeRelation.STRAIGHT.name
             else:
@@ -77,11 +79,12 @@ class OccupyNextEdgeCommand(Command):
         RETURN r.edge_id AS edge_id
         """
         df = self.graph_db.run_query(cmd)
-        assert df.shape[0] == 1
-        next_edge_id = df.edge_id.iloc[0]
+        assert df.shape[0] <= 1
+        if df.shape[0] == 1:
+            next_edge_id = df.edge_id.iloc[0]
 
-        self.command_queue.put(
-            SetComboBoxCommand(
-                content=next_edge_id, context=self.context.ui.map_position_CBox
+            self.command_queue.put(
+                SetComboBoxCommand(
+                    content=next_edge_id, context=self.context.ui.map_position_CBox
+                )
             )
-        )

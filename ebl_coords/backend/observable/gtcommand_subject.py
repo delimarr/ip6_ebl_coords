@@ -56,8 +56,8 @@ class _InnerGtCommandSubject(Subject):
         self.coords_observers: list[Observer] = []
         self.ts_hit_observers: list[Observer] = []
 
-        self._noise_buffer = np.empty((3, 3), dtype=np.float32)
-        self._median_buffer = np.empty((median_kernel_size, 3), dtype=np.float32)
+        self._noise_buffer = np.empty((3, 3), dtype=np.int32)
+        self._median_buffer = np.empty((median_kernel_size, 3), dtype=np.int32)
 
     def set_next_ts(self, edge_id: str) -> None:
         """Set coordinates and label of following node after this edge.
@@ -86,9 +86,13 @@ class _InnerGtCommandSubject(Subject):
             self._median_buffer[-1] = self._noise_buffer[1]
             if not np.isnan(self._median_buffer).any():
                 med_coord = np.median(self._median_buffer, axis=0)
-            self._median_buffer = np.roll(self._median_buffer, shift=-1)
+            self._median_buffer = np.roll(
+                self._median_buffer, shift=self._median_buffer.size - 3
+            )
 
-        self._noise_buffer = np.roll(self._noise_buffer, shift=-1)
+        self._noise_buffer = np.roll(
+            self._noise_buffer, shift=self._noise_buffer.size - 3
+        )
         return med_coord
 
     def _record(self, noise_filter_threshold: int) -> None:
@@ -104,7 +108,7 @@ class _InnerGtCommandSubject(Subject):
             line_string = line.decode("utf-8")
 
             ds = line_string.split(",")
-            coord = np.array([ds[4], ds[5], ds[6]], dtype=np.float32)
+            coord = np.array([ds[4], ds[5], ds[6]], dtype=np.int32)
             filtered_coord = self._filter_coord(coord, noise_filter_threshold)
             if filtered_coord is not None and not np.any(filtered_coord == last_coord):
                 self.notify(self.measure_observers, filtered_coord)
@@ -122,6 +126,7 @@ class _InnerGtCommandSubject(Subject):
                     if not np.any(ts_last_hit == hit_labels) and hit_labels.size > 0:
                         self.notify(self.ts_hit_observers, hit_labels)
                         ts_last_hit = hit_labels
+                        print("hit")
 
     @override
     def attach(self, observer: Observer) -> None:

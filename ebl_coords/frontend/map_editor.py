@@ -67,19 +67,16 @@ class MapEditor(Editor):
 
         self.ui.map_zone_speichern_btn.released.connect(self.save)
         self.ui.map_zone_neu_btn.released.connect(self.reset)
-        self.ui.map_position_CBox.currentIndexChanged.connect(self._map_pos_changed)
+        self.ui.map_position_CBox.currentIndexChanged.connect(self.map_pos_changed)
 
     def register_observers(self) -> None:
         """Make and attach observers."""
-        command_queue = self.main_window.command_queue
         self.ts_hit_observer = TsHitObserver(self.main_window)
         self.gtcommand.attach(self.ts_hit_observer)
-        self.ecos_oberver = EcosObserver(
-            command_queue=command_queue, ecos_df=self.main_window.ecos_df
-        )
+        self.ecos_oberver = EcosObserver(main_window=self.main_window)
         self.main_window.ecos.attach(self.ecos_oberver)
 
-    def _map_pos_changed(self) -> None:
+    def map_pos_changed(self) -> None:
         """Invoke update of gtcommand subject on QCombobox change."""
         edge_id = self.ui.map_position_CBox.currentData()
         if edge_id:
@@ -224,6 +221,7 @@ class MapEditor(Editor):
             state = self.main_window.ecos_df.loc[
                 self.main_window.ecos_df.guid == neutral.guid
             ].state.iloc[0]
+            state = int(state)
 
             if n1.coords is not None:
                 ut, vt = n1.coords

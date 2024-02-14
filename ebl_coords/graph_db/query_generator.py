@@ -131,7 +131,7 @@ def get_double_nodes(guid: str) -> str:
     weiche = SwitchItem.WEICHE.name
     vals = "n1.name, n1.bhf, n1.ecos_id, n1.x, n1.y, n1.z"
     return f"""
-    MATCH(n1:WEICHE{{node_id:'{guid}'}})-[:{double_vertex}]->(n2:{weiche}) RETURN {vals};
+    MATCH(n1:{weiche}{{node_id:'{guid}'}})-[:{double_vertex}]->(n2:{weiche}) RETURN {vals};
     """
 
 
@@ -147,7 +147,7 @@ def update_double_nodes(node: Node) -> str:
     double_vertex = EdgeRelation.DOUBLE_VERTEX.name
     weiche = SwitchItem.WEICHE.name
     return f"""
-    MATCH(n1:WEICHE{{node_id:'{node.id}'}})-[:{double_vertex}]->(n2:{weiche})\
+    MATCH(n1:{weiche}{{node_id:'{node.id}'}})-[:{double_vertex}]->(n2:{weiche})\
     SET n1.bhf = '{node.bpk.name}'\
     SET n2.bhf = '{node.bpk.name}'\
     SET n1.name = '{node.ts_number}'\

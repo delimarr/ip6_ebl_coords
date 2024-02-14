@@ -133,7 +133,7 @@ def update_double_nodes(node: Node) -> str:
     double_vertex = EdgeRelation.DOUBLE_VERTEX.name
     weiche = SwitchItem.WEICHE.name
     return f"""
-    MATCH(n1:WEICHE{{node_id:'{node.id}'}})-[:{double_vertex}]->(n2:{weiche})\
+    MATCH(n1:{weiche}{{node_id:'{node.id}'}})-[:{double_vertex}]->(n2:{weiche})\
     SET n1.bhf = '{node.bhf.name}'\
     SET n2.bhf = '{node.bhf.name}'\
     SET n1.name = '{node.name}'\

@@ -22,7 +22,13 @@ def load_config(config_file: str) -> Tuple[List[str], Dict[str, Any]]:
     """
     with open(config_file, encoding="utf-8") as fd:
         config = json.load(fd)
-        return config["bpks"], config["ecos"]
+        bpks: List[str] = config["bpks"]
+        ecos_config: Dict[str, Any] = config["ecos"]
+        if MOCK_FLG:
+            for key in ecos_config["bpk_ip"].keys():
+                ecos_config["bpk_ip"][key] = "127.0.0.1"
+                ecos_config["port"] = 42043
+        return bpks, ecos_config
 
 
 def get_ecos_df(config: Dict[str, Any], bpks: List[str]) -> pd.DataFrame:
@@ -50,10 +56,13 @@ def _add_db_guid(df: pd.DataFrame) -> pd.DataFrame:
     db = GraphDbApi().run_query(cmd)[::2]
     db.bpk = '"' + db.bpk + '"'
     df.insert(df.shape[1], column="guid", value=np.nan)
+    df.guid = df.guid.astype(object)
     for _, row in db.iterrows():
-        addr = int(df["addr"])
         dcc = int(row.dcc)
-        df.guid.loc[(df["name1"] == row.bpk) & (addr == dcc)] = row.node_id
+        idx = df.guid.loc[
+            (df["name1"] == row.bpk) & (df["addr"].astype(int) == dcc)
+        ].index
+        df.loc[idx, "guid"] = row.node_id
     return df.dropna()
 
 

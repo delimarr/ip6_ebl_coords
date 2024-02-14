@@ -83,7 +83,8 @@ class _InnerEcosSubject(Subject):
                     if match_id:
                         ecos_id = match_id.group(1)
                         self.notify(
-                            self.observers, {"id": ecos_id, "ip": ip, "state": state}
+                            self.observers,
+                            {"id": int(ecos_id), "ip": ip, "state": int(state)},
                         )
 
     def start_record(self) -> None:

@@ -1,11 +1,13 @@
 """Provide ecos scraper and config loader."""
 import json
 import socket
+import warnings
 from typing import Any, Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
 
+from ebl_coords.backend.constants import MOCK_FLG
 from ebl_coords.graph_db.graph_db_api import GraphDbApi
 
 
@@ -32,6 +34,39 @@ def get_ecos_df(config: Dict[str, Any], bpks: List[str]) -> pd.DataFrame:
     Returns:
         pd.DataFrame: result
     """
+    if MOCK_FLG:
+        warnings.warn("used ecos mock, only use DAB.")
+        return _get_ecos_df_mock(config, bpks)
+    return _get_ecos_df_live(config, bpks)
+
+
+def _select_valid_bpks(df: pd.DataFrame, bpks: List[str]) -> pd.DataFrame:
+    df = df.loc[df.protocol == "DCC"]
+    return df.loc[df.name1.isin(bpks)]
+
+
+def _add_db_guid(df: pd.DataFrame) -> pd.DataFrame:
+    cmd = "MATCH (n) RETURN n.node_id AS node_id, n.ecos_id AS dcc, n.bhf AS bpk"
+    db = GraphDbApi().run_query(cmd)[::2]
+    db.bpk = '"' + db.bpk + '"'
+    df.insert(df.shape[1], column="guid", value=np.nan)
+    for _, row in db.iterrows():
+        addr = int(df["addr"])
+        dcc = int(row.dcc)
+        df.guid.loc[(df["name1"] == row.bpk) & (addr == dcc)] = row.node_id
+    return df.dropna()
+
+
+def _get_ecos_df_mock(config: Dict[str, Any], bpks: List[str]) -> pd.DataFrame:
+    df = pd.read_csv("./tmp/ecos.csv")
+    df = df.loc[df.protocol == "DCC"]
+    df = df.loc[df.name1.isin(bpks)]
+    df.insert(df.shape[1], column="ip", value=config["bpk_ip"]["DAB"])
+    df = _add_db_guid(df)
+    return df
+
+
+def _get_ecos_df_live(config: Dict[str, Any], bpks: List[str]) -> pd.DataFrame:
     port = config["port"]
     df_dicts = []
     for ip in list(config["bpk_ip"].values())[1:]:
@@ -67,14 +102,6 @@ def get_ecos_df(config: Dict[str, Any], bpks: List[str]) -> pd.DataFrame:
                 df_dicts.append(d)
 
     df = pd.DataFrame(df_dicts)
-    df = df.loc[df.protocol == "DCC"]
-    df = df.loc[df.name1.isin(bpks)]
-
-    cmd = "MATCH (n) RETURN n.node_id AS node_id, n.ecos_id AS dcc, n.bhf AS bpk"
-    db = GraphDbApi().run_query(cmd)[::2]
-    db.bpk = '"' + db.bpk + '"'
-    df.insert(df.shape[1], column="guid", value=np.nan)
-    for _, row in db.iterrows():
-        df.guid.loc[(df["name1"] == row.bpk) & (df["addr"] == row.dcc)] = row.node_id
-
-    return df.dropna()
+    df = _select_valid_bpks(df, bpks)
+    df = _add_db_guid(df)
+    return df

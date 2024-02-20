@@ -63,7 +63,7 @@ class OccupyNextEdgeCommand(Command):
 
         relation = EdgeRelation.NEUTRAL.name
 
-        # check if deflection/ straight exit is used.
+        # check if deflection/ straight exit will be used.
         if self.node_id[-1] == "0":
             state = self.ecos_df.loc[self.ecos_df.guid == self.node_id].state.iloc[0]
             state = int(state)

@@ -1,0 +1,256 @@
+id,objectclass,view,listview,control,state,type,protocol,addr,addrext,mode,duration,symbol,gates,variant,name1,name2,name3,position,switching
+20000,accessory,none,none,none,0,ACCESSORY,DCC,19,"19g,19r",SWITCH,100,1,2,0,"""DAB""","""EW01""","""019""",ok,0
+20001,accessory,none,none,none,0,ACCESSORY,DCC,5,"5g,5r",SWITCH,500,1,2,0,"""DAB""","""EW005""","""005""",ok,0
+20002,accessory,none,none,none,0,ACCESSORY,DCC,17,"17g,17r",SWITCH,100,1,2,0,"""DAB""","""EW02""","""017""",ok,0
+20003,accessory,none,none,none,0,ACCESSORY,DCC,18,"18g,18r",SWITCH,100,0,2,0,"""DAB""","""EW03""","""18""",ok,0
+20004,accessory,none,none,none,0,ACCESSORY,DCC,13,"13g,13r",SWITCH,100,0,2,0,"""DAB""","""EW04""","""013""",ok,0
+20005,accessory,none,none,none,0,ACCESSORY,DCC,14,"14g,14r",SWITCH,100,0,2,0,"""DAB""","""EW05""","""014""",ok,0
+20006,accessory,none,none,none,0,ACCESSORY,DCC,16,"16g,16r",SWITCH,100,1,2,0,"""DAB""","""EW06""","""016""",ok,0
+20007,accessory,none,none,none,0,ACCESSORY,DCC,15,"15g,15r",SWITCH,100,1,2,0,"""DAB""","""EW07""","""015""",ok,0
+20008,accessory,none,none,none,0,ACCESSORY,DCC,3,"3g,3r",SWITCH,100,0,2,0,"""DAB""","""EW08""","""003""",ok,0
+20009,accessory,none,none,none,0,ACCESSORY,DCC,4,"4g,4r",SWITCH,100,0,2,0,"""DAB""","""EW09""","""004""",ok,0
+20010,accessory,none,none,none,1,ACCESSORY,DCC,1,"1g,1r",SWITCH,100,1,2,0,"""DAB""","""EW10""","""001""",ok,0
+20011,accessory,none,none,none,0,ACCESSORY,DCC,2,"2g,2r",SWITCH,100,0,2,0,"""DAB""","""EW11""","""002""",ok,0
+20012,accessory,none,none,none,0,ACCESSORY,DCC,7,"7g,7r",SWITCH,100,0,2,0,"""DAB""","""EW12""","""007""",ok,0
+20013,accessory,none,none,none,0,ACCESSORY,DCC,6,"6g,6r",SWITCH,100,1,2,0,"""DAB""","""EW13""","""006""",ok,0
+20014,accessory,none,none,none,0,ACCESSORY,DCC,5,"5g,5r",SWITCH,100,1,2,0,"""DAB""","""EW14""","""005""",ok,0
+20015,accessory,none,none,none,1,ACCESSORY,DCC,25,"25g,25r,26g,26r",SWITCH,33,40,4,0,"""Neuer""","""Artikel""",""">0025<""",ok,0
+20016,accessory,none,none,none,0,ACCESSORY,DCC,33,"33g,33r",SWITCH,33,1,2,0,"""Neuer""","""Artikel""",""">0033<""",ok,0
+20017,accessory,none,none,none,1,ACCESSORY,DCC,27,"27g,27r,28g,28r",SWITCH,250,40,4,0,"""Neuer""","""Artikel""",""">0027<""",ok,0
+20018,accessory,none,none,none,1,ACCESSORY,DCC,29,"29g,29r,30g,30r",SWITCH,250,40,4,0,"""Neuer""","""Artikel""",""">0029<""",ok,0
+20022,accessory,none,none,none,1,ACCESSORY,DCC,41,"41g,41r,42g",SWITCH,250,39,3,0,"""Zwerg 10A""","""""","""""",ok,0
+20023,accessory,none,none,none,1,ACCESSORY,DCC,43,"43g,43r,44g",SWITCH,250,39,3,0,"""Zwerg 10B""","""""","""""",ok,0
+20021,accessory,none,none,none,1,ACCESSORY,DCC,49,"49g,49r,50g,50r",SWITCH,33,40,4,0,"""Neuer""","""Artikel""",""">0049<""",ok,0
+20019,accessory,none,none,none,0,ACCESSORY,DCC,65,"65g,65r",SWITCH,100,1,2,0,"""CHA""","""EW 04""",""">0065<""",ok,0
+20020,accessory,none,none,none,0,ACCESSORY,DCC,51,"51g,51r",SWITCH,250,38,2,0,"""Neuer""","""Artikel""",""">0051<""",ok,0
+20024,accessory,none,none,none,1,ACCESSORY,DCC,52,"52g,52r,53g,53r",SWITCH,33,40,4,0,"""Neuer""","""Artikel""","""52""",ok,0
+20025,accessory,none,none,none,0,ACCESSORY,DCC,54,"54g,54r",SWITCH,33,38,2,0,"""Neuer""","""Artikel""",""">0054<""",ok,0
+20026,accessory,none,none,none,0,ACCESSORY,DCC,66,"66g,66r",SWITCH,100,1,2,0,"""CHA""","""EW 03""",""">0066<""",ok,0
+20027,accessory,none,none,none,0,ACCESSORY,DCC,67,"67g,67r",SWITCH,100,0,2,0,"""CHA""","""EW 02""","""0067""",ok,0
+20028,accessory,none,none,none,0,ACCESSORY,DCC,68,"68g,68r",SWITCH,100,0,2,0,"""CHA""","""EW 01""","""0068""",ok,0
+20029,accessory,none,none,none,1,ACCESSORY,DCC,69,"69g,69r,70g",SWITCH,33,39,3,0,"""CHA""","""Signal R""","""0069""",ok,0
+20030,accessory,none,none,none,1,ACCESSORY,DCC,71,"71g,71r,72g",SWITCH,33,39,3,0,"""CHA""","""Signal S""","""0071""",ok,0
+20040,accessory,none,none,none,0,ACCESSORY,MM,201,"201g,201r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">0201<""",ok,0
+20041,accessory,none,none,none,0,ACCESSORY,MM,202,"202g,202r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">0202<""",ok,0
+20042,accessory,none,none,none,0,ACCESSORY,MM,203,"203g,203r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">0203<""",ok,0
+20043,accessory,none,none,none,0,ACCESSORY,MM,204,"204g,204r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">0204<""",ok,0
+20044,accessory,none,none,none,0,ACCESSORY,MM,205,"205g,205r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">0205<""",ok,0
+20045,accessory,none,none,none,0,ACCESSORY,MM,206,"206g,206r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">0206<""",ok,0
+20046,accessory,none,none,none,1,ACCESSORY,MM,207,"207g,207r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">0207<""",ok,0
+20047,accessory,none,none,none,1,ACCESSORY,MM,208,"208g,208r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">0208<""",ok,0
+20048,accessory,none,none,none,1,ACCESSORY,DCC,1098,"1098g,1098r",SWITCH,33,5,2,0,"""Neuer""","""Artikel""",""">1098<""",ok,0
+20049,accessory,none,none,none,1,ACCESSORY,DCC,1099,"1099g,1099r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1099<""",ok,0
+20050,accessory,none,none,none,1,ACCESSORY,DCC,1100,"1100g,1100r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1100<""",ok,0
+20051,accessory,none,none,none,1,ACCESSORY,DCC,1101,"1101g,1101r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1101<""",ok,0
+20052,accessory,none,none,none,1,ACCESSORY,DCC,1102,"1102g,1102r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1102<""",ok,0
+20053,accessory,none,none,none,1,ACCESSORY,DCC,1103,"1103g,1103r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1103<""",ok,0
+20054,accessory,none,none,none,1,ACCESSORY,DCC,1104,"1104g,1104r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1104<""",ok,0
+20055,accessory,none,none,none,1,ACCESSORY,DCC,1105,"1105g,1105r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1105<""",ok,0
+20056,accessory,none,none,none,1,ACCESSORY,DCC,1106,"1106g,1106r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1106<""",ok,0
+20057,accessory,none,none,none,1,ACCESSORY,DCC,1107,"1107g,1107r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1107<""",ok,0
+20058,accessory,none,none,none,1,ACCESSORY,DCC,1108,"1108g,1108r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1108<""",ok,0
+20059,accessory,none,none,none,1,ACCESSORY,DCC,1109,"1109g,1109r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1109<""",ok,0
+20060,accessory,none,none,none,1,ACCESSORY,DCC,1110,"1110g,1110r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1110<""",ok,0
+20061,accessory,none,none,none,1,ACCESSORY,DCC,1145,"1145g,1145r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1145<""",ok,0
+20062,accessory,none,none,none,1,ACCESSORY,DCC,1165,"1165g,1165r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1165<""",ok,0
+20063,accessory,none,none,none,1,ACCESSORY,DCC,1166,"1166g,1166r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1166<""",ok,0
+20064,accessory,none,none,none,1,ACCESSORY,DCC,1167,"1167g,1167r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1167<""",ok,0
+20065,accessory,none,none,none,1,ACCESSORY,DCC,1168,"1168g,1168r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1168<""",ok,0
+20066,accessory,none,none,none,1,ACCESSORY,DCC,1169,"1169g,1169r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1169<""",ok,0
+20067,accessory,none,none,none,1,ACCESSORY,DCC,1170,"1170g,1170r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1170<""",ok,0
+20068,accessory,none,none,none,1,ACCESSORY,DCC,1171,"1171g,1171r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1171<""",ok,0
+20069,accessory,none,none,none,1,ACCESSORY,DCC,1172,"1172g,1172r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1172<""",ok,0
+20072,accessory,none,none,none,1,ACCESSORY,DCC,1175,"1175g,1175r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1175<""",ok,0
+20073,accessory,none,none,none,0,ACCESSORY,DCC,1176,"1176g,1176r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1176<""",ok,0
+20074,accessory,none,none,none,1,ACCESSORY,DCC,1177,"1177g,1177r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1177<""",ok,0
+20075,accessory,none,none,none,0,ACCESSORY,DCC,1178,"1178g,1178r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1178<""",ok,0
+20076,accessory,none,none,none,1,ACCESSORY,DCC,1179,"1179g,1179r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1179<""",ok,0
+20077,accessory,none,none,none,1,ACCESSORY,DCC,1180,"1180g,1180r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1180<""",ok,0
+20078,accessory,none,none,none,1,ACCESSORY,DCC,1181,"1181g,1181r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1181<""",ok,0
+20079,accessory,none,none,none,1,ACCESSORY,DCC,1182,"1182g,1182r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1182<""",ok,0
+20080,accessory,none,none,none,1,ACCESSORY,DCC,1183,"1183g,1183r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1183<""",ok,0
+20081,accessory,none,none,none,1,ACCESSORY,DCC,1184,"1184g,1184r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1184<""",ok,0
+20082,accessory,none,none,none,1,ACCESSORY,DCC,1185,"1185g,1185r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1185<""",ok,0
+20083,accessory,none,none,none,1,ACCESSORY,DCC,1186,"1186g,1186r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1186<""",ok,0
+20084,accessory,none,none,none,1,ACCESSORY,DCC,1187,"1187g,1187r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1187<""",ok,0
+20085,accessory,none,none,none,1,ACCESSORY,DCC,1188,"1188g,1188r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1188<""",ok,0
+20086,accessory,none,none,none,1,ACCESSORY,DCC,1189,"1189g,1189r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1189<""",ok,0
+20087,accessory,none,none,none,1,ACCESSORY,DCC,1190,"1190g,1190r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1190<""",ok,0
+20088,accessory,none,none,none,1,ACCESSORY,DCC,1191,"1191g,1191r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1191<""",ok,0
+20089,accessory,none,none,none,1,ACCESSORY,DCC,1192,"1192g,1192r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1192<""",ok,0
+20090,accessory,none,none,none,1,ACCESSORY,DCC,1193,"1193g,1193r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1193<""",ok,0
+20091,accessory,none,none,none,1,ACCESSORY,DCC,1194,"1194g,1194r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1194<""",ok,0
+20092,accessory,none,none,none,1,ACCESSORY,DCC,1195,"1195g,1195r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1195<""",ok,0
+20093,accessory,none,none,none,1,ACCESSORY,DCC,1196,"1196g,1196r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1196<""",ok,0
+20094,accessory,none,none,none,1,ACCESSORY,DCC,1147,"1147g,1147r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1147<""",ok,0
+20095,accessory,none,none,none,1,ACCESSORY,DCC,1148,"1148g,1148r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1148<""",ok,0
+20096,accessory,none,none,none,1,ACCESSORY,DCC,1151,"1151g,1151r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1151<""",ok,0
+20097,accessory,none,none,none,1,ACCESSORY,DCC,1152,"1152g,1152r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1152<""",ok,0
+20098,accessory,none,none,none,1,ACCESSORY,DCC,1153,"1153g,1153r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1153<""",ok,0
+20099,accessory,none,none,none,1,ACCESSORY,DCC,1154,"1154g,1154r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1154<""",ok,0
+20100,accessory,none,none,none,1,ACCESSORY,DCC,1155,"1155g,1155r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1155<""",ok,0
+20101,accessory,none,none,none,1,ACCESSORY,DCC,1156,"1156g,1156r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1156<""",ok,0
+20102,accessory,none,none,none,1,ACCESSORY,DCC,1157,"1157g,1157r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1157<""",ok,0
+20103,accessory,none,none,none,1,ACCESSORY,DCC,1158,"1158g,1158r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1158<""",ok,0
+20104,accessory,none,none,none,1,ACCESSORY,DCC,1159,"1159g,1159r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1159<""",ok,0
+20105,accessory,none,none,none,1,ACCESSORY,DCC,1160,"1160g,1160r",SWITCH,33,18,2,0,"""Neuer""","""Artikel""",""">1160<""",ok,0
+20031,accessory,none,none,none,0,ACCESSORY,DCC,401,"401g,401r",SWITCH,33,1,2,0,"""CHA""","""EW08*""","""401""",ok,0
+20032,accessory,none,none,none,0,ACCESSORY,DCC,402,"402g,402r",SWITCH,33,1,2,0,"""CHA""","""EW07*""","""402""",ok,0
+20033,accessory,none,none,none,0,ACCESSORY,DCC,403,"403g,403r",SWITCH,33,1,2,0,"""CHA""","""EW05*""","""403""",ok,0
+20034,accessory,none,none,none,0,ACCESSORY,DCC,404,"404g,404r",SWITCH,33,1,2,0,"""CHA""","""EW06*""","""404""",ok,0
+20035,accessory,none,none,none,1,ACCESSORY,DCC,73,"73g,73r,74g,74r",SWITCH,33,12,4,0,"""DAB""","""Sig E""","""73-75""",ok,0
+20036,accessory,none,none,none,1,ACCESSORY,DCC,76,"76g,76r,77g,77r",SWITCH,33,22,4,0,"""DAB""","""VS B*""","""76-78""",ok,0
+20037,accessory,none,none,none,1,ACCESSORY,DCC,79,"79g,79r",SWITCH,33,18,2,0,"""DAB""","""Hilfssig E""","""79""",ok,0
+20038,accessory,none,none,none,0,ACCESSORY,DCC,501,"501g,501r",SWITCH,33,0,2,0,"""ENS W1""","""Stellen""","""DCC 501""",ok,0
+20039,accessory,none,none,none,1,ACCESSORY,DCC,502,"502g,502r",SWITCH,33,0,2,0,"""ENS W2""","""Stellen""","""DCC 502""",ok,0
+20000,accessory,none,none,none,0,ACCESSORY,DCC,177,"177g,177r",SWITCH,33,1,2,0,"""BLO""","""EW 01""","""177""",ok,0
+20001,accessory,none,none,none,0,ACCESSORY,DCC,178,"178g,178r",SWITCH,33,1,2,0,"""BLO""","""EW 02""","""178""",ok,0
+20002,accessory,none,none,none,0,ACCESSORY,DCC,179,"179g,179r",SWITCH,33,0,2,0,"""BLO""","""EW 03""","""179""",ok,0
+20003,accessory,none,none,none,0,ACCESSORY,DCC,180,"180g,180r",SWITCH,33,0,2,0,"""BLO""","""EW 04""","""180""",ok,0
+20004,accessory,none,none,none,0,ACCESSORY,DCC,181,"181g,181r",SWITCH,33,1,2,0,"""BLO""","""EW 05""","""181""",ok,0
+20005,accessory,none,none,none,0,ACCESSORY,DCC,161,"161g,161r",SWITCH,33,1,2,0,"""BLO""","""EW 06""","""161""",ok,0
+20006,accessory,none,none,none,0,ACCESSORY,DCC,162,"162g,162r",SWITCH,33,0,2,0,"""BLO""","""EW 07""","""162""",ok,0
+20007,accessory,none,none,none,0,ACCESSORY,DCC,165,"165g,165r",SWITCH,33,0,2,0,"""BLO""","""EW 08""","""165""",ok,0
+20008,accessory,none,none,none,0,ACCESSORY,DCC,163,"163g,163r",SWITCH,33,1,2,0,"""BLO""","""EW 09""","""163""",ok,0
+20009,accessory,none,none,none,0,ACCESSORY,DCC,164,"164g,164r",SWITCH,33,1,2,0,"""BLO""","""EW 10""","""164""",ok,0
+20010,accessory,none,none,none,0,ACCESSORY,DCC,113,"113g,113r",SWITCH,33,1,2,0,"""BLO""","""EW 11""","""113""",ok,0
+20011,accessory,none,none,none,0,ACCESSORY,DCC,114,"114g,114r",SWITCH,33,1,2,0,"""BLO""","""EW 12""","""114""",ok,0
+20012,accessory,none,none,none,0,ACCESSORY,DCC,52,"52g,52r",SWITCH,33,0,2,0,"""BLO""","""EW 13""","""052""",ok,0
+20013,accessory,none,none,none,0,ACCESSORY,DCC,53,"53g,53r",SWITCH,33,0,2,0,"""BLO""","""EW 14""","""053""",ok,0
+20014,accessory,none,none,none,1,ACCESSORY,DCC,55,"55g,55r",SWITCH,33,1,2,0,"""BLO""","""EW 16""","""055""",ok,0
+20015,accessory,none,none,none,0,ACCESSORY,DCC,56,"56g,56r",SWITCH,33,0,2,0,"""BLO""","""EW 17""","""056""",ok,0
+20016,accessory,none,none,none,0,ACCESSORY,DCC,57,"57g,57r",SWITCH,33,0,2,0,"""BLO""","""EW 18""","""057""",ok,0
+20017,accessory,none,none,none,0,ACCESSORY,DCC,33,"33g,33r",SWITCH,33,1,2,0,"""BLO""","""EW 19""","""033""",ok,0
+20018,accessory,none,none,none,0,ACCESSORY,DCC,34,"34g,34r",SWITCH,33,1,2,0,"""BLO""","""EW 20""","""034""",ok,0
+20019,accessory,none,none,none,1,ACCESSORY,DCC,209,"209g,209r,210g",SWITCH,250,24,3,0,"""BLO""","""HS A102""","""209""",ok,0
+20020,accessory,none,none,none,1,ACCESSORY,NONE,1,"1g,1r,2g,2r",SWITCH,250,22,4,0,"""BLO""","""HS A202""",""">0001<""",ok,0
+20021,accessory,none,none,none,1,ACCESSORY,DCC,225,"225g,225r,226g",SWITCH,250,24,3,0,"""BLO""","""HS A303""","""225""",ok,0
+20022,accessory,none,none,none,1,ACCESSORY,DCC,129,"129g,129r,130g",SWITCH,250,24,3,0,"""BLO""","""HS B11""","""129""",ok,0
+20023,accessory,none,none,none,1,ACCESSORY,DCC,137,"137g,137r,138g",SWITCH,250,24,3,0,"""BLO""","""HS B12""","""137""",ok,0
+20024,accessory,none,none,none,1,ACCESSORY,NONE,1,"1g,1r,2g,2r",SWITCH,250,22,4,0,"""BLO""","""HS B3""",""">0001<""",ok,0
+20025,accessory,none,none,none,1,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,24,3,0,"""BLO""","""HS B4""",""">0001<""",ok,0
+20026,accessory,none,none,none,1,ACCESSORY,DCC,97,"97g,97r,98g",SWITCH,250,24,3,0,"""BLO""","""HS C1""","""097""",ok,0
+20027,accessory,none,none,none,1,ACCESSORY,DCC,105,"105g,105r,106g",SWITCH,250,24,3,0,"""BLO""","""HS C2""","""105""",ok,0
+20028,accessory,none,none,none,1,ACCESSORY,DCC,65,"65g,65r,66g",SWITCH,250,24,3,0,"""BLO""","""HS D1""","""065""",ok,0
+20029,accessory,none,none,none,1,ACCESSORY,DCC,70,"70g,70r,71g",SWITCH,250,24,3,0,"""BLO""","""HS D2""","""070""",ok,0
+20030,accessory,none,none,none,1,ACCESSORY,DCC,81,"81g,81r,82g",SWITCH,250,24,3,0,"""BLO""","""HS D3""","""081""",ok,0
+20031,accessory,none,none,none,1,ACCESSORY,DCC,89,"89g,89r,90g",SWITCH,250,24,3,0,"""BLO""","""HS D4""","""089""",ok,0
+20032,accessory,none,none,none,1,ACCESSORY,DCC,1,"1g,1r,2g",SWITCH,250,24,3,0,"""BLO""","""HS E103""","""001""",ok,0
+20033,accessory,none,none,none,1,ACCESSORY,DCC,17,"17g,17r,18g",SWITCH,250,24,3,0,"""BLO""","""HS E203""","""017""",ok,0
+20034,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,32,3,0,"""BLO""","""VS A303*""",""">0001<""",ok,0
+20035,accessory,none,none,none,0,ACCESSORY,DCC,214,"214g,214r,215g",SWITCH,250,32,3,0,"""BLO""","""VS D* A102""","""214""",ok,0
+20036,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,32,3,0,"""BLO""","""VS A202*""",""">0001<""",ok,0
+20037,accessory,none,none,none,1,ACCESSORY,DCC,230,"230g,230r,231g",SWITCH,250,32,3,0,"""BLO""","""VS D* A303""","""230""",ok,0
+20038,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,32,3,0,"""BLO""","""VS D* A102""",""">0001<""",ok,0
+20039,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,32,3,0,"""BLO""","""VS D* A202""",""">0001<""",ok,0
+20040,accessory,none,none,none,1,ACCESSORY,DCC,6,"6g,6r,7g",SWITCH,250,32,3,0,"""BLO""","""VS B* 103""","""006""",ok,0
+20041,accessory,none,none,none,1,ACCESSORY,DCC,22,"22g,22r,23g",SWITCH,250,32,3,0,"""BLO""","""VS B* 203""","""022""",ok,0
+20042,accessory,none,none,none,1,ACCESSORY,DCC,241,"241g,241r,242g",SWITCH,250,32,3,0,"""BLO""","""VS E103*""","""241""",ok,0
+20043,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r",SWITCH,250,27,2,0,"""BLO""","""BUe Löw""","""""",ok,0
+20044,accessory,none,none,none,1,ACCESSORY,DCC,501,"501g,501r,502g",SWITCH,33,39,3,0,"""BLO""","""ZS 1A""","""501""",ok,0
+20045,accessory,none,none,none,1,ACCESSORY,DCC,505,"505g,505r,506g",SWITCH,33,39,3,0,"""BLO""","""ZS 2B""","""505""",ok,0
+20046,accessory,none,none,none,1,ACCESSORY,DCC,507,"507g,507r,508g",SWITCH,33,39,3,0,"""BLO""","""ZS 3A""","""507""",ok,0
+20047,accessory,none,none,none,1,ACCESSORY,DCC,503,"503g,503r,504g",SWITCH,33,39,3,0,"""BLO""","""ZS 1D""","""503""",ok,0
+20048,accessory,none,none,none,1,ACCESSORY,DCC,511,"511g,511r,512g",SWITCH,33,39,3,0,"""BLO""","""ZS 5A""","""511""",ok,0
+20049,accessory,none,none,none,1,ACCESSORY,DCC,513,"513g,513r,514g",SWITCH,33,39,3,0,"""BLO""","""ZS 6B""","""513""",ok,0
+20050,accessory,none,none,none,1,ACCESSORY,DCC,509,"509g,509r,510g",SWITCH,33,39,3,0,"""BLO""","""ZS 3C""","""509""",ok,0
+20051,accessory,none,none,none,1,ACCESSORY,DCC,517,"517g,517r,518g",SWITCH,33,39,3,0,"""BLO""","""ZS 8A""","""517""",ok,0
+20052,accessory,none,none,none,1,ACCESSORY,DCC,523,"523g,523r,524g",SWITCH,33,39,3,0,"""BLO""","""ZS 10B""","""523""",ok,0
+20053,accessory,none,none,none,1,ACCESSORY,DCC,515,"515g,515r,516g",SWITCH,33,39,3,0,"""BLO""","""ZS 7C""","""515""",ok,0
+20054,accessory,none,none,none,1,ACCESSORY,DCC,519,"519g,519r,520g",SWITCH,33,39,3,0,"""BLO""","""ZS 8C""","""519""",ok,0
+20055,accessory,none,none,none,1,ACCESSORY,DCC,521,"521g,521r,522g",SWITCH,33,39,3,0,"""BLO""","""ZS 9D""","""521""",ok,0
+20056,accessory,none,none,none,1,ACCESSORY,DCC,525,"525g,525r,526g",SWITCH,33,39,3,0,"""BLO""","""ZS 10C""","""525""",ok,0
+20057,accessory,none,none,none,1,ACCESSORY,DCC,527,"527g,527r,528g",SWITCH,33,39,3,0,"""BLO""","""ZS 11A""","""527""",ok,0
+20058,accessory,none,none,none,1,ACCESSORY,DCC,531,"531g,531r,532g",SWITCH,33,39,3,0,"""BLO""","""ZS 12B""","""531""",ok,0
+20059,accessory,none,none,none,1,ACCESSORY,DCC,529,"529g,529r,530g",SWITCH,33,39,3,0,"""BLO""","""ZS 11D""","""529""",ok,0
+20060,accessory,none,none,none,1,ACCESSORY,DCC,533,"533g,533r,534g",SWITCH,33,39,3,0,"""BLO""","""ZS 12C""","""533""",ok,0
+20061,accessory,none,none,none,1,ACCESSORY,DCC,541,"541g,541r,542g",SWITCH,33,39,3,0,"""BLO""","""ZS 16A""","""541""",ok,0
+20062,accessory,none,none,none,1,ACCESSORY,DCC,543,"543g,543r,544g",SWITCH,33,39,3,0,"""BLO""","""ZS 16B""","""543""",ok,0
+20063,accessory,none,none,none,1,ACCESSORY,DCC,539,"539g,539r,540g",SWITCH,33,39,3,0,"""BLO""","""ZS 14A""","""539""",ok,0
+20064,accessory,none,none,none,1,ACCESSORY,DCC,535,"535g,535r,536g",SWITCH,33,39,3,0,"""BLO""","""ZS 13B""","""535""",ok,0
+20065,accessory,none,none,none,1,ACCESSORY,DCC,537,"537g,537r,538g",SWITCH,33,39,3,0,"""BLO""","""ZS 13C""","""537""",ok,0
+20066,accessory,none,none,none,1,ACCESSORY,DCC,545,"545g,545r,546g",SWITCH,33,39,3,0,"""BLO""","""ZS 17C""","""545""",ok,0
+20067,accessory,none,none,none,1,ACCESSORY,DCC,549,"549g,549r,550g",SWITCH,33,39,3,0,"""BLO""","""ZS G53A""","""549""",ok,0
+20068,accessory,none,none,none,1,ACCESSORY,DCC,547,"547g,547r,548g",SWITCH,33,39,3,0,"""BLO""","""ZS G52A""","""547""",ok,0
+20069,accessory,none,none,none,1,ACCESSORY,DCC,553,"553g,553r,554g",SWITCH,33,39,3,0,"""BLO""","""ZS 20B""","""553""",ok,0
+20070,accessory,none,none,none,1,ACCESSORY,DCC,555,"555g,555r,556g",SWITCH,33,39,3,0,"""BLO""","""ZS 19 D""","""555""",ok,0
+20071,accessory,none,none,none,1,ACCESSORY,DCC,551,"551g,551r,552g",SWITCH,33,39,3,0,"""BLO""","""ZS 20C""","""551""",ok,0
+20072,accessory,none,none,none,1,ACCESSORY,DCC,1,"1g,1r,2g",SWITCH,250,32,3,0,"""BLO""","""VS E203*""","""248""",ok,0
+20073,accessory,none,none,none,1,ACCESSORY,DCC,233,"233g,233r",SWITCH,250,38,2,0,"""Test""","""je DCC""","""""",ok,0
+20074,accessory,none,none,none,1,ACCESSORY,DCC,600,"600g,600r",SWITCH,33,18,2,0,"""BUe Löw""","""Blinken ein""","""DCC 600""",ok,0
+20075,accessory,none,none,none,1,ACCESSORY,DCC,601,"601g,601r",SWITCH,33,18,2,0,"""BUe Löw""","""schliessen""","""DCC 601""",ok,0
+20076,accessory,none,none,none,1,ACCESSORY,DCC,602,"602g,602r",SWITCH,33,18,2,0,"""BUe Löw""","""öffnen""","""DCC 602""",ok,0
+20077,accessory,none,none,none,1,ACCESSORY,DCC,601,"601g,601r",SWITCH,33,27,2,0,"""BLO""","""BUe Löw""","""DCC 601""",ok,0
+20000,accessory,none,none,none,1,ACCESSORY,DCC,103,"103g,103r",SWITCH,33,36,2,0,"""FUS""","""FST Gl 1 li""","""103""",ok,0
+20002,accessory,none,none,none,1,ACCESSORY,DCC,102,"102g,102r",SWITCH,33,36,2,0,"""FUS""","""FST Gl 2 li""","""102""",ok,0
+20003,accessory,none,none,none,1,ACCESSORY,DCC,101,"101g,101r",SWITCH,33,36,2,0,"""FUS""","""FST Gl 3 li""","""101""",ok,0
+20004,accessory,none,none,none,1,ACCESSORY,DCC,100,"100g,100r",SWITCH,33,36,2,0,"""FUS""","""FST Gl 4 li""","""100""",ok,0
+20005,accessory,none,none,none,1,ACCESSORY,DCC,110,"110g,110r",SWITCH,33,36,2,0,"""FUS""","""FST Gl 1 re""","""110""",ok,0
+20006,accessory,none,none,none,1,ACCESSORY,DCC,111,"111g,111r",SWITCH,33,36,2,0,"""FUS""","""FST Gl 2 re""","""111""",ok,0
+20007,accessory,none,none,none,1,ACCESSORY,DCC,112,"112g,112r",SWITCH,33,36,2,0,"""FUS""","""FST Gl 3 re""","""112""",ok,0
+20009,accessory,none,none,none,0,ACCESSORY,DCC,1,"1g,1r",SWITCH,33,1,2,0,"""FUS""","""EW 01""","""001""",ok,0
+20010,accessory,none,none,none,0,ACCESSORY,DCC,2,"2g,2r",SWITCH,33,1,2,0,"""FUS""","""EW 02""","""002""",ok,0
+20011,accessory,none,none,none,1,ACCESSORY,DCC,3,"3g,3r",SWITCH,33,1,2,0,"""FUS""","""EW 03""","""003""",ok,0
+20012,accessory,none,none,none,1,ACCESSORY,DCC,4,"4g,4r",SWITCH,33,0,2,0,"""FUS""","""DKW 4a""","""004""",ok,0
+20013,accessory,none,none,none,0,ACCESSORY,DCC,5,"5g,5r",SWITCH,33,0,2,0,"""FUS""","""DKW 4b""","""005""",ok,0
+20014,accessory,none,none,none,1,ACCESSORY,DCC,6,"6g,6r",SWITCH,33,0,2,0,"""FUS""","""EW 05""","""006""",ok,0
+20015,accessory,none,none,none,0,ACCESSORY,DCC,7,"7g,7r",SWITCH,33,1,2,0,"""FUS""","""EW 06""","""007""",ok,0
+20016,accessory,none,none,none,0,ACCESSORY,DCC,8,"8g,8r",SWITCH,33,0,2,0,"""FUS""","""EW 07""","""008""",ok,0
+20017,accessory,none,none,none,0,ACCESSORY,DCC,9,"9g,9r",SWITCH,33,0,2,0,"""FUS""","""EW 08""","""009""",ok,0
+20018,accessory,none,none,none,1,ACCESSORY,DCC,10,"10g,10r",SWITCH,33,0,2,0,"""FUS""","""DKW 9a""","""010""",ok,0
+20019,accessory,none,none,none,1,ACCESSORY,DCC,11,"11g,11r",SWITCH,33,0,2,0,"""FUS""","""DKW 9b""","""011""",ok,0
+20020,accessory,none,none,none,1,ACCESSORY,DCC,12,"12g,12r",SWITCH,33,0,2,0,"""FUS""","""EW 10""","""012""",ok,0
+20021,accessory,none,none,none,0,ACCESSORY,DCC,13,"13g,13r",SWITCH,33,0,2,0,"""FUS""","""EW 11""","""013""",ok,0
+20022,accessory,none,none,none,0,ACCESSORY,DCC,14,"14g,14r",SWITCH,33,0,2,0,"""FUS""","""EW 12""","""014""",ok,0
+20112,accessory,none,none,none,1,ACCESSORY,DCC,17,"17g,17r,18g",SWITCH,33,26,3,0,"""FUS""","""HS B, FB1, ZS""","""017-018""",ok,0
+20008,accessory,none,none,none,1,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,33,32,3,0,"""FUS""","""VS A*, FB1,2""","""00-01""",ok,0
+20113,accessory,none,none,none,1,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,33,26,3,0,"""FUS""","""HS A, FB1,2""","""00-01""",ok,0
+20114,accessory,none,none,none,1,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,33,32,3,0,"""FUS""","""VS C*, FB1,2""","""00-01""",ok,0
+20115,accessory,none,none,none,1,ACCESSORY,NONE,1,"1g,1r",SWITCH,33,18,2,0,"""FUS""","""HS A, Hilfssig""","""00""",ok,0
+20116,accessory,none,none,none,1,ACCESSORY,DCC,25,"25g,25r,26g",SWITCH,33,26,3,0,"""FUS""","""HS C 1-3, FB1,2""","""025-026""",ok,0
+20117,accessory,none,none,none,1,ACCESSORY,DCC,27,"27g,27r,28g",SWITCH,33,26,3,0,"""FUS""","""HS C4, FB1, ZS""","""027-028""",ok,0
+20109,accessory,none,none,none,1,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,33,26,3,0,"""FUS""","""HS D, FB1,2""","""00-01""",ok,0
+20111,accessory,none,none,none,1,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,33,32,3,0,"""FUS""","""VS B*, FB1,2""","""00-01""",ok,0
+20110,accessory,none,none,none,1,ACCESSORY,NONE,1,"1g,1r",SWITCH,33,18,2,0,"""FUS""","""HS D, Hilfssig""","""00""",ok,0
+20108,accessory,none,none,none,1,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,33,32,3,0,"""FUS""","""VS D*, FB1,2""","""00-01""",ok,0
+20000,accessory,none,none,none,0,ACCESSORY,DCC,1,"1g,1r",SWITCH,33,1,2,0,"""GER""","""EW 01""","""001""",ok,0
+20001,accessory,none,none,none,0,ACCESSORY,DCC,2,"2g,2r",SWITCH,33,1,2,0,"""GER""","""EW 02""","""002""",ok,0
+20002,accessory,none,none,none,0,ACCESSORY,DCC,3,"3g,3r",SWITCH,33,0,2,0,"""GER""","""EW 03""","""003""",ok,0
+20003,accessory,none,none,none,0,ACCESSORY,DCC,4,"4g,4r",SWITCH,33,1,2,0,"""GER""","""EW 04""","""004""",ok,0
+20004,accessory,none,none,none,0,ACCESSORY,DCC,5,"5g,5r",SWITCH,33,1,2,0,"""GER""","""EW 05""","""005""",ok,0
+20005,accessory,none,none,none,0,ACCESSORY,DCC,49,"49g,49r",SWITCH,33,1,2,0,"""GER""","""EW 06""","""049""",ok,0
+20006,accessory,none,none,none,0,ACCESSORY,DCC,50,"50g,50r",SWITCH,33,1,2,0,"""GER""","""EW 07""","""050""",ok,0
+20007,accessory,none,none,none,0,ACCESSORY,DCC,33,"33g,33r",SWITCH,33,0,2,0,"""GER""","""EW 08""","""033""",ok,0
+20008,accessory,none,none,none,0,ACCESSORY,DCC,51,"51g,51r",SWITCH,33,0,2,0,"""GER""","""EW 09""","""051""",ok,0
+20009,accessory,none,none,none,1,ACCESSORY,DCC,53,"53g,53r",SWITCH,33,1,2,0,"""GER""","""EKW 10b""","""053""",ok,0
+20010,accessory,none,none,none,0,ACCESSORY,DCC,52,"52g,52r",SWITCH,33,1,2,0,"""GER""","""EKW 10a""","""052""",ok,0
+20011,accessory,none,none,none,1,ACCESSORY,DCC,54,"54g,54r",SWITCH,33,1,2,0,"""GER""","""EW 11""","""054""",ok,0
+20012,accessory,none,none,none,0,ACCESSORY,DCC,55,"55g,55r",SWITCH,33,0,2,0,"""GER""","""EW 12""","""055""",ok,0
+20013,accessory,none,none,none,0,ACCESSORY,DCC,56,"56g,56r",SWITCH,33,0,2,0,"""GER""","""EW 13""","""056""",ok,0
+20014,accessory,none,none,none,1,ACCESSORY,DCC,65,"65g,65r",SWITCH,33,1,2,0,"""GER""","""EW 14""","""065""",ok,0
+20015,accessory,none,none,none,1,ACCESSORY,DCC,66,"66g,66r",SWITCH,33,1,2,0,"""GER""","""EW 15""","""066""",ok,0
+20016,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,33,24,3,0,"""GER""","""HS A""",""">0001<""",ok,0
+20017,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,24,3,0,"""GER""","""HS Af""",""">0001<""",ok,0
+20018,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,32,3,0,"""GER""","""VS A*""",""">0001<""",ok,0
+20019,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,32,3,0,"""GER""","""VS Af*""",""">0001<""",ok,0
+20020,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,24,3,0,"""GER""","""HS B1""",""">0001<""",ok,0
+20021,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,24,3,0,"""GER""","""HS B2""",""">0001<""",ok,0
+20022,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,24,3,0,"""GER""","""HS B3""",""">0001<""",ok,0
+20023,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,24,3,0,"""GER""","""HS B4""",""">0001<""",ok,0
+20024,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,24,3,0,"""GER""","""HS C1""",""">0001<""",ok,0
+20025,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,24,3,0,"""GER""","""HS C2""",""">0001<""",ok,0
+20026,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,24,3,0,"""GER""","""HS C3""",""">0001<""",ok,0
+20027,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,24,3,0,"""GER""","""HS C4""",""">0001<""",ok,0
+20028,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,24,3,0,"""GER""","""HS E""",""">0001<""",ok,0
+20029,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,24,3,0,"""GER""","""HS G""",""">0001<""",ok,0
+20030,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,32,3,0,"""GER""","""VS E*""",""">0001<""",ok,0
+20031,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,32,3,0,"""GER""","""VS G*""",""">0001<""",ok,0
+20032,accessory,none,none,none,1,ACCESSORY,DCC,601,"601g,601r",SWITCH,33,27,2,0,"""GER""","""BÜ km23.3""","""DCC 601""",ok,0
+20033,accessory,none,none,none,1,ACCESSORY,DCC,600,"600g,600r",SWITCH,33,18,2,0,"""BUe km23.3""","""Blinken ein""","""DCC 600""",ok,0
+20034,accessory,none,none,none,0,ACCESSORY,NONE,100,"100g,100r",SWITCH,33,1,2,0,"""JON""","""EW 100""",""">0100<""",ok,0
+20035,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,24,3,0,"""JON""","""HS Q""",""">0001<""",ok,0
+20036,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,24,3,0,"""JON""","""HS R""",""">0001<""",ok,0
+20037,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,24,3,0,"""JON""","""HS P""",""">0001<""",ok,0
+20038,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,32,3,0,"""JON""","""VS Q*""",""">0001<""",ok,0
+20039,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,32,3,0,"""JON""","""VS R*""",""">0001<""",ok,0
+20040,accessory,none,none,none,0,ACCESSORY,NONE,1,"1g,1r,2g",SWITCH,250,32,3,0,"""JON""","""VS P*""",""">0001<""",ok,0

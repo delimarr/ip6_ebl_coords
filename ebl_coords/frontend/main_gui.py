@@ -369,12 +369,17 @@ class Ui_MainWindow:
         self.formLayout_5.setWidget(
             2, QtWidgets.QFormLayout.ItemRole.FieldRole, self.strecken_distance_sb
         )
+        self.strecken_delete_btn = QtWidgets.QPushButton(parent=self.strecken_right)
+        self.strecken_delete_btn.setObjectName("strecken_delete_btn")
+        self.formLayout_5.setWidget(
+            5, QtWidgets.QFormLayout.ItemRole.FieldRole, self.strecken_delete_btn
+        )
         self.horizontalLayout.addWidget(self.strecken_splitter)
         self.tabWidget.addTab(self.strecken_tab, "")
         self.horizontalLayout_2.addWidget(self.tabWidget)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(parent=MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1186, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1186, 19))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(parent=MainWindow)
@@ -386,7 +391,7 @@ class Ui_MainWindow:
         self.actionZone_laden.setObjectName("actionZone_laden")
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.weichen_weichenname_txt, self.weichen_dcc_txt)
         MainWindow.setTabOrder(self.weichen_dcc_txt, self.weichen_bhf_txt)
@@ -446,6 +451,7 @@ class Ui_MainWindow:
         self.label_10.setText(_translate("MainWindow", "Weichenpunkt B"))
         self.label_17.setText(_translate("MainWindow", "Länge [m]"))
         self.strecken_speichern_btn.setText(_translate("MainWindow", "Speichern"))
+        self.strecken_delete_btn.setText(_translate("MainWindow", "Löschen"))
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.strecken_tab),
             _translate("MainWindow", "Kanten"),

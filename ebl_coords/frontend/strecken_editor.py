@@ -111,13 +111,14 @@ class StreckenEditor(Editor):
         n1 = self._get_node(bhf1, name1, relation1)
         n2 = self._get_node(bhf2, name2, relation2)
         guid = generate_guid()
+        distance = self.ui.strecken_distance_sb.value()
         edge1 = Edge(
             id=f"{guid}_0",
             source=n1,
             dest=n2,
             relation=EDGE_RELATION_TO_ENUM[relation1],
             target=EDGE_RELATION_TO_ENUM[relation2],
-            distance=0,
+            distance=distance,
         )
         edge2 = Edge(
             id=f"{guid}_1",
@@ -125,7 +126,7 @@ class StreckenEditor(Editor):
             dest=n1,
             relation=EDGE_RELATION_TO_ENUM[relation2],
             target=EDGE_RELATION_TO_ENUM[relation1],
-            distance=0,
+            distance=distance,
         )
         cmd = single_edge(edge1)
         self.graph_db.run_query(cmd)

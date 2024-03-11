@@ -107,4 +107,4 @@ class WeichenEditor(Editor):
                 command_queue=self.main_window.command_queue,
                 ui=self.ui,
             )
-            self.gtcommand.attach(ts_measure_observer)
+            self.gtcommand.attach_all_coord(ts_measure_observer)

@@ -6,6 +6,7 @@ from queue import Queue
 from typing import TYPE_CHECKING
 
 import pandas as pd
+import pyvista as pv
 from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QApplication, QMainWindow
 
@@ -13,6 +14,7 @@ from ebl_coords.backend.constants import CALLBACK_DT, CONFIG_JSON
 from ebl_coords.backend.ecos import get_ecos_df, load_config
 from ebl_coords.backend.observable.ecos_subject import EcosSubject
 from ebl_coords.backend.observable.gtcommand_subject import GtCommandSubject
+from ebl_coords.backend.observable.plot_observer import PlotObserver
 from ebl_coords.frontend.main_gui import Ui_MainWindow
 from ebl_coords.frontend.map_editor import MapEditor
 from ebl_coords.frontend.strecken_editor import StreckenEditor
@@ -29,6 +31,12 @@ class MainWindow(QMainWindow):  # type: ignore
     def __init__(self) -> None:
         """Initialize and show the gui."""
         super().__init__()
+        pv.set_plot_theme("dark")
+        self.pl = pv.Plotter()
+        self.pl.enable_eye_dome_lighting()
+        self.pl.add_axes()
+        self.pl.show(interactive_update=True)
+
         self.callback_timer = QTimer()
         self.callback_timer.timeout.connect(self.my_callback)
         self.callback_timer.start(CALLBACK_DT)
@@ -52,6 +60,9 @@ class MainWindow(QMainWindow):  # type: ignore
         self.map_editor.register_observers()
         self.strecken_editor = StreckenEditor(self)
         self.weichen_editor = WeichenEditor(self)
+
+        self.plot_observer = PlotObserver(self.pl, self.command_queue)
+        self.gtcommand.attach_changed_coord(self.plot_observer)
 
         self.show()
 

@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 from ebl_coords.backend.constants import GTCOMMAND_IP, GTCOMMAND_PORT, IGNORE_Z_AXIS
+from ebl_coords.backend.constants import TS_HIT_THRESHOLD
 from ebl_coords.backend.observable.subject import Subject
 from ebl_coords.backend.transform_data import get_tolerance_mask, get_track_switches_hit
 from ebl_coords.decorators import override
@@ -27,7 +28,7 @@ class _InnerGtCommandSubject(Subject):
         noise_filter_threshold: int = 30,
         ip: str = GTCOMMAND_IP,
         port: int = GTCOMMAND_PORT,
-        ts_hit_threshold: int = 35,
+        ts_hit_threshold: int = TS_HIT_THRESHOLD,
     ) -> None:
         """Initialize the buffer and the socket.
 
@@ -52,12 +53,14 @@ class _InnerGtCommandSubject(Subject):
         )
         self.record_thread.start()
 
-        self.measure_observers: list[Observer] = []
-        self.coords_observers: list[Observer] = []
+        self.all_coord_observers: list[Observer] = []
+        self.changed_coord_observers: list[Observer] = []
         self.ts_hit_observers: list[Observer] = []
 
-        self._noise_buffer = np.empty((3, 3), dtype=np.int32)
-        self._median_buffer = np.empty((median_kernel_size, 3), dtype=np.int32)
+        self._noise_buffer = np.full((3, 3), dtype=np.float32, fill_value=np.nan)
+        self._median_buffer = np.full(
+            (median_kernel_size, 3), dtype=np.float32, fill_value=np.nan
+        )
 
     def set_next_ts(self, edge_id: str) -> None:
         """Set coordinates and label of following node after this edge.
@@ -108,25 +111,31 @@ class _InnerGtCommandSubject(Subject):
             line_string = line.decode("utf-8")
 
             ds = line_string.split(",")
-            coord = np.array([ds[4], ds[5], ds[6]], dtype=np.int32)
+            coord = np.array([ds[3], ds[4], ds[5]], dtype=np.int32)
+            time_stamp = int(ds[0])
             filtered_coord = self._filter_coord(coord, noise_filter_threshold)
-            if filtered_coord is not None and not np.any(filtered_coord == last_coord):
-                self.notify(self.measure_observers, filtered_coord)
-                if IGNORE_Z_AXIS:
-                    filtered_coord[2] = 0
-                self.notify(self.coords_observers, filtered_coord)
-                if self.ts_labels and self.ts_hit_observers:
-                    hit_labels = get_track_switches_hit(
-                        self.ts_labels,
-                        self.ts_coords,
-                        filtered_coord.reshape(1, -1),
-                        self.ts_hit_threshold,
+            if filtered_coord is not None:
+                self.notify(self.all_coord_observers, filtered_coord)
+                if not np.all(filtered_coord == last_coord):
+                    if IGNORE_Z_AXIS:
+                        filtered_coord[2] = 0
+                    self.notify(
+                        self.changed_coord_observers, (time_stamp, filtered_coord)
                     )
-                    last_coord = filtered_coord
-                    if not np.any(ts_last_hit == hit_labels) and hit_labels.size > 0:
-                        self.notify(self.ts_hit_observers, hit_labels)
-                        ts_last_hit = hit_labels
-                        print("hit")
+                    if self.ts_labels and self.ts_hit_observers:
+                        hit_labels = get_track_switches_hit(
+                            self.ts_labels,
+                            self.ts_coords,
+                            filtered_coord.reshape(1, -1),
+                            self.ts_hit_threshold,
+                        )
+                        last_coord = filtered_coord
+                        if (
+                            not np.all(ts_last_hit == hit_labels)
+                            and hit_labels.size > 0
+                        ):
+                            self.notify(self.ts_hit_observers, hit_labels)
+                            ts_last_hit = hit_labels
 
     @override
     def attach(self, observer: Observer) -> None:
@@ -135,24 +144,77 @@ class _InnerGtCommandSubject(Subject):
         Args:
             observer (Observer): observer
         """
-        observer_name = observer.__class__.__name__
-        if observer_name == "TsMeasureObserver":
-            self.measure_observers.append(observer)
-        elif observer_name == "TsHitObserver":
-            self.ts_hit_observers.append(observer)
-        observer.subject = self
+        self.changed_coord_observers.append(observer)
 
-    @override
-    def detach(self, observer: Observer) -> None:
-        """Detach observer.
+    def attach_all_coord(self, observer: Observer) -> None:
+        """Attach observer that is notified whenever a new valid coordinate is received.
+
+        observer.result contains the new coordinate as np.ndarray
 
         Args:
             observer (Observer): observer
         """
-        observer_name = observer.__class__.__name__
-        if observer_name == "TsMeasureObserver":
-            self.measure_observers.remove(observer)
-        elif observer_name == "TsHitObserver":
+        observer.subject = self
+        self.all_coord_observers.append(observer)
+
+    def attach_changed_coord(self, observer: Observer) -> None:
+        """Attach observer that is notified whenever a different coordinate is received.
+
+        observer.result contains Tuple[int, np.ndarray] timestamp in ms, coordinate
+
+        Args:
+            observer (Observer): observer
+        """
+        observer.subject = self
+        self.changed_coord_observers.append(observer)
+
+    def attach_ts_hit(self, observer: Observer) -> None:
+        """Attach observer that is notified whenever a train switch is hit.
+
+        observer.result contains hit labels as np.ndarray
+
+        Args:
+            observer (Observer): observer
+        """
+        observer.subject = self
+        self.ts_hit_observers.append(observer)
+
+    def detach_all_coord(self, observer: Observer) -> None:
+        """Detach observer from this hook.
+
+        Args:
+            observer (Observer): observer
+        """
+        self.all_coord_observers.remove(observer)
+
+    def detach_changed_coord(self, observer: Observer) -> None:
+        """Detach observer from this hook.
+
+        Args:
+            observer (Observer): observer
+        """
+        self.changed_coord_observers.remove(observer)
+
+    def detach_ts_hit(self, observer: Observer) -> None:
+        """Detach observer from this hook.
+
+        Args:
+            observer (Observer): observer
+        """
+        self.ts_hit_observers.remove(observer)
+
+    @override
+    def detach(self, observer: Observer) -> None:
+        """Detach observer from all hooks.
+
+        Args:
+            observer (Observer): observer
+        """
+        if observer in self.all_coord_observers:
+            self.all_coord_observers.remove(observer)
+        if observer in self.changed_coord_observers:
+            self.changed_coord_observers.remove(observer)
+        if observer in self.ts_hit_observers:
             self.ts_hit_observers.remove(observer)
 
 

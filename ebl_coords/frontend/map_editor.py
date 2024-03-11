@@ -11,6 +11,7 @@ from PyQt6.QtWidgets import QListWidgetItem, QPushButton
 from ebl_coords.backend.command.gui_cmd import DrawOccupiedNetCommand
 from ebl_coords.backend.constants import BLOCK_SIZE, ZONE_FILE
 from ebl_coords.backend.observable.ecos_oberver import EcosObserver
+from ebl_coords.backend.observable.position_observer import PositionObserver
 from ebl_coords.backend.observable.ts_hit_observer import TsHitObserver
 from ebl_coords.decorators import override
 from ebl_coords.frontend.custom_widgets import ClickableLabel, CustomZoneContainer
@@ -71,10 +72,12 @@ class MapEditor(Editor):
 
     def register_observers(self) -> None:
         """Make and attach observers."""
+        # TO DO: check if references of observers can be dropped
         self.ts_hit_observer = TsHitObserver(self.main_window)
-        self.gtcommand.attach(self.ts_hit_observer)
+        self.gtcommand.attach_ts_hit(self.ts_hit_observer)
         self.ecos_oberver = EcosObserver(main_window=self.main_window)
         self.main_window.ecos.attach(self.ecos_oberver)
+        self.gtcommand.attach_changed_coord(PositionObserver(self.main_window))
 
     def map_pos_changed(self) -> None:
         """Invoke update of gtcommand subject on QCombobox change."""
@@ -86,13 +89,21 @@ class MapEditor(Editor):
             cmd = f"""
             MATCH(n1:{weiche})-[r]->(n2:{weiche})
             WHERE r.edge_id = '{edge_id}'
-            RETURN r.edge_id AS edge_id, type(r) AS ts_source, r.target AS ts_dest, n1.node_id AS source_id, n2.node_id as dest_id
+            RETURN r.edge_id AS edge_id, type(r) AS ts_source, r.target AS ts_dest, n1.node_id AS source_id, n2.node_id AS dest_id, r.distance AS distance
             """
             df = self.graph_db.run_query(cmd)
             assert df.shape[0] == 1
+            edge_info = df.iloc[0].to_dict()
+            distance = float(edge_info["distance"])
+            edge_info["distance"] = distance
+            edge_info["occupied_percent"] = 0
+            if distance > 0:
+                edge_info["occupied_percent"] = (
+                    self.ui.map_distance_dsb.value() / distance
+                )
 
             self.main_window.command_queue.put(
-                DrawOccupiedNetCommand(content=df, context=self)
+                DrawOccupiedNetCommand(content=edge_info, context=self)
             )
 
     def load_json(self) -> None:

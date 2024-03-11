@@ -4,6 +4,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from ebl_coords.backend.command.db_cmd import OccupyNextEdgeCommand
+from ebl_coords.backend.command.gui_cmd import SetFloatCommand
 from ebl_coords.backend.observable.observer import Observer
 from ebl_coords.decorators import override
 
@@ -31,4 +32,7 @@ class TsHitObserver(Observer):
             OccupyNextEdgeCommand(
                 content=(self.result[0], self.ecos_df), context=self.map_editor
             )
+        )
+        self.command_queue.put(
+            SetFloatCommand(content=0.0, context=self.map_editor.ui.map_distance_dsb)
         )

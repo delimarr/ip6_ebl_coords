@@ -1,6 +1,7 @@
 """Command pattern Pandas."""
 from __future__ import annotations
 
+import numpy as np
 import pandas as pd
 
 from ebl_coords.backend.command.base import Command
@@ -32,6 +33,8 @@ class UpdateStateCommand(Command):
         ip = self.content["ip"]
         state = self.content["state"]
 
+        assert np.issubdtype(type(ecos_id), np.integer)
+        assert np.issubdtype(self.context.id.dtype, np.integer)
         index = self.context.loc[
             (self.context.id == ecos_id) & (self.context.ip == ip)
         ].index

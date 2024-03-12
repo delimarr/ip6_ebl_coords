@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow:
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1186, 955)
+        MainWindow.resize(1186, 843)
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -86,24 +86,14 @@ class Ui_MainWindow:
         self.label_7 = QtWidgets.QLabel(parent=self.map_left_form)
         self.label_7.setObjectName("label_7")
         self.formLayout.setWidget(
-            14, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_7
+            15, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_7
         )
         self.map_zone_height = QtWidgets.QSpinBox(parent=self.map_left_form)
         self.map_zone_height.setMinimum(1)
         self.map_zone_height.setProperty("value", 10)
         self.map_zone_height.setObjectName("map_zone_height")
         self.formLayout.setWidget(
-            14, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_zone_height
-        )
-        self.map_zone_speichern_btn = QtWidgets.QPushButton(parent=self.map_left_form)
-        self.map_zone_speichern_btn.setObjectName("map_zone_speichern_btn")
-        self.formLayout.setWidget(
-            15, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_zone_speichern_btn
-        )
-        self.map_zone_neu_btn = QtWidgets.QPushButton(parent=self.map_left_form)
-        self.map_zone_neu_btn.setObjectName("map_zone_neu_btn")
-        self.formLayout.setWidget(
-            16, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_zone_neu_btn
+            15, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_zone_height
         )
         self.label_12 = QtWidgets.QLabel(parent=self.map_left_form)
         self.label_12.setObjectName("label_12")
@@ -185,6 +175,21 @@ class Ui_MainWindow:
         self.map_distance_dsb.setObjectName("map_distance_dsb")
         self.formLayout.setWidget(
             5, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_distance_dsb
+        )
+        self.map_zone_neu_btn = QtWidgets.QPushButton(parent=self.map_left_form)
+        self.map_zone_neu_btn.setObjectName("map_zone_neu_btn")
+        self.formLayout.setWidget(
+            16, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_zone_neu_btn
+        )
+        self.map_zone_resize_btn = QtWidgets.QPushButton(parent=self.map_left_form)
+        self.map_zone_resize_btn.setObjectName("map_zone_resize_btn")
+        self.formLayout.setWidget(
+            17, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_zone_resize_btn
+        )
+        self.map_zone_speichern_btn = QtWidgets.QPushButton(parent=self.map_left_form)
+        self.map_zone_speichern_btn.setObjectName("map_zone_speichern_btn")
+        self.formLayout.setWidget(
+            19, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_zone_speichern_btn
         )
         self.verticalLayout_5.addWidget(self.map_left_form)
         self.map_right = QtWidgets.QWidget(parent=self.map_splitter)
@@ -391,7 +396,7 @@ class Ui_MainWindow:
         self.actionZone_laden.setObjectName("actionZone_laden")
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.weichen_weichenname_txt, self.weichen_dcc_txt)
         MainWindow.setTabOrder(self.weichen_dcc_txt, self.weichen_bhf_txt)
@@ -400,16 +405,14 @@ class Ui_MainWindow:
         MainWindow.setTabOrder(self.weichen_einmessen_btn, self.map_zone_width)
         MainWindow.setTabOrder(self.map_zone_width, self.map_zone_height)
         MainWindow.setTabOrder(self.map_zone_height, self.map_zone_speichern_btn)
-        MainWindow.setTabOrder(self.map_zone_speichern_btn, self.map_zone_neu_btn)
-        MainWindow.setTabOrder(self.map_zone_neu_btn, self.strecken_comboBox_a)
+        MainWindow.setTabOrder(self.map_zone_speichern_btn, self.strecken_comboBox_a)
         MainWindow.setTabOrder(self.strecken_comboBox_a, self.strecken_comboBox_b)
         MainWindow.setTabOrder(self.strecken_comboBox_b, self.strecken_speichern_btn)
         MainWindow.setTabOrder(self.strecken_speichern_btn, self.weichen_list)
         MainWindow.setTabOrder(self.weichen_list, self.strecken_list)
         MainWindow.setTabOrder(self.strecken_list, self.strecken_new_btn)
         MainWindow.setTabOrder(self.strecken_new_btn, self.map_weichen_list)
-        MainWindow.setTabOrder(self.map_weichen_list, self.tabWidget)
-        MainWindow.setTabOrder(self.tabWidget, self.weichen_new_btn)
+        MainWindow.setTabOrder(self.map_weichen_list, self.weichen_new_btn)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -418,10 +421,6 @@ class Ui_MainWindow:
         self.label_5.setText(_translate("MainWindow", "Position"))
         self.label_6.setText(_translate("MainWindow", "Netzbreite"))
         self.label_7.setText(_translate("MainWindow", "Netzhöhe"))
-        self.map_zone_speichern_btn.setText(
-            _translate("MainWindow", "Speichern und Generieren")
-        )
-        self.map_zone_neu_btn.setText(_translate("MainWindow", "Neues Netz"))
         self.label_12.setText(_translate("MainWindow", "Fahrstrecke [m]"))
         self.label_14.setText(_translate("MainWindow", "Gleisnetz-Konfiguration"))
         self.label_15.setText(_translate("MainWindow", "Transmitter-Konfiguration"))
@@ -430,6 +429,11 @@ class Ui_MainWindow:
         self.map_break_s_label.setText(_translate("MainWindow", "0"))
         self.label_11.setText(_translate("MainWindow", "Bremsbeschleunigung [m/s^2]"))
         self.label_13.setText(_translate("MainWindow", "Bremsweg [m]"))
+        self.map_zone_neu_btn.setText(_translate("MainWindow", "Neues Netz"))
+        self.map_zone_resize_btn.setText(
+            _translate("MainWindow", "Rastergrösse anpassen")
+        )
+        self.map_zone_speichern_btn.setText(_translate("MainWindow", "Speichern"))
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.map_tab), _translate("MainWindow", "Gleisnetz")
         )

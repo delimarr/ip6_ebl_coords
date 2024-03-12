@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1186</width>
-    <height>955</height>
+    <height>843</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="map_tab">
        <attribute name="title">
@@ -95,34 +95,20 @@
                  </property>
                 </widget>
                </item>
-               <item row="14" column="0">
+               <item row="15" column="0">
                 <widget class="QLabel" name="label_7">
                  <property name="text">
                   <string>Netzhöhe</string>
                  </property>
                 </widget>
                </item>
-               <item row="14" column="1">
+               <item row="15" column="1">
                 <widget class="QSpinBox" name="map_zone_height">
                  <property name="minimum">
                   <number>1</number>
                  </property>
                  <property name="value">
                   <number>10</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="15" column="1">
-                <widget class="QPushButton" name="map_zone_speichern_btn">
-                 <property name="text">
-                  <string>Speichern und Generieren</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="16" column="1">
-                <widget class="QPushButton" name="map_zone_neu_btn">
-                 <property name="text">
-                  <string>Neues Netz</string>
                  </property>
                 </widget>
                </item>
@@ -235,6 +221,27 @@
                 <widget class="QDoubleSpinBox" name="map_distance_dsb">
                  <property name="maximum">
                   <double>1000.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="16" column="1">
+                <widget class="QPushButton" name="map_zone_neu_btn">
+                 <property name="text">
+                  <string>Neues Netz</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="17" column="1">
+                <widget class="QPushButton" name="map_zone_resize_btn">
+                 <property name="text">
+                  <string>Rastergrösse anpassen</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="19" column="1">
+                <widget class="QPushButton" name="map_zone_speichern_btn">
+                 <property name="text">
+                  <string>Speichern</string>
                  </property>
                 </widget>
                </item>
@@ -520,7 +527,6 @@
   <tabstop>map_zone_width</tabstop>
   <tabstop>map_zone_height</tabstop>
   <tabstop>map_zone_speichern_btn</tabstop>
-  <tabstop>map_zone_neu_btn</tabstop>
   <tabstop>strecken_comboBox_a</tabstop>
   <tabstop>strecken_comboBox_b</tabstop>
   <tabstop>strecken_speichern_btn</tabstop>
@@ -528,7 +534,6 @@
   <tabstop>strecken_list</tabstop>
   <tabstop>strecken_new_btn</tabstop>
   <tabstop>map_weichen_list</tabstop>
-  <tabstop>tabWidget</tabstop>
   <tabstop>weichen_new_btn</tabstop>
  </tabstops>
  <resources/>

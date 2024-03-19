@@ -68,7 +68,7 @@ def _add_db_guid(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _get_ecos_df_mock(config: Dict[str, Any], bpks: List[str]) -> pd.DataFrame:
-    df = pd.read_csv("./tmp/ecos.csv")
+    df = pd.read_csv("./ecos_mock/ecos.csv")
     df = df.loc[df.protocol == "DCC"]
     df = df.loc[df.name1.isin(bpks)]
     df.insert(df.shape[1], column="ip", value=config["bpk_ip"]["DAB"])

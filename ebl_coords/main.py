@@ -7,12 +7,9 @@ from typing import TYPE_CHECKING
 
 import pandas as pd
 
-from ebl_coords.backend.command.invoker import Invoker
-from ebl_coords.backend.constants import CALLBACK_DT_MS, CONFIG_JSON, ECOS_DF_LOCK, GTCOMMAND_IP
-from ebl_coords.backend.constants import GTCOMMAND_PORT
+from ebl_coords.backend.constants import CONFIG_JSON, ECOS_DF_LOCK
 from ebl_coords.backend.ecos import get_ecos_df, load_config
 from ebl_coords.backend.observable.ecos_subject import EcosSubject
-from ebl_coords.backend.observable.gtcommand_subject import GtCommandSubject
 from ebl_coords.frontend.gui import Gui
 from ebl_coords.graph_db.graph_db_api import GraphDbApi
 
@@ -24,14 +21,18 @@ class EblCoords:
     """Main Backend."""
 
     def __init__(self) -> None:
-        """Start all threads, subjects and invoker loop."""
-        self.worker_queue: Queue[Command] = Queue()
-        invoker = Invoker()
-        self.worker_thread = invoker.start_loop(
-            queue=self.worker_queue, interval_s=CALLBACK_DT_MS / 1000
-        )
+        """Initialize and show the gui."""
+        super().__init__()
+        self.callback_timer = QTimer()
+        self.callback_timer.timeout.connect(self.my_callback)
+        self.callback_timer.start(CALLBACK_DT)
 
-        self.gtcommand = GtCommandSubject(ip=GTCOMMAND_IP, port=GTCOMMAND_PORT)
+        self.graph_db = GraphDbApi()
+
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)  # type: ignore
+
+        self.command_queue: Queue[Command] = Queue()
 
         self.bpks, self.ecos_config = load_config(config_file=CONFIG_JSON)
         self.ecos_df: pd.DataFrame

@@ -118,8 +118,10 @@ class NetMaker:
         block_size = self.block_size
         width_pixels = width * block_size + 1
         height_pixels = height * block_size + 1
-        self.map.setFixedSize(width_pixels, height_pixels)
-        self.map.setPixmap(QtGui.QPixmap(self.map.size()))
+        old_size = self.map.pixmap().size()
+        if old_size.width() != width_pixels or old_size.height() != height_pixels:
+            self.map.setFixedSize(width_pixels, height_pixels)
+            self.map.setPixmap(QtGui.QPixmap(self.map.size()))
 
         # vertical lines
         for i in range(0, width + 1):

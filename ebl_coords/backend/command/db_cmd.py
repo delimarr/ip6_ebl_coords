@@ -133,6 +133,7 @@ class OccupyNextEdgeGuiCommand(Command):
 
         relation = EdgeRelation.NEUTRAL.name
 
+        # check if deflection/ straight exit will be used.
         if self.node_id[-1] == "0":
             neutral_node_id = f"{self.node_id[:-1]}0"
             with ECOS_DF_LOCK:

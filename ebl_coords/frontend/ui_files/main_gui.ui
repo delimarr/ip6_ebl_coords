@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>1186</width>
-    <height>955</height>
+    <height>843</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>EBL</string>
+   <string>EBL Coords</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -78,14 +78,14 @@
                <item row="1" column="1">
                 <widget class="QComboBox" name="map_position_CBox"/>
                </item>
-               <item row="11" column="0">
+               <item row="13" column="0">
                 <widget class="QLabel" name="label_6">
                  <property name="text">
                   <string>Netzbreite</string>
                  </property>
                 </widget>
                </item>
-               <item row="11" column="1">
+               <item row="13" column="1">
                 <widget class="QSpinBox" name="map_zone_width">
                  <property name="minimum">
                   <number>1</number>
@@ -95,14 +95,14 @@
                  </property>
                 </widget>
                </item>
-               <item row="12" column="0">
+               <item row="15" column="0">
                 <widget class="QLabel" name="label_7">
                  <property name="text">
                   <string>Netzhöhe</string>
                  </property>
                 </widget>
                </item>
-               <item row="12" column="1">
+               <item row="15" column="1">
                 <widget class="QSpinBox" name="map_zone_height">
                  <property name="minimum">
                   <number>1</number>
@@ -112,35 +112,14 @@
                  </property>
                 </widget>
                </item>
-               <item row="13" column="1">
-                <widget class="QPushButton" name="map_zone_speichern_btn">
-                 <property name="text">
-                  <string>Speichern und Generieren</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="14" column="1">
-                <widget class="QPushButton" name="map_zone_neu_btn">
-                 <property name="text">
-                  <string>Neues Netz</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="0">
+               <item row="5" column="0">
                 <widget class="QLabel" name="label_12">
                  <property name="text">
-                  <string>Fahrtmeter</string>
+                  <string>Fahrstrecke [m]</string>
                  </property>
                 </widget>
                </item>
-               <item row="4" column="1">
-                <widget class="QLabel" name="map_distance_label">
-                 <property name="text">
-                  <string>0m</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="10" column="0" colspan="2">
+               <item row="12" column="0" colspan="2">
                 <widget class="QLabel" name="label_14">
                  <property name="font">
                   <font>
@@ -167,24 +146,24 @@
                  </property>
                 </widget>
                </item>
-               <item row="5" column="0">
+               <item row="7" column="0">
                 <widget class="QLabel" name="label_8">
                  <property name="text">
-                  <string>Geschwindigkeit</string>
+                  <string>Geschwindigkeit [m/s]</string>
                  </property>
                 </widget>
                </item>
-               <item row="5" column="1">
+               <item row="7" column="1">
                 <widget class="QLabel" name="map_v_label">
                  <property name="text">
-                  <string>0m/s</string>
+                  <string>0</string>
                  </property>
                 </widget>
                </item>
-               <item row="6" column="1">
+               <item row="8" column="1">
                 <widget class="QLabel" name="map_break_s_label">
                  <property name="text">
-                  <string>0m</string>
+                  <string>0</string>
                  </property>
                 </widget>
                </item>
@@ -211,10 +190,10 @@
                  </property>
                 </widget>
                </item>
-               <item row="6" column="0">
+               <item row="8" column="0">
                 <widget class="QLabel" name="label_13">
                  <property name="text">
-                  <string>Bremsweg</string>
+                  <string>Bremsweg [m]</string>
                  </property>
                 </widget>
                </item>
@@ -225,7 +204,7 @@
                  </property>
                 </widget>
                </item>
-               <item row="9" column="0">
+               <item row="11" column="0">
                 <spacer name="verticalSpacer_2">
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
@@ -237,6 +216,34 @@
                   </size>
                  </property>
                 </spacer>
+               </item>
+               <item row="5" column="1">
+                <widget class="QDoubleSpinBox" name="map_distance_dsb">
+                 <property name="maximum">
+                  <double>1000.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="16" column="1">
+                <widget class="QPushButton" name="map_zone_neu_btn">
+                 <property name="text">
+                  <string>Neues Netz</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="17" column="1">
+                <widget class="QPushButton" name="map_zone_resize_btn">
+                 <property name="text">
+                  <string>Rastergrösse anpassen</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="19" column="1">
+                <widget class="QPushButton" name="map_zone_speichern_btn">
+                 <property name="text">
+                  <string>Speichern</string>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -442,14 +449,21 @@
             <item row="1" column="1">
              <widget class="QComboBox" name="strecken_comboBox_b"/>
             </item>
-            <item row="3" column="1">
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_17">
+              <property name="text">
+               <string>Länge [m]</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
              <widget class="QPushButton" name="strecken_speichern_btn">
               <property name="text">
                <string>Speichern</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
+            <item row="3" column="1">
              <spacer name="verticalSpacer_3">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -461,6 +475,16 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item row="2" column="1">
+             <widget class="QDoubleSpinBox" name="strecken_distance_sb"/>
+            </item>
+            <item row="5" column="1">
+             <widget class="QPushButton" name="strecken_delete_btn">
+              <property name="text">
+               <string>Löschen</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -478,7 +502,7 @@
      <x>0</x>
      <y>0</y>
      <width>1186</width>
-     <height>22</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>
@@ -503,7 +527,6 @@
   <tabstop>map_zone_width</tabstop>
   <tabstop>map_zone_height</tabstop>
   <tabstop>map_zone_speichern_btn</tabstop>
-  <tabstop>map_zone_neu_btn</tabstop>
   <tabstop>strecken_comboBox_a</tabstop>
   <tabstop>strecken_comboBox_b</tabstop>
   <tabstop>strecken_speichern_btn</tabstop>
@@ -511,7 +534,6 @@
   <tabstop>strecken_list</tabstop>
   <tabstop>strecken_new_btn</tabstop>
   <tabstop>map_weichen_list</tabstop>
-  <tabstop>tabWidget</tabstop>
   <tabstop>weichen_new_btn</tabstop>
  </tabstops>
  <resources/>

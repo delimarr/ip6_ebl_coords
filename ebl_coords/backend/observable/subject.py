@@ -1,14 +1,17 @@
 """Subject interface."""
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+from threading import RLock
 from typing import TYPE_CHECKING, Any
+
+from ebl_coords.backend.singleton_meta import SingletonMeta
 
 if TYPE_CHECKING:
     from ebl_coords.backend.observable.observer import Observer
 
 
-class Subject(ABC):
+class Subject(metaclass=SingletonMeta):
     """Subject interface.
 
     Args:
@@ -18,6 +21,11 @@ class Subject(ABC):
         NotImplementedError: interface
         NotImplementedError: interface
     """
+
+    @abstractmethod
+    def __init__(self) -> None:
+        """Initialize the Subject with reentry lock."""
+        self.lock = RLock()
 
     @abstractmethod
     def attach(self, observer: Observer) -> None:
@@ -50,6 +58,7 @@ class Subject(ABC):
             observers (list[Observer]): list of observers
             result (Any): result
         """
-        for observer in observers:
-            observer.result = result
-            observer.update()
+        with self.lock:
+            for observer in observers:
+                observer.result = result
+                observer.update()

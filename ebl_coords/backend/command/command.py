@@ -1,6 +1,9 @@
 """Base Command. Command-Pattern."""
 from abc import ABC, abstractmethod
+from queue import Queue
 from typing import Any, Optional
+
+from ebl_coords.decorators import override
 
 
 class Command(ABC):
@@ -31,3 +34,27 @@ class Command(ABC):
             NotImplementedError: interface
         """
         raise NotImplementedError
+
+
+class WrapperCommand(Command):
+    """A Wrapper Command, in order to a command directly to the next queue.
+
+    Args:
+        Command (_type_): interface
+    """
+
+    def __init__(self, content: Command, context: Queue[Command]) -> None:
+        """Initialize this command.
+
+        Args:
+            content (Command): gui command
+            context (Queue[Command]): gui_queue
+        """
+        super().__init__(content, context)
+        self.content: Command
+        self.context: Queue[Command]
+
+    @override
+    def run(self) -> None:
+        """Put the command in the context queue."""
+        self.context.put(self.content)

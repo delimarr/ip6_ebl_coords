@@ -3,93 +3,23 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import pandas as pd
-
-from ebl_coords.backend.command.base import Command
+from ebl_coords.backend.command.command import Command
 from ebl_coords.backend.constants import OCCUPIED_HEX
 from ebl_coords.decorators import override
 from ebl_coords.graph_db.data_elements.edge_relation_enum import EdgeRelation
 
 if TYPE_CHECKING:
-    from PyQt6.QtWidgets import QComboBox, QLabel
+    import pandas as pd
 
-    from ebl_coords.frontend.main_gui import Ui_MainWindow
     from ebl_coords.frontend.map_editor import MapEditor
 
 
-class StatusBarCommand(Command):
-    """Display StatusBar.
+class DrawOccupiedNetCmd(Command):
+    """Redraw the net and color occupied edge.
 
     Args:
         Command (_type_): interface
     """
-
-    def __init__(self, content: str, context: Ui_MainWindow) -> None:
-        """Initialize command.
-
-        Args:
-            content (str): message to be displayed
-            context (Ui_MainWindow): Ui Container
-        """
-        super().__init__(content, context)
-        self.content: str
-        self.context: Ui_MainWindow
-
-    @override
-    def run(self) -> None:
-        """Display message in statusbar."""
-        self.context.statusbar.showMessage(self.content)
-
-
-class SetTextCommand(Command):
-    """Update a QLabel text.
-
-    Args:
-        Command (_type_): interface
-    """
-
-    def __init__(self, content: str, context: QLabel) -> None:
-        """Initialize context and content.
-
-        Args:
-            content (str): new text
-            context (QLabel): target QLabel
-        """
-        super().__init__(content, context)
-        self.content: str
-        self.context: QLabel
-
-    @override
-    def run(self) -> None:
-        """Update text."""
-        self.context.setText(self.content)
-
-
-class SetComboBoxCommand(Command):
-    """Select a new element in a QComboBox."""
-
-    def __init__(self, content: str, context: QComboBox) -> None:
-        """Initialize userdata and QCombobox.
-
-        Args:
-            content (str): UserData of QCombobox-Item
-            context (QComboBox): QCombobox
-        """
-        super().__init__(content, context)
-        self.content: str
-        self.context: QComboBox
-
-    @override
-    def run(self) -> None:
-        """Match content to UserData from QComboBox element and select it."""
-        for i in range(self.context.count()):
-            if self.context.itemData(i) == self.content:
-                self.context.setCurrentIndex(i)
-                return
-
-
-class DrawOccupiedNetCommand(Command):
-    """Redraw the net and color occupied edge."""
 
     def __init__(self, content: pd.DataFrame, context: MapEditor) -> None:
         """Initialize this command.
@@ -102,7 +32,6 @@ class DrawOccupiedNetCommand(Command):
         self.content: pd.DataFrame
         self.context: MapEditor
         self.switches = self.context.zone.switches
-        self.ecos_df = self.context.main_window.ecos_df
 
     @override
     def run(self) -> None:
@@ -140,9 +69,7 @@ class DrawOccupiedNetCommand(Command):
         if coords is None:
             return
         points.append(coords)
-
         self.context.net_maker.clear()
-        self.context.draw()
         for i in range(len(points) - 1):
             p1: tuple[int, int] = points[i]
             p2: tuple[int, int] = points[i + 1]

@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     import pandas as pd
 
 
-class _InnerEcosSubject(Subject):
+class EcosSubject(Subject):
     """Connect to ecos devices and provide observer pattern.
 
     Args:
@@ -28,6 +28,7 @@ class _InnerEcosSubject(Subject):
             ecos_config (dict[str, Any]): ecos config
             ecos_ids (pd.Series): all ecos ids in the network
         """
+        super().__init__()
         self.ecos_config = ecos_config
         self.ecos_ids = ecos_ids
         self.observers: list[Observer] = []
@@ -39,7 +40,8 @@ class _InnerEcosSubject(Subject):
         Args:
             observer (Observer): observer
         """
-        self.observers.append(observer)
+        with self.lock:
+            self.observers.append(observer)
 
     @override
     def detach(self, observer: Observer) -> None:
@@ -48,7 +50,8 @@ class _InnerEcosSubject(Subject):
         Args:
             observer (Observer): observer
         """
-        self.observers.remove(observer)
+        with self.lock:
+            self.observers.remove(observer)
 
     def _record(self, ip: str, port: int) -> None:
         """Open and subsribe to an ecos socket. Notify observers.
@@ -92,15 +95,3 @@ class _InnerEcosSubject(Subject):
         port = self.ecos_config["port"]
         for ip in self.ecos_config["bpk_ip"].values():
             Thread(target=self._record, args=[ip, port], daemon=True).start()
-
-
-class EcosSubject(_InnerEcosSubject):
-    """Singleton wrapper class for Subject."""
-
-    _api = None
-
-    def __new__(cls, *args, **kwargs) -> _InnerEcosSubject:  # type: ignore # pylint: disable=unused-argument
-        """Return singleton or create if it does not exist yet."""
-        if cls._api is None:
-            cls._api = super(_InnerEcosSubject, cls).__new__(cls)
-        return cls._api

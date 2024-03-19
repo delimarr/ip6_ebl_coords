@@ -5,38 +5,39 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from ebl_coords.backend.observable.ts_measure_observer import TsMeasureObserver
+from ebl_coords.backend.command.db_cmd import DbCommand, FillTsListGuiCommand, GetTsGuiCommand
+from ebl_coords.backend.command.ecos_cmd import UpdateEocsDfCommand
+from ebl_coords.backend.observable.ts_measure_observer import AttachTsMeasureCommand
 from ebl_coords.decorators import override
-from ebl_coords.frontend.custom_widgets import CustomBtn, fill_list
+from ebl_coords.frontend.custom_widgets import CustomBtn
 from ebl_coords.frontend.editor import Editor
 from ebl_coords.graph_db.data_elements.bpk_enum import Bpk
 from ebl_coords.graph_db.data_elements.node_dc import Node
 from ebl_coords.graph_db.data_elements.switch_item_enum import SwitchItem
-from ebl_coords.graph_db.query_generator import double_node, generate_guid
-from ebl_coords.graph_db.query_generator import get_double_nodes, update_double_nodes
+from ebl_coords.graph_db.query_generator import double_node, generate_guid, update_double_nodes
 
 if TYPE_CHECKING:
-    from ebl_coords.main import MainWindow
+    from ebl_coords.frontend.gui import Gui
 
 
 class WeichenEditor(Editor):
     """Editor for train switches.
 
     Args:
-        Editor (_type_): Base Editor class.
+        Editor (_type_): interface
     """
 
     def __init__(
         self,
-        main_window: MainWindow,
+        gui: Gui,
     ) -> None:
-        """Connect Buttons.
+        """Initialize weichen_editor for main gui.
 
         Args:
-            main_window (MainWindow): main window
+            gui (Gui): gui
         """
-        super().__init__(main_window)
-        self.strecken_editor = self.main_window.strecken_editor
+        super().__init__(gui)
+        self.strecken_editor = self.gui.strecken_editor
 
         self.ui.weichen_new_btn.clicked.connect(self.reset)
         self.ui.weichen_speichern_btn.clicked.connect(self.save)
@@ -52,9 +53,12 @@ class WeichenEditor(Editor):
         self.ui.weichen_dcc_txt.clear()
         self.ui.weichen_bhf_txt.clear()
         self.ui.weichen_list.clear()
-        fill_list(self.graph_db, self.ui.weichen_list, self.select_ts)
         self.selected_ts = None
-        self.strecken_editor.reset()
+        self.worker_queue.put(
+            FillTsListGuiCommand(
+                content=(self.ui.weichen_list, self.select_ts), context=self.gui_queue
+            )
+        )
 
     @override
     def save(self) -> None:
@@ -78,10 +82,11 @@ class WeichenEditor(Editor):
                 # modify existing double node
                 node.id = self.selected_ts
                 cmd = update_double_nodes(node)
-            self.graph_db.run_query(cmd)
-            self.main_window.set_ecos_df()
-            self.main_window.map_editor.fill_list()
+            self.worker_queue.put(DbCommand(cmd))
+            self.worker_queue.put(UpdateEocsDfCommand(self.gui.ebl_coords))
+            self.gui.map_editor.fill_list()
             self.reset()
+            self.strecken_editor.reset()
 
     def select_ts(self, custom_btn: CustomBtn) -> None:
         """Select a train switch.
@@ -90,21 +95,20 @@ class WeichenEditor(Editor):
             custom_btn (CustomBtn): source button
         """
         self.selected_ts = custom_btn.guid
-        cmd = get_double_nodes(self.selected_ts)
-        df = self.graph_db.run_query(cmd)
-        self.ui.weichen_bhf_txt.setText(df["n1.bhf"][0])
-        self.ui.weichen_dcc_txt.setText(df["n1.ecos_id"][0])
-        self.ui.weichen_weichenname_txt.setText(df["n1.name"][0])
-        self.ui.weichen_coord_label.setText(
-            f"({df['n1.x'][0]}, {df['n1.y'][0]}, {df['n1.z'][0]})"
+        self.worker_queue.put(
+            GetTsGuiCommand(content=(self.selected_ts, self.gui.ui), context=self.gui_queue)
         )
 
     def start_measurement(self) -> None:
         """Start measure coordinates for this trainswitch."""
         if self.selected_ts is not None:
-            ts_measure_observer = TsMeasureObserver(
-                selected_ts=self.selected_ts,
-                command_queue=self.main_window.command_queue,
-                ui=self.ui,
+            self.worker_queue.put(
+                AttachTsMeasureCommand(
+                    content=(
+                        self.selected_ts,
+                        self.gui_queue,
+                        self.worker_queue,
+                        self.gui.ui,
+                    ),
+                )
             )
-            self.gtcommand.attach(ts_measure_observer)

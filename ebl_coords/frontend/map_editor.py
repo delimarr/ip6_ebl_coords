@@ -8,37 +8,34 @@ from typing import TYPE_CHECKING
 
 from PyQt6.QtWidgets import QListWidgetItem, QPushButton
 
-from ebl_coords.backend.command.gui_cmd import DrawOccupiedNetCommand
+from ebl_coords.backend.command.db_cmd import MapDrawConnectTopoGuiCmd, MapDrawConnectTsGuiCmd
+from ebl_coords.backend.command.db_cmd import MapFillCbGuiCmd, MapFillListGuiCmd
 from ebl_coords.backend.constants import BLOCK_SIZE, ZONE_FILE
-from ebl_coords.backend.observable.ecos_oberver import EcosObserver
-from ebl_coords.backend.observable.ts_hit_observer import TsHitObserver
+from ebl_coords.backend.observable.ecos_oberver import AttachEcosObsCommand
+from ebl_coords.backend.observable.ts_hit_observer import AttachTsHitObsCommand
 from ebl_coords.decorators import override
+from ebl_coords.frontend.command.map.redraw_cmd import RedrawCmd
 from ebl_coords.frontend.custom_widgets import ClickableLabel, CustomZoneContainer
 from ebl_coords.frontend.editor import Editor
 from ebl_coords.frontend.map_data_elements.map_train_switch_dc import MapTsTopopoint
 from ebl_coords.frontend.map_data_elements.zone_dc import Zone
 from ebl_coords.frontend.net_maker import NetMaker
 from ebl_coords.graph_db.data_elements.edge_relation_enum import EDGE_RELATION_TO_ENUM
-from ebl_coords.graph_db.data_elements.edge_relation_enum import EdgeRelation
-from ebl_coords.graph_db.data_elements.switch_item_enum import SwitchItem
 
 if TYPE_CHECKING:
-    from ebl_coords.main import MainWindow
+    from ebl_coords.frontend.gui import Gui
 
 
 class MapEditor(Editor):
     """The Map editor."""
 
-    def __init__(self, main_window: MainWindow) -> None:
+    def __init__(self, gui: Gui) -> None:
         """Build zone and create clickable label.
 
         Args:
-            main_window (MainWindow): main_window
+            gui (Gui): gui
         """
-        super().__init__(main_window)
-        self.ts_hit_observer: TsHitObserver
-        self.ecos_oberver: EcosObserver
-
+        super().__init__(gui)
         self.selected_ts: MapTsTopopoint | None = None
 
         self._connect_ui_elements()
@@ -50,13 +47,11 @@ class MapEditor(Editor):
             height=self.ui.map_zone_height.value(),
             switches={},
         )
-        self.net_maker: NetMaker = NetMaker(
-            self.map_label, block_size=self.zone.block_size
-        )
+        self.net_maker: NetMaker = NetMaker(self.map_label, block_size=self.zone.block_size)
         self.fill_list()
-        self.fill_combobox()
         if exists(ZONE_FILE):
             self.load_json()
+        self.fill_combobox()
 
     def _connect_ui_elements(self) -> None:
         """Make map label and connect events."""
@@ -71,29 +66,26 @@ class MapEditor(Editor):
 
     def register_observers(self) -> None:
         """Make and attach observers."""
-        self.ts_hit_observer = TsHitObserver(self.main_window)
-        self.gtcommand.attach(self.ts_hit_observer)
-        self.ecos_oberver = EcosObserver(main_window=self.main_window)
-        self.main_window.ecos.attach(self.ecos_oberver)
+        self.worker_queue.put(
+            AttachTsHitObsCommand(
+                content=(
+                    self.gui_queue,
+                    self.worker_queue,
+                    self.gui.ebl_coords.ecos_df,
+                    self.ui.map_position_CBox,
+                )
+            )
+        )
+        self.worker_queue.put(
+            AttachEcosObsCommand(
+                content=(self.gui_queue, self.worker_queue, self),
+                context=self.gui.ebl_coords.ecos,
+            )
+        )
 
     def map_pos_changed(self) -> None:
         """Invoke update of gtcommand subject on QCombobox change."""
-        edge_id = self.ui.map_position_CBox.currentData()
-        if edge_id:
-            self.main_window.gtcommand.set_next_ts(edge_id=edge_id)
-
-            weiche = SwitchItem.WEICHE.name
-            cmd = f"""
-            MATCH(n1:{weiche})-[r]->(n2:{weiche})
-            WHERE r.edge_id = '{edge_id}'
-            RETURN r.edge_id AS edge_id, type(r) AS ts_source, r.target AS ts_dest, n1.node_id AS source_id, n2.node_id as dest_id
-            """
-            df = self.graph_db.run_query(cmd)
-            assert df.shape[0] == 1
-
-            self.main_window.command_queue.put(
-                DrawOccupiedNetCommand(content=df, context=self)
-            )
+        self.worker_queue.put(RedrawCmd(content=(self, self.gui_queue), context=self.worker_queue))
 
     def load_json(self) -> None:
         """Create scene from a json file."""
@@ -111,9 +103,15 @@ class MapEditor(Editor):
         self.net_maker = NetMaker(self.map_label, self.zone.block_size)
         self.ui.map_zone_width.setValue(self.zone.width)
         self.ui.map_zone_height.setValue(self.zone.height)
-        self.draw()
 
-    def _add_btns_to_list(self, text: str, guid_0: str, guid_1: str) -> None:
+    def add_btns_to_list(self, text: str, guid_0: str, guid_1: str) -> None:
+        """Create, add, connect custom buttons and add to zone.switches if new.
+
+        Args:
+            text (str): display text of button
+            guid_0 (str): trainswitch guid_0
+            guid_1 (str): trainswitch guid_1
+        """
         item = QListWidgetItem(self.ui.map_weichen_list)
         zone_container = CustomZoneContainer(text, guid_0, guid_1)
         zone_container.neutral_btn.released.connect(
@@ -140,15 +138,15 @@ class MapEditor(Editor):
             guid=guid_1,
             relation=EDGE_RELATION_TO_ENUM[zone_container.straight_btn.text()].name,
         )
-        self.zone.switches[
-            f"{neutral_switch.guid}{neutral_switch.relation}"
-        ] = neutral_switch
-        self.zone.switches[
-            f"{deflection_switch.guid}{deflection_switch.relation}"
-        ] = deflection_switch
-        self.zone.switches[
-            f"{straight_switch.guid}{straight_switch.relation}"
-        ] = straight_switch
+        self.zone.switches.setdefault(
+            f"{neutral_switch.guid}{neutral_switch.relation}", neutral_switch
+        )
+        self.zone.switches.setdefault(
+            f"{deflection_switch.guid}{deflection_switch.relation}", deflection_switch
+        )
+        self.zone.switches.setdefault(
+            f"{straight_switch.guid}{straight_switch.relation}", straight_switch
+        )
 
         item.setSizeHint(zone_container.sizeHint())
         self.ui.map_weichen_list.setItemWidget(item, zone_container)
@@ -156,29 +154,19 @@ class MapEditor(Editor):
     def fill_list(self) -> None:
         """Clear and fill list with trainswitch buttons."""
         self.ui.map_weichen_list.clear()
-        cmd = "MATCH (node:WEICHE) RETURN node.bhf, node.name, node.node_id"
-        df = self.graph_db.run_query(cmd)[::2]
-        df.sort_values(by=["node.bhf", "node.name"], inplace=True)
-        for _, row in df.iterrows():
-            guid = row["node.node_id"]
-            name = f"{row['node.bhf']}_{row['node.name']}"
-            self._add_btns_to_list(
-                text=name,
-                guid_0=guid,
-                guid_1=guid[:-1] + "1",
-            )
+        self.worker_queue.put(MapFillListGuiCmd(content=self, context=self.gui_queue))
 
     def fill_combobox(self) -> None:
         """Clear and fill position combobox."""
         self.ui.map_position_CBox.clear()
-        for guid, name in self.graph_db.edges_tostring():
-            self.ui.map_position_CBox.addItem(name, guid)
+        self.worker_queue.put(
+            MapFillCbGuiCmd(content=self.ui.map_position_CBox, context=self.gui_queue)
+        )
 
     @override
     def reset(self) -> None:
         """Clear the form and reset the zone and zonemaker."""
         self.ui.map_weichen_list.clear()
-        self.selected_ts = None
         self.ui.map_zone_width.clear()
         self.ui.map_zone_height.clear()
         self.map_label.clear()
@@ -204,61 +192,29 @@ class MapEditor(Editor):
             guid (str): node_idRelation
             btn (QPushButton): btn pressed
         """
-        self.selected_ts = self.zone.switches[
-            f"{guid}{EDGE_RELATION_TO_ENUM[btn.text()].name}"
-        ]
+        self.selected_ts = self.zone.switches[f"{guid}{EDGE_RELATION_TO_ENUM[btn.text()].name}"]
 
     def _draw_connect_topo(self) -> None:
         switches = list(self.zone.switches.values())
         for i in range(0, len(self.zone.switches), 3):
             neutral = switches[i]
-            n1 = switches[i + 1]
-            n2 = switches[i + 2]
             if neutral.coords is None:
                 continue
+            n1 = switches[i + 1]
+            n2 = switches[i + 2]
 
-            u, v = neutral.coords
-            state = self.main_window.ecos_df.loc[
-                self.main_window.ecos_df.guid == neutral.guid
-            ].state.iloc[0]
-            state = int(state)
-
-            if n1.coords is not None:
-                ut, vt = n1.coords
-                snap_to_border = (
-                    n1.relation == EdgeRelation.STRAIGHT.name
-                    and state == 1
-                    or n1.relation == EdgeRelation.DEFLECTION.name
-                    and state == 0
+            self.worker_queue.put(
+                MapDrawConnectTopoGuiCmd(
+                    content=(self.gui.ebl_coords.ecos_df, neutral, n1, self.net_maker),
+                    context=self.gui_queue,
                 )
-                self.net_maker.draw_grid_line(u, v, ut, vt, snap_first=snap_to_border)
-            if n2.coords is not None:
-                ut, vt = n2.coords
-                snap_to_border = (
-                    n2.relation == EdgeRelation.STRAIGHT.name
-                    and state == 1
-                    or n2.relation == EdgeRelation.DEFLECTION.name
-                    and state == 0
+            )
+            self.worker_queue.put(
+                MapDrawConnectTopoGuiCmd(
+                    content=(self.gui.ebl_coords.ecos_df, neutral, n2, self.net_maker),
+                    context=self.gui_queue,
                 )
-                self.net_maker.draw_grid_line(u, v, ut, vt, snap_first=snap_to_border)
-
-    def _draw_connect_ts(self) -> None:
-        double_vertex = EdgeRelation.DOUBLE_VERTEX.name
-        cmd = f"""
-        MATCH (n1)-[r]->(n2)\
-        WHERE NOT type(r) = '{double_vertex}'\
-        RETURN n1.node_id, n2.node_id, r.target AS target, type(r) AS relation
-        """
-        df = self.graph_db.run_query(cmd)
-        if df.size > 0:
-            for _, row in df.iterrows():
-                if row["target"] is not None:
-                    ts1 = self.zone.switches[f"{row['n1.node_id']}{row['relation']}"]
-                    ts2 = self.zone.switches[f"{row['n2.node_id']}{row['target']}"]
-                    if ts1.coords and ts2.coords:
-                        u1, v1 = ts1.coords
-                        u2, v2 = ts2.coords
-                        self.net_maker.draw_grid_line(u1, v1, u2, v2, snap_first=False)
+            )
 
     def draw(self) -> None:
         """Draw the net."""
@@ -273,7 +229,11 @@ class MapEditor(Editor):
                 self.net_maker.draw_grid_text(ts.name, u, v)
 
         self._draw_connect_topo()
-        self._draw_connect_ts()
+        self.worker_queue.put(
+            MapDrawConnectTsGuiCmd(
+                content=(self.zone.switches, self.net_maker), context=self.gui_queue
+            )
+        )
 
     def click_map(self) -> None:
         """Set a topo point on the map and redraw."""

@@ -68,7 +68,7 @@ repos:
             --strict,
           ]
         additional_dependencies: ["toml", "types-toml", "types-requests"]
-        exclude: ^data/|live.py|infra_dab.py|main_gui.py
+        exclude: ^data/|live.py|infra_dab.py|main_gui.py|singleton_meta.py
 
   - repo: local
     hooks:

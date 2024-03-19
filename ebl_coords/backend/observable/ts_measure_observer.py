@@ -5,18 +5,19 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
+from ebl_coords.backend.command.command import Command, WrapperCommand
 from ebl_coords.backend.command.db_cmd import DbCommand
-from ebl_coords.backend.command.gui_cmd import SetTextCommand, StatusBarCommand
+from ebl_coords.backend.observable.gtcommand_subject import GtCommandSubject
 from ebl_coords.backend.observable.observer import Observer
 from ebl_coords.decorators import override
+from ebl_coords.frontend.command.label_cmd import SetTextCmd
+from ebl_coords.frontend.command.status_bar_cmd import StatusBarCmd
 from ebl_coords.graph_db.data_elements.edge_relation_enum import EdgeRelation
 from ebl_coords.graph_db.data_elements.switch_item_enum import SwitchItem
 
 if TYPE_CHECKING:
     from queue import Queue
 
-    from ebl_coords.backend.command.base import Command
-    from ebl_coords.backend.observable.gtcommand_subject import GtCommandSubject
     from ebl_coords.frontend.main_gui import Ui_MainWindow
 
 
@@ -30,7 +31,8 @@ class TsMeasureObserver(Observer):
     def __init__(
         self,
         selected_ts: str,
-        command_queue: Queue[Command],
+        gui_queue: Queue[Command],
+        worker_queue: Queue[Command],
         ui: Ui_MainWindow,
         points_needed: int = 150,
     ) -> None:
@@ -38,13 +40,15 @@ class TsMeasureObserver(Observer):
 
         Args:
             selected_ts (str): guid of trainswitch in db.
-            command_queue (Queue[Command]): put command in queue with db and Gui updates.
+            gui_queue (Queue[Command]): gui command queue
+            worker_queue (Queue[Command]): worker command queue
             ui (Ui_MainWindow): ui
             points_needed (int, optional): How many point should be used for the measurement. Defaults to 150.
         """
         self.subject: GtCommandSubject
         self.selected_ts = selected_ts
-        self.command_queue = command_queue
+        self.gui_queue = gui_queue
+        self.worker_queue = worker_queue
         self.ui = ui
         self.points_needed = points_needed
         self.buffer = np.empty((points_needed, 3), dtype=np.float32)
@@ -68,23 +72,58 @@ class TsMeasureObserver(Observer):
             SET n1.z = '{z}'\
             SET n2.z = '{z}';
             """
-            self.command_queue.put(DbCommand(content=cmd))
-            self.command_queue.put(
-                StatusBarCommand(
-                    content=f"Weiche bei: ({x}, {y}, {z}) eingemessen.", context=self.ui
+            self.worker_queue.put(DbCommand(content=cmd))
+
+            self.worker_queue.put(
+                WrapperCommand(
+                    content=StatusBarCmd(
+                        content=f"Weiche bei: ({x}, {y}, {z}) eingemessen.",
+                        context=self.ui,
+                    ),
+                    context=self.gui_queue,
                 )
             )
-            self.command_queue.put(
-                SetTextCommand(
-                    content=f"({x}, {y}, {z})", context=self.ui.weichen_coord_label
+            self.worker_queue.put(
+                WrapperCommand(
+                    content=SetTextCmd(
+                        content=f"({x}, {y}, {z})", context=self.ui.weichen_coord_label
+                    ),
+                    context=self.gui_queue,
                 )
             )
             return
-        self.command_queue.put(
-            StatusBarCommand(
-                content=f"Bitte warten. Weiche wird eingemessen: {self.index}/{self.points_needed}",
-                context=self.ui,
+        self.worker_queue.put(
+            WrapperCommand(
+                content=StatusBarCmd(
+                    content=f"Bitte warten. Weiche wird eingemessen: {self.index}/{self.points_needed}",
+                    context=self.ui,
+                ),
+                context=self.gui_queue,
             )
         )
         self.buffer[self.index, :] = self.result
         self.index += 1
+
+
+class AttachTsMeasureCommand(Command):
+    """Create and Attach TsMeasureObserver-Command."""
+
+    def __init__(self, content: tuple[str, Queue[Command], Queue[Command], Ui_MainWindow]) -> None:
+        """Create and attach a TsMeasureObserver and set context to GtCommandSubject.
+
+        Args:
+            content (Tuple[str, Queue[Command], Queue[Command], Ui_MainWindow]): guid of ts, gui_queue, worker_queue, ui
+        """
+        super().__init__(content, GtCommandSubject())
+        self.context: GtCommandSubject
+        self.content: tuple[str, Queue[Command], Queue[Command], Ui_MainWindow]
+
+    @override
+    def run(self) -> None:
+        """Create and attach a TsMeasureObserver."""
+        guid, worker_queue, gui_queue, ui = self.content
+        self.context.attach_all_coord(
+            TsMeasureObserver(
+                selected_ts=guid, gui_queue=gui_queue, worker_queue=worker_queue, ui=ui
+            )
+        )

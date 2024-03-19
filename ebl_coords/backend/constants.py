@@ -1,5 +1,6 @@
 """Constants, server config."""
 from os.path import abspath
+from threading import RLock
 
 from PyQt6.QtGui import QColor
 
@@ -22,9 +23,15 @@ if MOCK_FLG:
 # if true, set all z-coordinates to zero.
 IGNORE_Z_AXIS: bool = True
 
+# minimal distance [m] delta needed for summation
+MIN_DELTA_DISTANCE: float = 0.05
+
+# GTCommand train switch hit threshold
+TS_HIT_THRESHOLD: int = 50
+
 # callback deltatime in ms, 30 Calls per Second
-CPS: int = 30
-CALLBACK_DT: int = 1000 // CPS
+CPS: int = 120
+CALLBACK_DT_MS: int = 1000 // CPS
 
 # zone dump file
 ZONE_FILE: str = str(abspath("./zone_data/zone_dump.json"))
@@ -47,3 +54,6 @@ POINT_HEX: QColor = QColor("#FFFFFF")  # white
 LINE_HEX: QColor = QColor("#FFFFFF")  # white
 TEXT_HEX: QColor = QColor("#FFFFFF")  # white
 OCCUPIED_HEX: QColor = QColor("#FF0000")  # red
+
+# ecos df lock
+ECOS_DF_LOCK = RLock()

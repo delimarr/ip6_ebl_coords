@@ -49,10 +49,30 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.isort]
 multi_line_output=9
-line_length=88
+line_length=100
+profile="black"
+known_first_party = ["ebl_coords"]
 
 [tool.pycln]
 all = true
 
 [tool.pytest.ini_options]
 filterwarnings = ["error"]
+
+[tool.black]
+line-length = 100
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''

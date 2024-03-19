@@ -42,8 +42,11 @@ def get_ecos_df(config: Dict[str, Any], bpks: List[str]) -> pd.DataFrame:
     """
     if MOCK_FLG:
         warnings.warn("used ecos mock, only use DAB.")
-        return _get_ecos_df_mock(config, bpks)
-    return _get_ecos_df_live(config, bpks)
+        df = _get_ecos_df_mock(config, bpks)
+    else:
+        df = _get_ecos_df_live(config, bpks)
+    df.id = df.id.astype(int)
+    return df
 
 
 def _select_valid_bpks(df: pd.DataFrame, bpks: List[str]) -> pd.DataFrame:
@@ -59,9 +62,7 @@ def _add_db_guid(df: pd.DataFrame) -> pd.DataFrame:
     df.guid = df.guid.astype(object)
     for _, row in db.iterrows():
         dcc = int(row.dcc)
-        idx = df.guid.loc[
-            (df["name1"] == row.bpk) & (df["addr"].astype(int) == dcc)
-        ].index
+        idx = df.guid.loc[(df["name1"] == row.bpk) & (df["addr"].astype(int) == dcc)].index
         df.loc[idx, "guid"] = row.node_id
     return df.dropna()
 

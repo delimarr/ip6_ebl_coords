@@ -4,22 +4,22 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ebl_coords.main import MainWindow
+    from ebl_coords.frontend.gui import Gui
 
 
 class Editor:
     """Base Class for any Editors."""
 
-    def __init__(self, main_window: MainWindow) -> None:
-        """Initialize the Editor with a main_window.
+    def __init__(self, gui: Gui) -> None:
+        """Initialize the Editor from a gui.
 
         Args:
-            main_window (MainWindow): main_window
+            gui (Gui): the main gui
         """
-        self.main_window = main_window
-        self.ui = main_window.ui
-        self.graph_db = main_window.graph_db
-        self.gtcommand = main_window.gtcommand
+        self.gui = gui
+        self.ui = gui.ui
+        self.worker_queue = gui.worker_queue
+        self.gui_queue = gui.gui_queue
 
     def reset(self) -> None:
         """Clears all text field and resets the values to the default.

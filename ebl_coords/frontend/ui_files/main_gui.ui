@@ -477,7 +477,14 @@
              </spacer>
             </item>
             <item row="2" column="1">
-             <widget class="QDoubleSpinBox" name="strecken_distance_sb"/>
+             <widget class="QDoubleSpinBox" name="strecken_distance_sb">
+              <property name="maximum">
+               <double>1000.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+             </widget>
             </item>
             <item row="5" column="1">
              <widget class="QPushButton" name="strecken_delete_btn">
@@ -502,7 +509,7 @@
      <x>0</x>
      <y>0</y>
      <width>1186</width>
-     <height>19</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

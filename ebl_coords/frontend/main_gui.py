@@ -25,8 +25,7 @@ class Ui_MainWindow:
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.map_splitter = QtWidgets.QSplitter(parent=self.map_tab)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Preferred,
-            QtWidgets.QSizePolicy.Policy.Preferred,
+            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Preferred
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -36,8 +35,7 @@ class Ui_MainWindow:
         self.map_splitter.setObjectName("map_splitter")
         self.map_left = QtWidgets.QWidget(parent=self.map_splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Preferred,
-            QtWidgets.QSizePolicy.Policy.Preferred,
+            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Preferred
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -63,9 +61,7 @@ class Ui_MainWindow:
         self.formLayout.setObjectName("formLayout")
         self.label_5 = QtWidgets.QLabel(parent=self.map_left_form)
         self.label_5.setObjectName("label_5")
-        self.formLayout.setWidget(
-            1, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_5
-        )
+        self.formLayout.setWidget(1, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_5)
         self.map_position_CBox = QtWidgets.QComboBox(parent=self.map_left_form)
         self.map_position_CBox.setObjectName("map_position_CBox")
         self.formLayout.setWidget(
@@ -73,21 +69,15 @@ class Ui_MainWindow:
         )
         self.label_6 = QtWidgets.QLabel(parent=self.map_left_form)
         self.label_6.setObjectName("label_6")
-        self.formLayout.setWidget(
-            13, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_6
-        )
+        self.formLayout.setWidget(13, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_6)
         self.map_zone_width = QtWidgets.QSpinBox(parent=self.map_left_form)
         self.map_zone_width.setMinimum(1)
         self.map_zone_width.setProperty("value", 20)
         self.map_zone_width.setObjectName("map_zone_width")
-        self.formLayout.setWidget(
-            13, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_zone_width
-        )
+        self.formLayout.setWidget(13, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_zone_width)
         self.label_7 = QtWidgets.QLabel(parent=self.map_left_form)
         self.label_7.setObjectName("label_7")
-        self.formLayout.setWidget(
-            15, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_7
-        )
+        self.formLayout.setWidget(15, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_7)
         self.map_zone_height = QtWidgets.QSpinBox(parent=self.map_left_form)
         self.map_zone_height.setMinimum(1)
         self.map_zone_height.setProperty("value", 10)
@@ -97,9 +87,7 @@ class Ui_MainWindow:
         )
         self.label_12 = QtWidgets.QLabel(parent=self.map_left_form)
         self.label_12.setObjectName("label_12")
-        self.formLayout.setWidget(
-            5, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_12
-        )
+        self.formLayout.setWidget(5, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_12)
         self.label_14 = QtWidgets.QLabel(parent=self.map_left_form)
         font = QtGui.QFont()
         font.setBold(True)
@@ -110,27 +98,19 @@ class Ui_MainWindow:
             | QtCore.Qt.AlignmentFlag.AlignVCenter
         )
         self.label_14.setObjectName("label_14")
-        self.formLayout.setWidget(
-            12, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.label_14
-        )
+        self.formLayout.setWidget(12, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.label_14)
         self.label_15 = QtWidgets.QLabel(parent=self.map_left_form)
         font = QtGui.QFont()
         font.setBold(True)
         self.label_15.setFont(font)
         self.label_15.setObjectName("label_15")
-        self.formLayout.setWidget(
-            0, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.label_15
-        )
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.label_15)
         self.label_8 = QtWidgets.QLabel(parent=self.map_left_form)
         self.label_8.setObjectName("label_8")
-        self.formLayout.setWidget(
-            7, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_8
-        )
+        self.formLayout.setWidget(7, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_8)
         self.map_v_label = QtWidgets.QLabel(parent=self.map_left_form)
         self.map_v_label.setObjectName("map_v_label")
-        self.formLayout.setWidget(
-            7, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_v_label
-        )
+        self.formLayout.setWidget(7, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_v_label)
         self.map_break_s_label = QtWidgets.QLabel(parent=self.map_left_form)
         self.map_break_s_label.setObjectName("map_break_s_label")
         self.formLayout.setWidget(
@@ -138,38 +118,25 @@ class Ui_MainWindow:
         )
         self.label_11 = QtWidgets.QLabel(parent=self.map_left_form)
         self.label_11.setObjectName("label_11")
-        self.formLayout.setWidget(
-            2, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_11
-        )
+        self.formLayout.setWidget(2, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_11)
         self.map_break_a_txt = QtWidgets.QDoubleSpinBox(parent=self.map_left_form)
         self.map_break_a_txt.setMinimum(-10.0)
         self.map_break_a_txt.setMaximum(0.0)
         self.map_break_a_txt.setSingleStep(0.01)
         self.map_break_a_txt.setProperty("value", -0.5)
         self.map_break_a_txt.setObjectName("map_break_a_txt")
-        self.formLayout.setWidget(
-            2, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_break_a_txt
-        )
+        self.formLayout.setWidget(2, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_break_a_txt)
         self.label_13 = QtWidgets.QLabel(parent=self.map_left_form)
         self.label_13.setObjectName("label_13")
-        self.formLayout.setWidget(
-            8, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_13
-        )
+        self.formLayout.setWidget(8, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_13)
         self.label_18 = QtWidgets.QLabel(parent=self.map_left_form)
         self.label_18.setText("")
         self.label_18.setObjectName("label_18")
-        self.formLayout.setWidget(
-            3, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.label_18
-        )
+        self.formLayout.setWidget(3, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.label_18)
         spacerItem = QtWidgets.QSpacerItem(
-            20,
-            40,
-            QtWidgets.QSizePolicy.Policy.Minimum,
-            QtWidgets.QSizePolicy.Policy.Expanding,
+            20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding
         )
-        self.formLayout.setItem(
-            11, QtWidgets.QFormLayout.ItemRole.LabelRole, spacerItem
-        )
+        self.formLayout.setItem(11, QtWidgets.QFormLayout.ItemRole.LabelRole, spacerItem)
         self.map_distance_dsb = QtWidgets.QDoubleSpinBox(parent=self.map_left_form)
         self.map_distance_dsb.setMaximum(1000.0)
         self.map_distance_dsb.setObjectName("map_distance_dsb")
@@ -230,9 +197,7 @@ class Ui_MainWindow:
         self.formLayout_2.setObjectName("formLayout_2")
         self.label_2 = QtWidgets.QLabel(parent=self.weichen_widget)
         self.label_2.setObjectName("label_2")
-        self.formLayout_2.setWidget(
-            0, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_2
-        )
+        self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_2)
         self.weichen_weichenname_txt = QtWidgets.QLineEdit(parent=self.weichen_widget)
         self.weichen_weichenname_txt.setObjectName("weichen_weichenname_txt")
         self.formLayout_2.setWidget(
@@ -240,9 +205,7 @@ class Ui_MainWindow:
         )
         self.label_3 = QtWidgets.QLabel(parent=self.weichen_widget)
         self.label_3.setObjectName("label_3")
-        self.formLayout_2.setWidget(
-            1, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_3
-        )
+        self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_3)
         self.weichen_dcc_txt = QtWidgets.QLineEdit(parent=self.weichen_widget)
         self.weichen_dcc_txt.setObjectName("weichen_dcc_txt")
         self.formLayout_2.setWidget(
@@ -250,9 +213,7 @@ class Ui_MainWindow:
         )
         self.label_4 = QtWidgets.QLabel(parent=self.weichen_widget)
         self.label_4.setObjectName("label_4")
-        self.formLayout_2.setWidget(
-            2, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_4
-        )
+        self.formLayout_2.setWidget(2, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_4)
         self.weichen_bhf_txt = QtWidgets.QLineEdit(parent=self.weichen_widget)
         self.weichen_bhf_txt.setObjectName("weichen_bhf_txt")
         self.formLayout_2.setWidget(
@@ -260,9 +221,7 @@ class Ui_MainWindow:
         )
         self.label_9 = QtWidgets.QLabel(parent=self.weichen_widget)
         self.label_9.setObjectName("label_9")
-        self.formLayout_2.setWidget(
-            3, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_9
-        )
+        self.formLayout_2.setWidget(3, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_9)
         self.weichen_einmessen_btn = QtWidgets.QPushButton(parent=self.weichen_widget)
         self.weichen_einmessen_btn.setObjectName("weichen_einmessen_btn")
         self.formLayout_2.setWidget(
@@ -279,14 +238,9 @@ class Ui_MainWindow:
             3, QtWidgets.QFormLayout.ItemRole.FieldRole, self.weichen_coord_label
         )
         spacerItem1 = QtWidgets.QSpacerItem(
-            20,
-            40,
-            QtWidgets.QSizePolicy.Policy.Minimum,
-            QtWidgets.QSizePolicy.Policy.Expanding,
+            20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding
         )
-        self.formLayout_2.setItem(
-            4, QtWidgets.QFormLayout.ItemRole.FieldRole, spacerItem1
-        )
+        self.formLayout_2.setItem(4, QtWidgets.QFormLayout.ItemRole.FieldRole, spacerItem1)
         self.weichen_delete_btn = QtWidgets.QPushButton(parent=self.weichen_widget)
         self.weichen_delete_btn.setObjectName("weichen_delete_btn")
         self.formLayout_2.setWidget(
@@ -304,14 +258,11 @@ class Ui_MainWindow:
         self.strecken_splitter.setObjectName("strecken_splitter")
         self.strecken_left = QtWidgets.QWidget(parent=self.strecken_splitter)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
-            QtWidgets.QSizePolicy.Policy.Preferred,
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.Preferred
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.strecken_left.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.strecken_left.sizePolicy().hasHeightForWidth())
         self.strecken_left.setSizePolicy(sizePolicy)
         self.strecken_left.setMinimumSize(QtCore.QSize(200, 0))
         self.strecken_left.setMaximumSize(QtCore.QSize(600, 16777215))
@@ -332,9 +283,7 @@ class Ui_MainWindow:
         self.formLayout_5.setObjectName("formLayout_5")
         self.label = QtWidgets.QLabel(parent=self.strecken_right)
         self.label.setObjectName("label")
-        self.formLayout_5.setWidget(
-            0, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label
-        )
+        self.formLayout_5.setWidget(0, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label)
         self.strecken_comboBox_a = QtWidgets.QComboBox(parent=self.strecken_right)
         self.strecken_comboBox_a.setObjectName("strecken_comboBox_a")
         self.formLayout_5.setWidget(
@@ -342,9 +291,7 @@ class Ui_MainWindow:
         )
         self.label_10 = QtWidgets.QLabel(parent=self.strecken_right)
         self.label_10.setObjectName("label_10")
-        self.formLayout_5.setWidget(
-            1, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_10
-        )
+        self.formLayout_5.setWidget(1, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_10)
         self.strecken_comboBox_b = QtWidgets.QComboBox(parent=self.strecken_right)
         self.strecken_comboBox_b.setObjectName("strecken_comboBox_b")
         self.formLayout_5.setWidget(
@@ -352,24 +299,19 @@ class Ui_MainWindow:
         )
         self.label_17 = QtWidgets.QLabel(parent=self.strecken_right)
         self.label_17.setObjectName("label_17")
-        self.formLayout_5.setWidget(
-            2, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_17
-        )
+        self.formLayout_5.setWidget(2, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_17)
         self.strecken_speichern_btn = QtWidgets.QPushButton(parent=self.strecken_right)
         self.strecken_speichern_btn.setObjectName("strecken_speichern_btn")
         self.formLayout_5.setWidget(
             4, QtWidgets.QFormLayout.ItemRole.FieldRole, self.strecken_speichern_btn
         )
         spacerItem2 = QtWidgets.QSpacerItem(
-            20,
-            40,
-            QtWidgets.QSizePolicy.Policy.Minimum,
-            QtWidgets.QSizePolicy.Policy.Expanding,
+            20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding
         )
-        self.formLayout_5.setItem(
-            3, QtWidgets.QFormLayout.ItemRole.FieldRole, spacerItem2
-        )
+        self.formLayout_5.setItem(3, QtWidgets.QFormLayout.ItemRole.FieldRole, spacerItem2)
         self.strecken_distance_sb = QtWidgets.QDoubleSpinBox(parent=self.strecken_right)
+        self.strecken_distance_sb.setMaximum(1000.0)
+        self.strecken_distance_sb.setSingleStep(0.1)
         self.strecken_distance_sb.setObjectName("strecken_distance_sb")
         self.formLayout_5.setWidget(
             2, QtWidgets.QFormLayout.ItemRole.FieldRole, self.strecken_distance_sb
@@ -384,7 +326,7 @@ class Ui_MainWindow:
         self.horizontalLayout_2.addWidget(self.tabWidget)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(parent=MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1186, 19))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1186, 22))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(parent=MainWindow)
@@ -430,9 +372,7 @@ class Ui_MainWindow:
         self.label_11.setText(_translate("MainWindow", "Bremsbeschleunigung [m/s^2]"))
         self.label_13.setText(_translate("MainWindow", "Bremsweg [m]"))
         self.map_zone_neu_btn.setText(_translate("MainWindow", "Neues Netz"))
-        self.map_zone_resize_btn.setText(
-            _translate("MainWindow", "Rastergrösse anpassen")
-        )
+        self.map_zone_resize_btn.setText(_translate("MainWindow", "Rastergrösse anpassen"))
         self.map_zone_speichern_btn.setText(_translate("MainWindow", "Speichern"))
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.map_tab), _translate("MainWindow", "Gleisnetz")
@@ -447,8 +387,7 @@ class Ui_MainWindow:
         self.weichen_coord_label.setText(_translate("MainWindow", "(x, y ,z)"))
         self.weichen_delete_btn.setText(_translate("MainWindow", "Löschen"))
         self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.weichen_tab),
-            _translate("MainWindow", "Weichen"),
+            self.tabWidget.indexOf(self.weichen_tab), _translate("MainWindow", "Weichen")
         )
         self.strecken_new_btn.setText(_translate("MainWindow", "Neue Kante"))
         self.label.setText(_translate("MainWindow", "Weichenpunkt A"))
@@ -457,8 +396,7 @@ class Ui_MainWindow:
         self.strecken_speichern_btn.setText(_translate("MainWindow", "Speichern"))
         self.strecken_delete_btn.setText(_translate("MainWindow", "Löschen"))
         self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.strecken_tab),
-            _translate("MainWindow", "Kanten"),
+            self.tabWidget.indexOf(self.strecken_tab), _translate("MainWindow", "Kanten")
         )
         self.actionneue_Zone.setText(_translate("MainWindow", "Neue Zone"))
         self.actionZone_laden.setText(_translate("MainWindow", "Zone laden"))

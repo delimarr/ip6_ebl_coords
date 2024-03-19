@@ -36,4 +36,9 @@ class RedrawCmd(Command):
         """Redraw the map_label."""
         map_editor, gui_queue = self.content
         edge_id = map_editor.ui.map_position_CBox.currentData()
-        self.context.put(MapDrawOccupiedGuiCmd(content=(edge_id, map_editor), context=gui_queue))
+        self.context.put(
+            MapDrawOccupiedGuiCmd(
+                content=(edge_id, map_editor, map_editor.ui.map_distance_dsb.value()),
+                context=gui_queue,
+            )
+        )

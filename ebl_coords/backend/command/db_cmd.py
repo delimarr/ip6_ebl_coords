@@ -14,6 +14,7 @@ from ebl_coords.frontend.command.combobox_cmd import AddComboBoxElementCmd, SetC
 from ebl_coords.frontend.command.combobox_cmd import SetComboBoxContentCmd
 from ebl_coords.frontend.command.label_cmd import SetTextCmd
 from ebl_coords.frontend.command.map.add_btns_to_list_cmd import MapAddCustomButtonsToListCmd
+from ebl_coords.frontend.command.map.clear_cmd import ClearCmd
 from ebl_coords.frontend.command.map.draw_cmd import DrawCmd
 from ebl_coords.frontend.command.map.draw_grid_line_cmd import DrawGridLineCmd
 from ebl_coords.frontend.command.map.draw_occupied_cmd import DrawOccupiedNetCmd
@@ -324,13 +325,14 @@ class StreckenSaveGuiCmd(Command):
         n1 = get_node(bhf1, name1, relation1)
         n2 = get_node(bhf2, name2, relation2)
         guid = generate_guid()
+        distance = self.content[0].ui.strecken_distance_sb.value()
         edge1 = Edge(
             id=f"{guid}_0",
             source=n1,
             dest=n2,
             relation=EDGE_RELATION_TO_ENUM[relation1],
             target=EDGE_RELATION_TO_ENUM[relation2],
-            distance=0,
+            distance=distance,
         )
         edge2 = Edge(
             id=f"{guid}_1",
@@ -338,7 +340,7 @@ class StreckenSaveGuiCmd(Command):
             dest=n1,
             relation=EDGE_RELATION_TO_ENUM[relation2],
             target=EDGE_RELATION_TO_ENUM[relation1],
-            distance=0,
+            distance=distance,
         )
         cmd = single_edge(edge1)
         GraphDbApi().run_query(cmd)
@@ -354,33 +356,42 @@ class MapDrawOccupiedGuiCmd(Command):
         Command (_type_): interface
     """
 
-    def __init__(self, content: tuple[str, MapEditor], context: Queue[Command]) -> None:
+    def __init__(self, content: tuple[str, MapEditor, float], context: Queue[Command]) -> None:
         """Redraw map.
 
         Args:
-            content (Tuple[str, MapEditor]): (edge_id, map_editor)
+            content (Tuple[str, MapEditor, float]): (edge_id, map_editor, distance)
             context (Queue[Command]): gui_queue
         """
         super().__init__(content, context)
-        self.content: tuple[str, MapEditor]
+        self.content: tuple[str, MapEditor, float]
         self.context: Queue[Command]
 
     @override
     def run(self) -> None:
         """Draw occupied edge."""
-        edge_id, map_editor = self.content
+        edge_id, map_editor, distance = self.content
         if edge_id is not None:
             GtCommandSubject().set_next_ts(edge_id)
             weiche = SwitchItem.WEICHE.name
             cmd = f"""
             MATCH(n1:{weiche})-[r]->(n2:{weiche})
             WHERE r.edge_id = '{edge_id}'
-            RETURN r.edge_id AS edge_id, type(r) AS ts_source, r.target AS ts_dest, n1.node_id AS source_id, n2.node_id as dest_id
+            RETURN r.edge_id AS edge_id, type(r) AS ts_source, r.target AS ts_dest, n1.node_id AS source_id, n2.node_id AS dest_id, r.distance AS distance
             """
             df = GraphDbApi().run_query(cmd)
 
             if df.shape[0] == 1:
-                self.context.put(DrawOccupiedNetCmd(content=df, context=map_editor))
+                edge_info = df.iloc[0].to_dict()
+                length = float(edge_info["distance"])
+                edge_info["distance"] = length
+                edge_info["occupied_percent"] = 0
+                if length > 0:
+                    edge_info["occupied_percent"] = distance / length
+
+                self.context.put(DrawOccupiedNetCmd(content=edge_info, context=map_editor))
+                return
+        self.context.put(ClearCmd(context=map_editor))
         self.context.put(DrawCmd(context=map_editor))
 
 

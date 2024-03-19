@@ -63,6 +63,7 @@ class MapEditor(Editor):
         self.ui.map_zone_speichern_btn.released.connect(self.save)
         self.ui.map_zone_neu_btn.released.connect(self.reset)
         self.ui.map_position_CBox.currentIndexChanged.connect(self.map_pos_changed)
+        self.ui.map_distance_dsb.valueChanged.connect(self.map_pos_changed)
 
     def register_observers(self) -> None:
         """Make and attach observers."""
@@ -242,4 +243,5 @@ class MapEditor(Editor):
             coords = self.net_maker.get_grid_coords(position.x(), position.y())
             self.selected_ts.coords = (int(coords[0]), int(coords[1]))
             self.selected_ts = None
+            self.net_maker.clear()
             self.draw()

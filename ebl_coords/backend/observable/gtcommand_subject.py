@@ -29,7 +29,6 @@ class GtCommandSubject(Subject):
         ip: str = GTCOMMAND_IP,
         port: int = GTCOMMAND_PORT,
         ts_hit_threshold: int = TS_HIT_THRESHOLD,
-        ts_hit_threshold: int = TS_HIT_THRESHOLD,
     ) -> None:
         """Initialize the buffer and the socket.
 
@@ -55,8 +54,6 @@ class GtCommandSubject(Subject):
         )
         self.record_thread.start()
 
-        self.all_coord_observers: list[Observer] = []
-        self.changed_coord_observers: list[Observer] = []
         self.all_coord_observers: list[Observer] = []
         self.changed_coord_observers: list[Observer] = []
         self.ts_hit_observers: list[Observer] = []
@@ -111,8 +108,6 @@ class GtCommandSubject(Subject):
             line_string = line.decode("utf-8")
 
             ds = line_string.split(",")
-            coord = np.array([ds[3], ds[4], ds[5]], dtype=np.int32)
-            time_stamp = int(ds[0])
             coord = np.array([ds[3], ds[4], ds[5]], dtype=np.int32)
             time_stamp = int(ds[0])
             filtered_coord = self._filter_coord(coord, noise_filter_threshold)
@@ -211,7 +206,6 @@ class GtCommandSubject(Subject):
 
     @override
     def detach(self, observer: Observer) -> None:
-        """Detach observer from all hooks.
         """Detach observer from all hooks.
 
         Args:

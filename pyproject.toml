@@ -42,6 +42,7 @@ black = "23.10.1"
 pyqt6-tools = "6.4.2.3.3"
 dataclasses-json = "0.6.3"
 typing = "3.7.4.3"
+pyinstaller = "^6.5"
 
 [build-system]
 requires = ["poetry-core=1.6.1"]

@@ -53,5 +53,10 @@ class EblCoords:
             self.ecos_df = df
 
 
+def main() -> None:
+    """Start EblCoords."""
+    EblCoords()
+
+
 if __name__ == "__main__":
-    ebl_coords = EblCoords()
+    main()

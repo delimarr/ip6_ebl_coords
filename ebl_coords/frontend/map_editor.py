@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict
+from os import remove
 from os.path import exists
 from typing import TYPE_CHECKING
 
@@ -53,6 +54,7 @@ class MapEditor(Editor):
         if exists(ZONE_FILE):
             self.load_json()
         self.fill_combobox()
+        self.resize_map_label()
 
     def _connect_ui_elements(self) -> None:
         """Make map label and connect events."""
@@ -62,7 +64,8 @@ class MapEditor(Editor):
         self.ui.map_right.layout().addWidget(self.map_label)
 
         self.ui.map_zone_speichern_btn.released.connect(self.save)
-        self.ui.map_zone_neu_btn.released.connect(self.reset)
+        self.ui.map_zone_neu_btn.released.connect(self.new_map_label)
+        self.ui.map_zone_resize_btn.released.connect(self.resize_map_label)
         self.ui.map_position_CBox.currentIndexChanged.connect(self.map_pos_changed)
         self.ui.map_distance_dsb.valueChanged.connect(self.map_pos_changed)
 
@@ -175,16 +178,33 @@ class MapEditor(Editor):
 
     @override
     def save(self) -> None:
-        """Draw the zone and export to json."""
+        """Save the zone as json."""
+        with open(ZONE_FILE, "w", encoding="utf-8") as fd:
+            json.dump(asdict(self.zone), fd, indent=4)
+
+    def resize_map_label(self) -> None:
+        """Resize the map_label."""
         width = self.ui.map_zone_width.text()
         height = self.ui.map_zone_height.text()
         if width and height:
             self.zone.width = int(width)
             self.zone.height = int(height)
-            # write to file
-            with open(ZONE_FILE, "w", encoding="utf-8") as fd:
-                json.dump(asdict(self.zone), fd, indent=4)
-            self.draw()
+        self.net_maker.resize_label(self.zone.width, self.zone.height)
+        self.draw()
+
+    def new_map_label(self) -> None:
+        """Reset zone and reset net_maker.pixmap."""
+        if exists(ZONE_FILE):
+            remove(ZONE_FILE)
+        self.zone = Zone(
+            name="my_zone",
+            block_size=BLOCK_SIZE,
+            width=self.ui.map_zone_width.value(),
+            height=self.ui.map_zone_height.value(),
+            switches={},
+        )
+        self.fill_list()
+        self.resize_map_label()
 
     def select_ts(self, guid: str, btn: QPushButton) -> None:
         """Select a train switch with its direction.

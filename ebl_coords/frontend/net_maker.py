@@ -4,8 +4,8 @@ from typing import List, Optional, Tuple
 from PyQt6 import QtGui
 from PyQt6.QtGui import QColor, QPen
 
-from ebl_coords.backend.constants import BACKGROUND_HEX, BLOCK_SIZE, GRID_HEX
-from ebl_coords.backend.constants import GRID_LINE_WIDTH, LINE_HEX, POINT_HEX, TEXT_HEX
+from ebl_coords.backend.constants import BACKGROUND_HEX, BLOCK_SIZE, GRID_HEX, GRID_LINE_WIDTH
+from ebl_coords.backend.constants import LINE_HEX, POINT_HEX, TEXT_HEX
 from ebl_coords.frontend.custom_widgets import ClickableLabel
 
 
@@ -52,9 +52,7 @@ class NetMaker:
         painter.end()
         self.map.setPixmap(canvas)
 
-    def draw_line(
-        self, x1: int, y1: int, x2: int, y2: int, color: QColor, width: int = 1
-    ) -> None:
+    def draw_line(self, x1: int, y1: int, x2: int, y2: int, color: QColor, width: int = 1) -> None:
         """Draw a line from point 1 to point 2 on the grid system.
 
         Args:
@@ -90,9 +88,7 @@ class NetMaker:
         painter.end()
         self.map.setPixmap(canvas)
 
-    def draw_grid_text(
-        self, text: str, u: int, v: int, color: QColor = TEXT_HEX
-    ) -> None:
+    def draw_grid_text(self, text: str, u: int, v: int, color: QColor = TEXT_HEX) -> None:
         """Draw a text in the middle of a tile.
 
         Args:
@@ -105,6 +101,21 @@ class NetMaker:
         y = v * self.block_size + self.block_size // 2
         self.draw_text(text, x, y, color)
 
+    def resize_label(self, width: int, height: int) -> None:
+        """Resize the pixmap.
+
+        Args:
+            width (int): number width tiles
+            height (int): number height tiles
+        """
+        self.width = width
+        self.height = height
+        block_size = self.block_size
+        width_pixels = width * block_size + 1
+        height_pixels = height * block_size + 1
+        self.map.setFixedSize(width_pixels, height_pixels)
+        self.map.setPixmap(QtGui.QPixmap(self.map.size()))
+
     def draw_grid(self, width: int, height: int, color: QColor = GRID_HEX) -> None:
         """Draws a grid.
 
@@ -113,25 +124,15 @@ class NetMaker:
             height (int): height in blocks
             color (QColor, optional): color. Defaults to GRID_HEX.
         """
-        self.width = width
-        self.height = height
-        block_size = self.block_size
-        width_pixels = width * block_size + 1
-        height_pixels = height * block_size + 1
-        old_size = self.map.pixmap().size()
-        if old_size.width() != width_pixels or old_size.height() != height_pixels:
-            self.map.setFixedSize(width_pixels, height_pixels)
-            self.map.setPixmap(QtGui.QPixmap(self.map.size()))
-
         # vertical lines
         for i in range(0, width + 1):
-            x_i = i * block_size
-            self.draw_line(x_i, 0, x_i, height * block_size, color)
+            x_i = i * self.block_size
+            self.draw_line(x_i, 0, x_i, height * self.block_size, color)
 
         # horizontal lines
         for i in range(0, height + 1):
-            y_i = i * block_size
-            self.draw_line(0, y_i, width * block_size, y_i, color)
+            y_i = i * self.block_size
+            self.draw_line(0, y_i, width * self.block_size, y_i, color)
 
     def draw_grid_line(
         self,
@@ -166,9 +167,7 @@ class NetMaker:
             if border_coords:
                 x1, y1 = border_coords
         if snap_second:
-            border_coords = self.get_boundary_point(  # pylint: disable=W1114
-                u2, v2, u1, v1
-            )
+            border_coords = self.get_boundary_point(u2, v2, u1, v1)  # pylint: disable=W1114
             if border_coords:
                 x2, y2 = border_coords
 
@@ -201,9 +200,7 @@ class NetMaker:
             (bottom_r, bottom_l),
         ]
 
-    def get_boundary_point(
-        self, u1: int, v1: int, u2: int, v2: int
-    ) -> Optional[Tuple[int, int]]:
+    def get_boundary_point(self, u1: int, v1: int, u2: int, v2: int) -> Optional[Tuple[int, int]]:
         """Return point on rect boundary around (u1, v1).
 
         https://gist.github.com/kylemcdonald/6132fc1c29fd3767691442ba4bc84018 [07.02.2024]
@@ -227,9 +224,7 @@ class NetMaker:
             if denominator == 0:
                 continue
 
-            ua = (
-                (b2_x - b1_x) * (y1 - b1_y) - (b2_y - b1_y) * (x1 - b1_x)
-            ) / denominator
+            ua = ((b2_x - b1_x) * (y1 - b1_y) - (b2_y - b1_y) * (x1 - b1_x)) / denominator
             if ua < 0 or ua > 1:  # out of range
                 continue
             ub = ((x2 - x1) * (y1 - b1_y) - (y2 - y1) * (x1 - b1_x)) / denominator

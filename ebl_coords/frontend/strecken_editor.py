@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from ebl_coords.backend.command.command import WrapperCommand, WrapperFunctionCommand
 from ebl_coords.backend.command.db_cmd import DbCommand, FillStreckenCBGuiCommand
 from ebl_coords.backend.command.db_cmd import FillStreckenListGuiCommand, StreckenSaveGuiCmd
 from ebl_coords.decorators import override
@@ -29,9 +30,11 @@ class StreckenEditor(Editor):
             gui (Gui): gui
         """
         super().__init__(gui)
+        self.selected_edge: tuple[str, str] | None = None
 
         self.ui.strecken_new_btn.clicked.connect(self.reset)
         self.ui.strecken_speichern_btn.clicked.connect(self.save)
+        self.ui.strecken_delete_btn.clicked.connect(self.delete_strecke)
         self.reset()
 
     def _fill_comboboxes(self) -> None:
@@ -45,6 +48,11 @@ class StreckenEditor(Editor):
             )
         )
 
+    def select_strecke(self, custom_btn: CustomBtn) -> None:
+        """Select edge from button, does not allow edit or load text."""
+        _, relation, _ = custom_btn.button.text().split("\t")
+        self.selected_edge = (custom_btn.guid, relation)
+
     @override
     def reset(self) -> None:
         """Reset all comboboxes and the list."""
@@ -53,6 +61,7 @@ class StreckenEditor(Editor):
         self._fill_comboboxes()
         self.gui.map_editor.fill_combobox()
         self.gui.map_editor.draw()
+        self.selected_edge = None
 
     @override
     def save(self) -> None:
@@ -68,19 +77,18 @@ class StreckenEditor(Editor):
             )
         )
 
-    def select_strecke(self, custom_btn: CustomBtn) -> None:
-        """Delete a directional edge in the database.
-
-        Args:
-            custom_btn (CustomBtn): Button clicked
-        """
-        weiche = SwitchItem.WEICHE.name
-        _, relation, _ = custom_btn.button.text().split("\t")
-        relation = EDGE_RELATION_TO_ENUM[relation].name
-        cmd = f"""\
-            MATCH (a:{weiche})-[r:{relation}]->(b:{weiche})\
-            WHERE r.edge_id = '{custom_btn.guid}'\
-            DELETE r;\
-        """
-        self.worker_queue.put(DbCommand(cmd))
-        self.reset()
+    def delete_strecke(self) -> None:
+        """Delete selected directional edge in the database."""
+        if self.selected_edge is not None:
+            weiche = SwitchItem.WEICHE.name
+            guid, relation = self.selected_edge
+            relation = EDGE_RELATION_TO_ENUM[relation].name
+            cmd = f"""\
+                MATCH (a:{weiche})-[r:{relation}]->(b:{weiche})\
+                WHERE r.edge_id = '{guid}'\
+                DELETE r;\
+            """
+            self.worker_queue.put(DbCommand(cmd))
+            self.worker_queue.put(
+                WrapperCommand(content=WrapperFunctionCommand(self.reset), context=self.gui_queue)
+            )

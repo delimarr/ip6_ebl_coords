@@ -1,7 +1,7 @@
 """Base Command. Command-Pattern."""
 from abc import ABC, abstractmethod
 from queue import Queue
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 
 from ebl_coords.decorators import override
 
@@ -58,3 +58,25 @@ class WrapperCommand(Command):
     def run(self) -> None:
         """Put the command in the context queue."""
         self.context.put(self.content)
+
+
+class WrapperFunctionCommand(Command):
+    """A Wrapper Command, in order to execute function as run.
+
+    Args:
+        Command (_type_): interface
+    """
+
+    def __init__(self, content: Callable[..., Any]) -> None:
+        """Initialize this command.
+
+        Args:
+            content (Callable[..., Any]): any function
+        """
+        super().__init__(content, None)
+        self.content: Callable[..., Any]
+
+    @override
+    def run(self) -> None:
+        """Put the command in the context queue."""
+        self.content()

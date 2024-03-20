@@ -42,9 +42,11 @@ def get_ecos_df(config: Dict[str, Any], bpks: List[str]) -> pd.DataFrame:
     """
     if MOCK_FLG:
         warnings.warn("used ecos mock, only use DAB.")
-        df = _get_ecos_df_mock(config, bpks)
+        df = get_ecos_df_mock(config, bpks)
     else:
-        df = _get_ecos_df_live(config, bpks)
+        df = get_ecos_df_live(config)
+    df = _select_valid_bpks(df, bpks)
+    df = _add_db_guid(df)
     df.id = df.id.astype(int)
     return df
 
@@ -67,7 +69,16 @@ def _add_db_guid(df: pd.DataFrame) -> pd.DataFrame:
     return df.dropna()
 
 
-def _get_ecos_df_mock(config: Dict[str, Any], bpks: List[str]) -> pd.DataFrame:
+def get_ecos_df_mock(config: Dict[str, Any], bpks: List[str]) -> pd.DataFrame:
+    """Get ecos df from file.
+
+    Args:
+        config (Dict[str, Any]): ecos df
+        bpks (List[str]): all bpks
+
+    Returns:
+        pd.DataFrame: _description_
+    """
     df = pd.read_csv("./ecos_mock/ecos.csv")
     df = df.loc[df.protocol == "DCC"]
     df = df.loc[df.name1.isin(bpks)]
@@ -76,7 +87,15 @@ def _get_ecos_df_mock(config: Dict[str, Any], bpks: List[str]) -> pd.DataFrame:
     return df
 
 
-def _get_ecos_df_live(config: Dict[str, Any], bpks: List[str]) -> pd.DataFrame:
+def get_ecos_df_live(config: Dict[str, Any]) -> pd.DataFrame:
+    """Get ECoS df in production.
+
+    Args:
+        config (Dict[str, Any]): ecos config
+
+    Returns:
+        pd.DataFrame: ecos df
+    """
     port = config["port"]
     df_dicts = []
     for ip in list(config["bpk_ip"].values())[1:]:
@@ -112,6 +131,4 @@ def _get_ecos_df_live(config: Dict[str, Any], bpks: List[str]) -> pd.DataFrame:
                 df_dicts.append(d)
 
     df = pd.DataFrame(df_dicts)
-    df = _select_valid_bpks(df, bpks)
-    df = _add_db_guid(df)
     return df

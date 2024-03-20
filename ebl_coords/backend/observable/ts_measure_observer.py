@@ -34,7 +34,7 @@ class TsMeasureObserver(Observer):
         gui_queue: Queue[Command],
         worker_queue: Queue[Command],
         ui: Ui_MainWindow,
-        points_needed: int = 150,
+        points_needed: int = 50,
     ) -> None:
         """Initialize the observer.
 
@@ -43,7 +43,7 @@ class TsMeasureObserver(Observer):
             gui_queue (Queue[Command]): gui command queue
             worker_queue (Queue[Command]): worker command queue
             ui (Ui_MainWindow): ui
-            points_needed (int, optional): How many point should be used for the measurement. Defaults to 150.
+            points_needed (int, optional): How many point should be used for the measurement. Defaults to 50.
         """
         self.subject: GtCommandSubject
         self.selected_ts = selected_ts

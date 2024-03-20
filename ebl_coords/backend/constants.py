@@ -5,7 +5,7 @@ from threading import RLock
 from PyQt6.QtGui import QColor
 
 # live or mock
-MOCK_FLG: bool = True
+MOCK_FLG: bool = False
 
 # neo4j config
 NEO4J_URI_LOCAL: str = "bolt://localhost:7687"
@@ -24,13 +24,14 @@ if MOCK_FLG:
 IGNORE_Z_AXIS: bool = True
 
 # minimal distance [m] delta needed for summation
-MIN_DELTA_DISTANCE: float = 0.05
+MIN_DELTA_DISTANCE: float = 0.03
+MIN_SHOW_DISTANCE: float = 0.1
 
 # GTCommand train switch hit threshold
 TS_HIT_THRESHOLD: int = 50
 
 # callback deltatime in ms, 30 Calls per Second
-CPS: int = 120
+CPS: int = 60
 CALLBACK_DT_MS: int = 1000 // CPS
 
 # zone dump file

@@ -43,9 +43,11 @@ class DrawOccupiedNetCmd(Command):
 
         neutral_string = EdgeRelation.NEUTRAL.name
 
+        self.context.net_maker.clear()
         # neutral point source
         coords = self.switches[f"{source_id[:-1]}0{neutral_string}"].coords
         if coords is None:
+            self.context.draw()
             return
         points.append(coords)
 
@@ -54,6 +56,7 @@ class DrawOccupiedNetCmd(Command):
         if ts_source != neutral_string:
             coords = self.switches[source_id + ts_source].coords
             if coords is None:
+                self.context.draw()
                 return
             points.append(coords)
 
@@ -62,12 +65,14 @@ class DrawOccupiedNetCmd(Command):
         if ts_dest != neutral_string:
             coords = self.switches[dest_id + ts_dest].coords
             if coords is None:
+                self.context.draw()
                 return
             points.append(coords)
 
         # neutral point dest
         coords = self.switches[f"{dest_id[:-1]}0{neutral_string}"].coords
         if coords is None:
+            self.context.draw()
             return
         points.append(coords)
 
@@ -78,7 +83,6 @@ class DrawOccupiedNetCmd(Command):
         )
         occupied_length = self.content["occupied_percent"] * lengths.sum()
 
-        self.context.net_maker.clear()
         for i in range(lengths.size):
             length = lengths[i]
             p1 = points_array[i]

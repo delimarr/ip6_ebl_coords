@@ -39,6 +39,7 @@ if TYPE_CHECKING:
     from ebl_coords.frontend.map_editor import MapEditor
     from ebl_coords.frontend.net_maker import NetMaker
     from ebl_coords.frontend.strecken_editor import StreckenEditor
+    from ebl_coords.main import EblCoords
 
 
 def get_strecken_df() -> pd.DataFrame:
@@ -112,19 +113,17 @@ class OccupyNextEdgeGuiCommand(Command):
         Command (_type_): interface
     """
 
-    def __init__(
-        self, content: tuple[str, pd.DataFrame, QComboBox], context: Queue[Command]
-    ) -> None:
+    def __init__(self, content: tuple[str, EblCoords, QComboBox], context: Queue[Command]) -> None:
         """Initialize occupy command.
 
         Args:
-            content (tuple[str, pd.DataFrame, QComboBox]): (source node_id, ecos Dataframe, QComboBox)
+            content (tuple[str, EblCoords, QComboBox]): (source node_id, ebl_coords, QComboBox)
             context (MapEditor): map editor
         """
         super().__init__(content, context)
-        self.content: tuple[str, pd.DataFrame, QComboBox]
+        self.content: tuple[str, EblCoords, QComboBox]
         self.context: Queue[Command]
-        self.node_id, self.ecos_df, self.combo_box = self.content
+        self.node_id, self.ebl_coords, self.combo_box = self.content
 
     @override
     def run(self) -> None:
@@ -138,7 +137,9 @@ class OccupyNextEdgeGuiCommand(Command):
         if self.node_id[-1] == "0":
             neutral_node_id = f"{self.node_id[:-1]}0"
             with ECOS_DF_LOCK:
-                state = self.ecos_df.loc[self.ecos_df.guid == neutral_node_id].state.iloc[0]
+                state = self.ebl_coords.ecos_df.loc[
+                    self.ebl_coords.ecos_df.guid == neutral_node_id
+                ].state.iloc[0]
             state = int(state)
             assert state in (0, 1)
             if state == 0:

@@ -10,10 +10,9 @@ from ebl_coords.backend.observable.observer import Observer
 from ebl_coords.decorators import override
 
 if TYPE_CHECKING:
-    from queue import Queue
-
-    import pandas as pd
     from PyQt6.QtWidgets import QComboBox
+
+    from ebl_coords.main import EblCoords
 
 
 class TsHitObserver(Observer):
@@ -21,22 +20,18 @@ class TsHitObserver(Observer):
 
     def __init__(
         self,
-        gui_queue: Queue[Command],
-        worker_queue: Queue[Command],
-        ecos_df: pd.DataFrame,
+        ebl_coors: EblCoords,
         combo_box: QComboBox,
     ) -> None:
         """Initialize TsHitObserver.
 
         Args:
-            gui_queue (Queue[Command]): gui_queue
-            worker_queue (Queue[Command]): worker_queue
-            ecos_df (pd.DataFrame): ecos_df
+            ebl_coors (EblCoords): ebl_Coords
             combo_box (QComboBox): map combo box
         """
-        self.gui_queue = gui_queue
-        self.worker_queue = worker_queue
-        self.ecos_df = ecos_df
+        self.ebl_coords = ebl_coors
+        self.gui_queue = ebl_coors.gui_queue
+        self.worker_queue = ebl_coors.worker_queue
         self.combo_box = combo_box
 
     @override
@@ -44,7 +39,7 @@ class TsHitObserver(Observer):
         """Update QCombobox in map editor."""
         self.worker_queue.put(
             OccupyNextEdgeGuiCommand(
-                content=(self.result[0], self.ecos_df, self.combo_box),
+                content=(self.result[0], self.ebl_coords, self.combo_box),
                 context=self.gui_queue,
             )
         )
@@ -53,27 +48,23 @@ class TsHitObserver(Observer):
 class AttachTsHitObsCommand(Command):
     """Create and attach a TsHitObserver."""
 
-    def __init__(
-        self, content: tuple[Queue[Command], Queue[Command], pd.DataFrame, QComboBox]
-    ) -> None:
+    def __init__(self, content: tuple[EblCoords, QComboBox]) -> None:
         """Initialize this command and set context to GtCommandSubject.
 
         Args:
-            content (tuple[Queue[Command], Queue[Command], pd.DataFrame, QComboBox]): (gui_queue, worker_queue, ecos_df, combo_boc)
+            content (tuple[EblCoords, QComboBox]): (ebl_coords, combo_box)
         """
         super().__init__(content, GtCommandSubject())
-        self.content: tuple[Queue[Command], Queue[Command], pd.DataFrame, QComboBox]
+        self.content: tuple[EblCoords, QComboBox]
         self.context: GtCommandSubject
 
     @override
     def run(self) -> None:
         """Create and attach a new TsHitObserver."""
-        gui_queue, worker_queue, ecos_df, combo_box = self.content
+        ebl_coords, combo_box = self.content
         self.context.attach_ts_hit(
             TsHitObserver(
-                gui_queue=gui_queue,
-                worker_queue=worker_queue,
-                ecos_df=ecos_df,
+                ebl_coors=ebl_coords,
                 combo_box=combo_box,
             )
         )

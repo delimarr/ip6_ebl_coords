@@ -139,6 +139,7 @@ class Ui_MainWindow:
         self.formLayout.setItem(11, QtWidgets.QFormLayout.ItemRole.LabelRole, spacerItem)
         self.map_distance_dsb = QtWidgets.QDoubleSpinBox(parent=self.map_left_form)
         self.map_distance_dsb.setMaximum(1000.0)
+        self.map_distance_dsb.setSingleStep(0.01)
         self.map_distance_dsb.setObjectName("map_distance_dsb")
         self.formLayout.setWidget(
             5, QtWidgets.QFormLayout.ItemRole.FieldRole, self.map_distance_dsb

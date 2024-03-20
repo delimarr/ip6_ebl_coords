@@ -12,6 +12,7 @@ from ebl_coords.backend.command.db_cmd import MapDrawConnectTopoGuiCmd, MapDrawC
 from ebl_coords.backend.command.db_cmd import MapFillCbGuiCmd, MapFillListGuiCmd
 from ebl_coords.backend.constants import BLOCK_SIZE, ZONE_FILE
 from ebl_coords.backend.observable.ecos_oberver import AttachEcosObsCommand
+from ebl_coords.backend.observable.position_observer import AttachPositionCommand
 from ebl_coords.backend.observable.ts_hit_observer import AttachTsHitObsCommand
 from ebl_coords.decorators import override
 from ebl_coords.frontend.command.map.redraw_cmd import RedrawCmd
@@ -70,9 +71,7 @@ class MapEditor(Editor):
         self.worker_queue.put(
             AttachTsHitObsCommand(
                 content=(
-                    self.gui_queue,
-                    self.worker_queue,
-                    self.gui.ebl_coords.ecos_df,
+                    self.gui.ebl_coords,
                     self.ui.map_position_CBox,
                 )
             )
@@ -83,6 +82,7 @@ class MapEditor(Editor):
                 context=self.gui.ebl_coords.ecos,
             )
         )
+        self.worker_queue.put(AttachPositionCommand(content=self))
 
     def map_pos_changed(self) -> None:
         """Invoke update of gtcommand subject on QCombobox change."""

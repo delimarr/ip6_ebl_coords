@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 from ebl_coords.backend.command.invoker import Invoker
-from ebl_coords.backend.constants import CALLBACK_DT_MS, CONFIG_JSON, ECOS_DF_LOCK
-from ebl_coords.backend.ecos import get_ecos_df, load_config
+from ebl_coords.backend.constants import CALLBACK_DT_MS, CONFIG_JSON, ECOS_DF_LOCK, MOCK_FLG
+from ebl_coords.backend.ecos import get_ecos_df, get_ecos_df_live, get_ecos_df_mock, load_config
 from ebl_coords.backend.observable.ecos_subject import EcosSubject
 from ebl_coords.frontend.gui import Gui
 from ebl_coords.graph_db.graph_db_api import GraphDbApi
@@ -30,10 +30,15 @@ class EblCoords:
 
         self.bpks, self.ecos_config = load_config(config_file=CONFIG_JSON)
         self.ecos_df: pd.DataFrame
-        self.update_ecos_df()
 
-        self.ecos = EcosSubject(ecos_config=self.ecos_config, ecos_ids=self.ecos_df["id"])
+        if MOCK_FLG:
+            ecos_ids = get_ecos_df_mock(self.ecos_config, self.bpks)["id"]
+        else:
+            ecos_ids = get_ecos_df_live(self.ecos_config)["id"]
+        self.ecos = EcosSubject(ecos_config=self.ecos_config, ecos_ids=ecos_ids)
         self.ecos.start_record()
+
+        self.update_ecos_df()
 
         self.graphdb = GraphDbApi()
 

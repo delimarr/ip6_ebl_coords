@@ -43,10 +43,11 @@ def get_ecos_df(config: Dict[str, Any], bpks: List[str]) -> pd.DataFrame:
     if MOCK_FLG:
         warnings.warn("used ecos mock, only use DAB.")
         df = get_ecos_df_mock(config, bpks)
+        df = _select_valid_bpks(df, bpks)
     else:
         df = get_ecos_df_live(config)
-    df = _select_valid_bpks(df, bpks)
-    df = _add_db_guid(df)
+        df = _select_valid_bpks(df, bpks)
+        df = _add_db_guid(df)
     df.id = df.id.astype(int)
     return df
 

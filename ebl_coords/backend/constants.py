@@ -5,7 +5,7 @@ from threading import RLock
 from PyQt6.QtGui import QColor
 
 # live or mock
-MOCK_FLG: bool = False
+MOCK_FLG: bool = True
 
 # neo4j config
 NEO4J_URI_LOCAL: str = "bolt://localhost:7687"

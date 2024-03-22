@@ -10,6 +10,11 @@ This repository contains an interface to GoT, coordinates recording and analysis
 - if you are on linux run `git config --global --add safe.directory /workdir`
 - run `pre-commit install`
 
+# build .exe
+run `poetry run pyinstaller .\ebl_coords\main.py --collect-submodules application --onefile --name ebl_coords`
+
+https://stackoverflow.com/questions/76145761/use-poetry-to-create-binary-distributable-with-pyinstaller-on-package
+
 # use local_exec branch in order to run `live.py`
 
 # pyqt6

@@ -1,0 +1,16 @@
+services:
+  dev-environment-python:
+    build: .
+    privileged: true
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    volumes:
+      - ../:/workdir/
+    environment:
+      - DEV_CONTAINER=1
+    networks:
+      - ebl-net
+
+networks:
+  ebl-net:
+    name: ebl

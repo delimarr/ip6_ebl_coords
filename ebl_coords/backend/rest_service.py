@@ -31,8 +31,6 @@ class RestApi:
 
     def _add_routes(self) -> None:
         self.app.post("/gtcommand/all_coord")(self.all_coord)
-        self.app.post("/gtcommand/changed_coord")(self.changed_coord)
-        self.app.post("/gtcommand/ts_hit")(self.ts_hit)
 
     async def all_coord(self, observer: Request) -> Dict[str, str]:
         """Attach the observer sent to gtcommand_subject all_coords.
@@ -44,33 +42,6 @@ class RestApi:
             Dict[str, str]: json that will eventually contain the ip of the websocket
         """
         obs = pickle_load(observer.body)
-        # Challenge: open a websocket and then make the received observer
-        # register commands with the target being the websocket
+        # Client hat auch REST Api mit PUT wo die DatenPunkte hingeschickt werden.
         self.gtcommand_subject.attach_all_coord(obs)
-        return {"message": "Hello World"}
-
-    async def changed_coord(self, observer: Request) -> Dict[str, str]:
-        """Attach the observer sent to gtcommand_subject changed_coord.
-
-        Args:
-            observer (Request): pickled observer to attach
-
-        Returns:
-            Dict[str, str]: json that will eventually contain the ip of the websocket
-        """
-        obs = pickle_load(observer.body)
-        self.gtcommand_subject.attach_changed_coord(obs)
-        return {"message": "Hello World"}
-
-    async def ts_hit(self, observer: Request) -> Dict[str, str]:
-        """Attach the observer sent to gtcommand_subject ts_hit.
-
-        Args:
-            observer (Request): pickled observer to attach
-
-        Returns:
-            Dict[str, str]: json that will eventually contain the ip of the websocket
-        """
-        obs = pickle_load(observer.body)
-        self.gtcommand_subject.attach_ts_hit(obs)
         return {"message": "Hello World"}

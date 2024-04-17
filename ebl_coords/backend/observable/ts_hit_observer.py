@@ -8,6 +8,7 @@ from ebl_coords.backend.command.db_cmd import OccupyNextEdgeGuiCommand
 from ebl_coords.backend.observable.gtcommand_subject import GtCommandSubject
 from ebl_coords.backend.observable.observer import Observer
 from ebl_coords.decorators import override
+from ebl_coords.frontend.command.d_spinbox_cmd import SetFloatCmd
 
 if TYPE_CHECKING:
     from PyQt6.QtWidgets import QComboBox
@@ -43,6 +44,7 @@ class TsHitObserver(Observer):
                 context=self.gui_queue,
             )
         )
+        self.gui_queue.put(SetFloatCmd(content=0, context=self.ebl_coords.gui.ui.map_distance_dsb))
 
 
 class AttachTsHitObsCommand(Command):

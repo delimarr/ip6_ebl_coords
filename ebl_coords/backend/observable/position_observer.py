@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 from ebl_coords.backend.command.command import Command
-from ebl_coords.backend.constants import MIN_DELTA_DISTANCE, MIN_SHOW_DISTANCE
+from ebl_coords.backend.constants import MIN_DELTA_DISTANCE
 from ebl_coords.backend.observable.gtcommand_subject import GtCommandSubject
 from ebl_coords.backend.observable.observer import Observer
 from ebl_coords.decorators import override
@@ -30,8 +30,6 @@ class PositionObserver(Observer):
         self.map_editor = map_editor
         self.prev_coord: np.ndarray | None = None
         self.prev_timestamp: int | None = None  # in ms
-        self.distance: float = 0
-        self.time_delta: float = 0
 
     @override
     def update(self) -> None:
@@ -49,31 +47,23 @@ class PositionObserver(Observer):
         time_delta = (timestamp - self.prev_timestamp) / 1000
 
         if distance > MIN_DELTA_DISTANCE:
-            self.distance += distance
-            self.time_delta += time_delta
-            if self.distance > MIN_SHOW_DISTANCE:
-                self.gui_queue.put(
-                    AddFloatCmd(content=self.distance, context=self.map_editor.ui.map_distance_dsb)
+            self.gui_queue.put(
+                AddFloatCmd(content=distance, context=self.map_editor.ui.map_distance_dsb)
+            )
+            v = distance / time_delta
+            self.gui_queue.put(
+                SetTextCmd(
+                    content=f"{v:.3f}",
+                    context=self.map_editor.ui.map_v_label,
                 )
-                v = self.distance / self.time_delta
-                self.gui_queue.put(
-                    SetTextCmd(
-                        content=f"{v:.3f}",
-                        context=self.map_editor.ui.map_v_label,
-                    )
+            )
+            a = self.map_editor.ui.map_break_a_txt.value()
+            self.gui_queue.put(
+                SetTextCmd(
+                    content=f"{abs(v*v/2*a):.3f}",
+                    context=self.map_editor.ui.map_break_s_label,
                 )
-                a = self.map_editor.ui.map_break_a_txt.value()
-                self.gui_queue.put(
-                    SetTextCmd(
-                        content=f"{abs(v*v/2*a):.3f}",
-                        context=self.map_editor.ui.map_break_s_label,
-                    )
-                )
-                self.distance = 0
-                self.time_delta = 0
-                self.distance = 0
-                self.time_delta = 0
-
+            )
             self.prev_coord = coord
             self.prev_timestamp = timestamp
 

@@ -10,6 +10,30 @@ if TYPE_CHECKING:
     from PyQt6.QtWidgets import QDoubleSpinBox
 
 
+class SetFloatCmd(Command):
+    """Set float value.
+
+    Args:
+        Command (_type_): interface
+    """
+
+    def __init__(self, content: float, context: QDoubleSpinBox) -> None:
+        """Initialiaze command.
+
+        Args:
+            content (float): float value
+            context (QDoubleSpinBox): target
+        """
+        super().__init__(content, context)
+        self.content: float
+        self.context: QDoubleSpinBox
+
+    @override
+    def run(self) -> None:
+        """Set the float value."""
+        self.context.setValue(self.content)
+
+
 class AddFloatCmd(Command):
     """Add float value to double spinbox.
 

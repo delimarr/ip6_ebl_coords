@@ -2,7 +2,7 @@
 from typing import List, Optional, Tuple
 
 from PyQt6 import QtGui
-from PyQt6.QtGui import QColor, QPen
+from PyQt6.QtGui import QColor, QPen, QPixmap
 
 from ebl_coords.backend.constants import BACKGROUND_HEX, BLOCK_SIZE, GRID_HEX, GRID_LINE_WIDTH
 from ebl_coords.backend.constants import LINE_HEX, POINT_HEX, TEXT_HEX
@@ -23,6 +23,7 @@ class NetMaker:
         self.height: int = 0
         self.block_size: int = block_size
         self.map = zone_map
+        self.map_buffer: QPixmap = self.map.pixmap().copy()
 
     def clear(self, color: QColor = BACKGROUND_HEX) -> None:
         """Clears the map label.
@@ -30,9 +31,13 @@ class NetMaker:
         Args:
             color (QColor, optional): color. Defaults to BACKGROUND_HEX.
         """
-        canvas = self.map.pixmap()
+        canvas = self.map.pixmap().copy()
         canvas.fill(color)
-        self.map.setPixmap(canvas)
+        self.map_buffer = canvas
+
+    def show(self) -> None:
+        """Show all drawn stuff."""
+        self.map.setPixmap(self.map_buffer)
 
     def draw_point(self, x: int, y: int, color: QColor, width: int) -> None:
         """Draw a point.
@@ -43,14 +48,12 @@ class NetMaker:
             color (QColor): color
             width (int): point width
         """
-        canvas = self.map.pixmap()
-        painter = QtGui.QPainter(canvas)
+        painter = QtGui.QPainter(self.map_buffer)
         pen = QPen(color)
         pen.setWidth(width)
         painter.setPen(pen)
         painter.drawPoint(x, y)
         painter.end()
-        self.map.setPixmap(canvas)
 
     def draw_line(self, x1: int, y1: int, x2: int, y2: int, color: QColor, width: int = 1) -> None:
         """Draw a line from point 1 to point 2 on the grid system.
@@ -63,14 +66,12 @@ class NetMaker:
             color (QColor): color
             width (int): line width in pixel. Defaults to 1.
         """
-        canvas = self.map.pixmap()
-        painter = QtGui.QPainter(canvas)
+        painter = QtGui.QPainter(self.map_buffer)
         pen = QPen(color)
         pen.setWidth(width)
         painter.setPen(pen)
         painter.drawLine(x1, y1, x2, y2)
         painter.end()
-        self.map.setPixmap(canvas)
 
     def draw_text(self, text: str, x: int, y: int, color: QColor) -> None:
         """Write text at coordinates in grid system.
@@ -81,12 +82,10 @@ class NetMaker:
             y (int): pixel y
             color (QColor): color
         """
-        canvas = self.map.pixmap()
-        painter = QtGui.QPainter(canvas)
+        painter = QtGui.QPainter(self.map_buffer)
         painter.setPen(color)
         painter.drawText(x, y, text)
         painter.end()
-        self.map.setPixmap(canvas)
 
     def draw_grid_text(self, text: str, u: int, v: int, color: QColor = TEXT_HEX) -> None:
         """Draw a text in the middle of a tile.
@@ -115,6 +114,7 @@ class NetMaker:
         height_pixels = height * block_size + 1
         self.map.setFixedSize(width_pixels, height_pixels)
         self.map.setPixmap(QtGui.QPixmap(self.map.size()))
+        self.map_buffer = self.map.pixmap().copy()
 
     def draw_grid(self, width: int, height: int, color: QColor = GRID_HEX) -> None:
         """Draws a grid.

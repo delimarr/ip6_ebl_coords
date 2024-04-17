@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 
 from PyQt6.QtWidgets import QListWidgetItem, QPushButton
 
+from ebl_coords.backend.command.command import WrapperCommand, WrapperFunctionCommand
 from ebl_coords.backend.command.db_cmd import MapDrawConnectTopoGuiCmd, MapDrawConnectTsGuiCmd
 from ebl_coords.backend.command.db_cmd import MapFillCbGuiCmd, MapFillListGuiCmd
 from ebl_coords.backend.constants import BLOCK_SIZE, ZONE_FILE
@@ -226,13 +227,13 @@ class MapEditor(Editor):
 
             self.worker_queue.put(
                 MapDrawConnectTopoGuiCmd(
-                    content=(self.gui.ebl_coords.ecos_df, neutral, n1, self.net_maker),
+                    content=(self.gui.ebl_coords, neutral, n1, self.net_maker),
                     context=self.gui_queue,
                 )
             )
             self.worker_queue.put(
                 MapDrawConnectTopoGuiCmd(
-                    content=(self.gui.ebl_coords.ecos_df, neutral, n2, self.net_maker),
+                    content=(self.gui.ebl_coords, neutral, n2, self.net_maker),
                     context=self.gui_queue,
                 )
             )
@@ -253,6 +254,11 @@ class MapEditor(Editor):
         self.worker_queue.put(
             MapDrawConnectTsGuiCmd(
                 content=(self.zone.switches, self.net_maker), context=self.gui_queue
+            )
+        )
+        self.worker_queue.put(
+            WrapperCommand(
+                content=WrapperFunctionCommand(content=self.net_maker.show), context=self.gui_queue
             )
         )
 

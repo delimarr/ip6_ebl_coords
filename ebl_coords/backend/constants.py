@@ -34,7 +34,7 @@ CPS: int = 60
 CALLBACK_DT_MS: int = 1000 // CPS
 
 # zone dump file
-ZONE_FILE: str = str(abspath("./zone_data/zone_dump.json"))
+ZONE_FILE: str = str(abspath("./zone_dump.json"))
 
 # config file
 CONFIG_JSON: str = str(abspath("./ebl_config.json"))

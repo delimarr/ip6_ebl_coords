@@ -11,7 +11,7 @@ This repository contains an interface to GoT, coordinates recording and analysis
 - run `pre-commit install`
 
 # build .exe
-run `poetry run pyinstaller .\ebl_coords\main.py --collect-submodules application --onefile --name ebl_coords`
+run `poetry run pyinstaller .\ebl_coords\main.py --collect-submodules application --onefile --noconsole --name ebl_coords_v1_1_0`
 
 https://stackoverflow.com/questions/76145761/use-poetry-to-create-binary-distributable-with-pyinstaller-on-package
 

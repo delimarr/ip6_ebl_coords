@@ -25,7 +25,6 @@ IGNORE_Z_AXIS: bool = True
 
 # minimal distance [m] delta needed for summation
 MIN_DELTA_DISTANCE: float = 0.03
-MIN_SHOW_DISTANCE: float = 0.1
 
 # GTCommand train switch hit threshold
 TS_HIT_THRESHOLD: int = 50

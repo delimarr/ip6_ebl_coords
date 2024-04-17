@@ -227,13 +227,13 @@ class MapEditor(Editor):
 
             self.worker_queue.put(
                 MapDrawConnectTopoGuiCmd(
-                    content=(self.gui.ebl_coords.ecos_df, neutral, n1, self.net_maker),
+                    content=(self.gui.ebl_coords, neutral, n1, self.net_maker),
                     context=self.gui_queue,
                 )
             )
             self.worker_queue.put(
                 MapDrawConnectTopoGuiCmd(
-                    content=(self.gui.ebl_coords.ecos_df, neutral, n2, self.net_maker),
+                    content=(self.gui.ebl_coords, neutral, n2, self.net_maker),
                     context=self.gui_queue,
                 )
             )

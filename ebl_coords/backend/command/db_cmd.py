@@ -156,7 +156,6 @@ class OccupyNextEdgeGuiCommand(Command):
         assert df.shape[0] <= 1
         if df.shape[0] == 1:
             next_edge_id = df.edge_id.iloc[0]
-
             self.context.put(SetComboBoxCmd(content=next_edge_id, context=self.combo_box))
 
 
@@ -467,25 +466,25 @@ class MapDrawConnectTopoGuiCmd(Command):
 
     def __init__(
         self,
-        content: tuple[pd.DataFrame, MapTsTopopoint, MapTsTopopoint, NetMaker],
+        content: tuple[EblCoords, MapTsTopopoint, MapTsTopopoint, NetMaker],
         context: Queue[Command],
     ) -> None:
         """Initialize this command.
 
         Args:
-            content (Tuple[pd.DataFrame, neutral_switch, other_switch, NetMaker]): (ecos_df, neutral_switch, other_switch, netmaker)
+            content (Tuple[EblCoords, MapTsTopopoint, MapTsTopopoint, NetMaker]): (ebl_coords, neutral_switch, other_switch, netmaker)
             context (Queue[Command]): gui_queue
         """
         super().__init__(content, context)
-        self.content: tuple[pd.DataFrame, MapTsTopopoint, MapTsTopopoint, NetMaker]
+        self.content: tuple[EblCoords, MapTsTopopoint, MapTsTopopoint, NetMaker]
         self.context: Queue[Command]
 
     @override
     def run(self) -> None:
         """Draw edges in consideration with state of ecos_df."""
-        ecos_df, neutral, other, netmaker = self.content
+        ebl_coords, neutral, other, netmaker = self.content
         with ECOS_DF_LOCK:
-            state = ecos_df.loc[ecos_df.guid == neutral.guid].state.iloc[0]
+            state = ebl_coords.ecos_df.loc[ebl_coords.ecos_df.guid == neutral.guid].state.iloc[0]
         state = int(state)
         if other.coords is not None and neutral.coords is not None:
             u, v = neutral.coords
